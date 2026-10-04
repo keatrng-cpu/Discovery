@@ -6,7 +6,7 @@ description: Use when one party's exposure in a contract needs a written severit
 A contract, one named party, and a written severity rule are present. The scoring party is the one the ask named, fixed for the whole pass (a second party is a second pass). Quiet when no party or no rule is given.
 ## Done-when
 check: quote
-Each score row carries the written rule it applied, a severity from that rule, and a verbatim quote that is a substring of the source with a section locator. A row without a quote is dropped and printed as "unscored: <text>". Zero scored rows is valid.
+Each score row carries the party it scored, the written rule it applied, a severity from that rule, and a verbatim quote that is a substring of the source with a section locator. Every row's party equals the one party the ask named; a row for any other party fails. A row without a quote is dropped and printed as "unscored: <text>". Zero scored rows is valid.
 ## Rung
 rung: L1
 A fast model scores against the rule for the named party only; a program checks every quote is in the source and every row has rule, severity and locator. Escalate only on a failed quote match.
