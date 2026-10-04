@@ -6,7 +6,7 @@ description: Use when a newcomer needs one request flow with one hop matched to 
 A named request or endpoint and a runtime log are present. Quiet for "explain the repo" or architecture overviews.
 ## Done-when
 check: quote
-One record, read by a program: the hops of one request from entry to store, each as file:line of the hop function (the line exists in the file and contains the function name) plus the owning module; the first hop is the route entry and the last hop is the store call. Exactly one hop is also matched to a runtime log line quoted verbatim with its log line number; python3 reading that log line number returns the quote, and the line names the hop's function or file. No log line matching any hop is a valid result: report "log: unmatched" and stop.
+One command, `python3 onboard_check.py record.json --repo . --log app.log`, with one exit code. It does not exist in the repo yet: it is the program the desk would run. Inputs: the flow record, the repo, the log. It exits 0 only if each hop is a file:line whose line exists and contains the hop function name, with an owning module; the first hop is the route entry and the last is the store call; exactly one hop carries a log line quoted verbatim at its stated log line number, naming that hop's function or file. No log line matching any hop is a valid result: it prints "log: unmatched" and exits 0.
 
 ## Rung
 rung: L1

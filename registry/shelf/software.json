@@ -27,7 +27,7 @@
  "directives": {
   "analyze": {
    "trigger": "A failing path, stack trace, or error log is present and the owning file is unknown. Quiet when the ask is to edit, run tests, or explain the whole repo.",
-   "doneWhen": "Output one record, and a program reads each field: (1) a log line quoted verbatim with its line number in the log file, read back with python3 (line N of the log equals the quote); (2) that line names the entry file, given as file:line from the trace, and the file:line exists in the tree; (3) the broken invariant quoted verbatim from a source line at a stated file:line; (4) a do-not-touch list of paths, each present in `git ls-files`. A log with no matching line is a valid result: write \"unmatched\" and stop; do not guess a file.",
+   "doneWhen": "One command, `python3 analyze_check.py record.json --log app.log --repo .`, with one exit code. It does not exist in the repo yet: it is the program the desk would run. Inputs: the record, the log, the repo. It exits 0 only if the quoted log line sits verbatim at its stated line number in the log; that line names the entry file given as file:line from the trace, and the file:line exists in the tree; the broken invariant is quoted verbatim from a source line at a stated file:line; each do-not-touch path is listed by `git ls-files`. A log with no matching line is a valid result: the record says \"unmatched\", names no file, and the command exits 0.",
    "checkKind": "quote",
    "rung": "L1",
    "forbidden": "Guessing a file from a noisy log that the grep did not return; naming a file with no quoted line.",
@@ -35,7 +35,7 @@
    "toolScope": "read",
    "gated": false,
    "gate": "",
-   "status": "reliable",
+   "status": "assisted",
    "checkRunnable": false,
    "keywords": [
     "stack trace",
@@ -73,7 +73,7 @@
   },
   "edit": {
    "trigger": "A frozen plan lists the files to change and any signature change. Quiet when no plan exists or the plan is still open.",
-   "doneWhen": "`git diff --name-only` lists exactly the files named in the plan and no others (a sorted set comparison of the two lists); `git diff -U0` shows no added or removed `def` or `class` line unless the plan lists that signature change; and each hunk the plan marks non-obvious has an added one-line comment inside that hunk. An empty diff is a valid result when the plan needs no change: report \"diff: empty\".",
+   "doneWhen": "One command, `python3 edit_check.py plan.json`, with one exit code. It does not exist in the repo yet: it is the program the desk would run, reading `git diff`. Input: the frozen plan. It exits 0 only if the sorted `git diff --name-only` equals the plan's file list; `git diff -U0` shows no added or removed `def` or `class` line unless the plan lists that signature change; each hunk the plan marks non-obvious has an added one-line comment inside it. An empty diff is a valid result when the plan needs no change: it prints \"diff: empty\" and exits 0.",
    "checkKind": "state-diff",
    "rung": "L1",
    "forbidden": "Drift: editing an unnamed file, renaming a public signature, or tidying beyond the plan.",
@@ -97,7 +97,7 @@
   },
   "verify": {
    "trigger": "A project directory holds verify_gate.sh and a change claims to be finished. Quiet when no gate script exists: report gate absent and stop.",
-   "doneWhen": "`bash verify_gate.sh` in the project directory exits 0 (unit test, then build, then render-compare against the fixture; the first failure stops it). The Stop hook blocks 'done' until it does. The script runs `python3 -m unittest discover -s tests` (tune fixture tests test_simple and test_zero_numerator in tests/test_mod.py), then py_compile, then cmp against fixture.txt, under one exit code. A non-zero exit is a valid result: report RED with the exit code and the first failing line quoted verbatim, declared_done false. No verify_gate.sh in the directory is also a valid result: report \"gate: absent\" and stop. Never report GREEN without exit 0.",
+   "doneWhen": "`bash verify_gate.sh` in the project directory exits 0: unit test, then build, then a real Playwright (chromium) screenshot of the rendered page compared byte for byte to fixture.png; the first failure stops it. The Stop hook blocks 'done' until it does. The script runs `python3 -m unittest discover -s tests` (tune fixture tests test_simple and test_zero_numerator in tests/test_mod.py), then py_compile, then the Playwright screenshot and cmp against fixture.png, under one exit code. A non-zero exit is a valid result: report RED with the exit code and the first failing line quoted verbatim, declared_done false. No verify_gate.sh in the directory is also a valid result: report \"gate: absent\" and stop. Never report GREEN without exit 0.",
    "checkKind": "exit-code",
    "rung": "L0",
    "forbidden": "declaring done, or editing any file, on a model read of the output; verify never fixes",
@@ -120,7 +120,7 @@
   },
   "migrate": {
    "trigger": "One transform of one file shape applies to many files. Quiet for a single file, or when two different shapes are mixed.",
-   "doneWhen": "`git ls-files` filtered by the one file shape prints N target paths, and the worker manifest lists exactly those N paths (sorted set comparison). N of 0 is a valid result: report \"targets: 0\".",
+   "doneWhen": "One command, `python3 migrate_check.py manifest.json --shape '*.ext'`, with one exit code. It does not exist in the repo yet: it is the program the desk would run. Inputs: the worker manifest and the one file shape. It exits 0 only if the manifest paths equal `git ls-files` filtered by that shape (sorted set comparison, N targets); every path has exactly one transform and that transform is of the one shape; each worker has its own distinct isolated copy; every path has a passing recheck record, and any path without one is rejected. N of 0 is a valid result: it prints \"targets: 0\" and exits 0.",
    "checkKind": "count",
    "rung": "L2",
    "forbidden": "Guessing the file list instead of enumerating it, or accepting a file whose result was not rechecked.",
@@ -145,7 +145,7 @@
   },
   "review": {
    "trigger": "A diff or pull request is present. Quiet when asked to fix the code or to run tests.",
-   "doneWhen": "Every comment carries file:line and the quoted line text, and the quote appears verbatim at that line in `git diff` output. Any comment with no matching quote is dropped; zero surviving comments is a valid result: report \"findings: 0\".",
+   "doneWhen": "One command, `python3 review_check.py comments.json --diff`, with one exit code. It does not exist in the repo yet: it is the program the desk would run against `git diff` output. Input: the comment list. It exits 0 only if every surviving comment is labeled logic, security, or performance; carries file:line and a quoted line; and the quote appears verbatim at that line in the diff. Any comment with another label (style) or no matching quote is dropped. Zero surviving comments is a valid result: it prints \"findings: 0\" and exits 0.",
    "checkKind": "quote",
    "rung": "L1",
    "forbidden": "Posting a comment that cannot point at a line, or over-commenting style; cross-file logic no single line shows is reported unsupported, not smoothed.",
@@ -170,7 +170,7 @@
   },
   "onboard": {
    "trigger": "A named request or endpoint and a runtime log are present. Quiet for explain-the-repo or architecture overview asks.",
-   "doneWhen": "One record, read by a program: the hops of one request from entry to store, each as file:line of the hop function (the line exists in the file and contains the function name) plus the owning module; the first hop is the route entry and the last hop is the store call. Exactly one hop is also matched to a runtime log line quoted verbatim with its log line number; python3 reading that log line number returns the quote, and the line names the hop's function or file. No log line matching any hop is a valid result: report \"log: unmatched\" and stop.",
+   "doneWhen": "One command, `python3 onboard_check.py record.json --repo . --log app.log`, with one exit code. It does not exist in the repo yet: it is the program the desk would run. Inputs: the flow record, the repo, the log. It exits 0 only if each hop is a file:line whose line exists and contains the hop function name, with an owning module; the first hop is the route entry and the last is the store call; exactly one hop carries a log line quoted verbatim at its stated log line number, naming that hop's function or file. No log line matching any hop is a valid result: it prints \"log: unmatched\" and exits 0.",
    "checkKind": "quote",
    "rung": "L1",
    "forbidden": "Touring the repo: describing modules that are not on the traced request path.",

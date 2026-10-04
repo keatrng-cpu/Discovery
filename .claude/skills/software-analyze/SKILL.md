@@ -6,7 +6,7 @@ description: Use when a failing path, stack trace, or traceback must be mapped t
 A failing path, stack trace, or error log is present and the owning file is unknown. Quiet when the ask is to edit, to run tests, or to explain the whole repo.
 ## Done-when
 check: quote
-Output one record, and a program reads each field: (1) a log line quoted verbatim with its line number in the log file, read back with python3 (line N of the log equals the quote); (2) that line names the entry file, given as file:line from the trace, and the file:line exists in the tree; (3) the broken invariant quoted verbatim from a source line at a stated file:line; (4) a do-not-touch list of paths, each present in `git ls-files`. A log with no matching line is a valid result: write "unmatched" and stop; do not guess a file.
+One command, `python3 analyze_check.py record.json --log app.log --repo .`, with one exit code. It does not exist in the repo yet: it is the program the desk would run. Inputs: the record, the log, the repo. It exits 0 only if the quoted log line sits verbatim at its stated line number in the log; that line names the entry file given as file:line from the trace, and the file:line exists in the tree; the broken invariant is quoted verbatim from a source line at a stated file:line; each do-not-touch path is listed by `git ls-files`. A log with no matching line is a valid result: the record says "unmatched", names no file, and the command exits 0.
 
 ## Rung
 rung: L1
