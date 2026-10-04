@@ -132,7 +132,7 @@
    "absentTools": []
   },
   "monitor": {
-   "trigger": "A prior memo exists as a file with a date on each claim. Quiet when there is no memo file, because there is nothing to diff.",
+   "trigger": "A prior memo exists as a file with a date and a half-life in days on each claim. Quiet when there is no memo file, because there is nothing to diff.",
    "doneWhen": "Two readings must agree. Clock: a python3 date computation (claim date plus half-life days against today, never a model's judgment) prints the expired claim ids; every printed id has an added line marked \"expired\" and no unprinted id has one. Diff: `git diff --numstat` of the memo file reports 0 deleted lines, so the old conclusion stays visible and a changed conclusion appears as an added line marked \"changed\" beneath it; every source id on an added line is absent from the memo at HEAD (`git show HEAD:<memo>`), so only new sources were added. No new sources and no expiries is a valid result: an empty diff.",
    "checkKind": "state-diff",
    "rung": "L1",
