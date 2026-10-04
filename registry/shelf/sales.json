@@ -43,9 +43,7 @@
     "what they pay for",
     "candidate frames"
    ],
-   "absentTools": [
-    "CRM read connector for real buyer lists"
-   ]
+   "absentTools": []
   },
   "cluster": {
    "trigger": "A file of raw customer or interview quotes is present and grouping is asked for.",
@@ -57,7 +55,7 @@
    "toolScope": "read",
    "gated": false,
    "gate": "",
-   "status": "reliable",
+   "status": "assisted",
    "checkRunnable": false,
    "keywords": [
     "cluster quotes",
@@ -91,7 +89,7 @@
   },
   "brief": {
    "trigger": "A named prospect and an upcoming meeting need a pre-call brief from public facts.",
-   "doneWhen": "Every fact line in brief.md carries a verbatim quote and public URL fetched by firecrawl_scrape. A python3 script reads brief.md and exits 0 only if each fact's quote is found in the saved page text and no number appears outside a quoted span. One line names the likely objection. Facts not found print \"unsupported\"; \"no public facts found\" is a valid result.",
+   "doneWhen": "Every fact line in brief.md carries a verbatim quote and public URL fetched by firecrawl_scrape. A python3 script reads brief.md and exits 0 only if each fact's quote is found in the saved page text, no number appears outside a quoted span, exactly one line starts \"objection:\" with non-empty text, and a \"prepared:\" date line is earlier than the \"meeting:\" date line. It prints \"facts: N, quoted: N/N, objection: 1, prepared: before\". Facts not found print \"unsupported\"; \"no public facts found\" is a valid result (objection and dates still required).",
    "checkKind": "quote",
    "rung": "L1",
    "forbidden": "Inventing metrics with no quoted public source.",
@@ -108,13 +106,11 @@
     "likely objection",
     "public facts on prospect"
    ],
-   "absentTools": [
-    "CRM read connector for account history"
-   ]
+   "absentTools": []
   },
   "asset": {
    "trigger": "A winning frame is recorded and one asset for it is asked for.",
-   "doneWhen": "`python3 -c` over asset.md counts lines starting \"frame:\" and exits 0 only if the count is 1 and the id equals the winning id in state. It prints \"frames: 1/1\". With no winning frame it prints \"frames: 0/0\" and exits 0; no asset is written.",
+   "doneWhen": "`python3 -c` over asset.md counts lines and exits 0 only if exactly one line starts \"frame:\" and its id equals the winning id in state, exactly one line starts \"segment:\" and equals the segment named in brief.md, and exactly one line starts \"objection:\" and equals the objection line in brief.md. It prints \"frames: 1/1, segment: 1/1, objection: 1/1\". With no winning frame it prints \"frames: 0/0\" and exits 0; no asset is written.",
    "checkKind": "count",
    "rung": "L1",
    "forbidden": "Producing the other frames alongside the winner.",
@@ -152,11 +148,7 @@
     "test the frame",
     "ad test"
    ],
-   "absentTools": [
-    "mail send tool",
-    "payment tool",
-    "ad platform write action"
-   ]
+   "absentTools": []
   }
  }
 }
