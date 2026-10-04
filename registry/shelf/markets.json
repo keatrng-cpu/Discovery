@@ -29,7 +29,7 @@
  "directives": {
   "print": {
    "trigger": "An earnings release file is present (tune example: fixtures/markets-print/tune/release.txt). Quiet when only a news recap exists, or when the ask is to trade or size.",
-   "doneWhen": "`python3 fixtures/markets-print/check.py --fixture <dir> --out <out.json>` exits 0: eps, guidance, and surprise each carry a verbatim quote and the line number of the release; every number in the output appears in the release and none comes from the recap only.",
+   "doneWhen": "`python3 fixtures/markets-print/check.py --fixture <dir> --out <out.json>` exits 0: eps, guidance, and surprise each carry a verbatim quote and the line number of the release; every number in the output appears in the release and none comes from the recap only. A field the release does not hold is reported as absent (null, no quote, no line) and that counts as a pass: unsupported is a valid result.",
    "checkKind": "exit-code",
    "rung": "L1",
    "forbidden": "any number taken from a recap; averaging two figures; filling a field the release does not hold",
@@ -102,14 +102,14 @@
   },
   "memo": {
    "trigger": "Sourced facts exist and the ask is a thesis memo. Quiet when the ask is to buy, sell, or size a position.",
-   "doneWhen": "A person reads the memo and confirms the kill condition names a metric, a threshold, and a date, and that every line is tagged fact or inference. No program can judge observability. The memo must contain no order and no size.",
+   "doneWhen": "A person reads the memo and confirms it states a thesis and that its kill condition is an observable naming a metric, a threshold, and a date. No program can judge observability.",
    "checkKind": "human-only",
    "rung": "L3",
    "forbidden": "Writing a kill condition that cannot be observed (for example \"if sentiment turns\"), or adding an order or a size.",
    "tool": "none",
    "toolScope": "none",
-   "gated": false,
-   "gate": "",
+   "gated": true,
+   "gate": "ABSENT broker, order (prepare the thesis and kill condition, stop; a person places any order or size)",
    "status": "assisted",
    "checkRunnable": false,
    "keywords": [
@@ -125,7 +125,7 @@
   },
   "monitor": {
    "trigger": "A previous card file and new material both exist. Quiet when there is no prior card.",
-   "doneWhen": "The diff between the old and new card shows only added delta lines and removed expired lines; every claim carries a date and any older than the stated expiry is gone; the kill condition line is present and unchanged unless a delta changes it. An empty delta is a valid result: the card is unchanged.",
+   "doneWhen": "`git diff --no-index <old card> <new card>` shows only added delta lines and removed expired lines; any other changed line fails. An empty diff is a valid result: the card is unchanged.",
    "checkKind": "state-diff",
    "rung": "L1",
    "forbidden": "Rewriting the whole card, keeping a stale claim, or dropping the kill condition.",
@@ -152,10 +152,10 @@
    "checkKind": "state-diff",
    "rung": "L1",
    "forbidden": "Moving two variables, or continuing past the one requested variable. No order, no size.",
-   "tool": "Bash:python3",
-   "toolScope": "read",
-   "gated": false,
-   "gate": "",
+   "tool": "none",
+   "toolScope": "none",
+   "gated": true,
+   "gate": "ABSENT broker, order (show the thesis under one move, stop; a person places any order or size)",
    "status": "assisted",
    "checkRunnable": false,
    "keywords": [

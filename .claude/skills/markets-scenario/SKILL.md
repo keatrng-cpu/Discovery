@@ -13,5 +13,6 @@ Code diffs the input sets; one fast-model pass writes the thesis under the move.
 ## Forbidden move
 Moving two variables, or continuing past the one requested variable. No order, no size.
 ## Tool
-tool: Bash:python3
-scope: read
+tool: none
+scope: none
+gate: ABSENT broker, order (show the thesis under one move, stop; a person places any order or size)
