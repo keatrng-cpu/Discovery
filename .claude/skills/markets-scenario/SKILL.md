@@ -6,8 +6,12 @@ description: Use when a thesis must be shown under a move in exactly one variabl
 A baseline input set and a named variable to move. Quiet when two variables are named, or when the ask is to place risk.
 ## Done-when
 check: state-diff
-A diff of baseline inputs versus scenario inputs shows exactly one changed key, the named variable; all other keys are byte-equal. Two or more changed keys fails.
-Not part of the check, but required of the output: the thesis shown under that move, then stop. A move that leaves the thesis unchanged is a valid result.
+One command, one exit code: `python3 desk/scenario_check.py <baseline.json> <scenario.json> <out.md> <variable>` (a program the desk would run; it does not exist in the repo yet). Each assertion is one clause:
+- Move one: the diff of baseline versus scenario shows exactly one changed key, the named variable.
+- Hold fixed: every other key is byte-equal.
+- Show thesis: out.md holds one line starting "THESIS under <variable>:" that states the thesis under that move.
+- Stop: out.md holds no second thesis line and names no other variable as moved.
+A thesis line that says the thesis is unchanged is a valid result.
 ## Rung
 rung: L1
 Code diffs the input sets; one fast-model pass writes the thesis under the move. Escalate only if the diff shows more than one changed key.

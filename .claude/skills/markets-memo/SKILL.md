@@ -5,14 +5,18 @@ description: Use when a one-page investment memo needs a thesis and an observabl
 ## Trigger
 Sourced facts exist and the ask is a thesis memo. Quiet when the ask is to buy, sell, or size a position.
 ## Done-when
-check: human-only
-A person reads the kill condition line and confirms it is an observable: it names a metric, a threshold, and a date. That is the one check; no program can judge observability.
-Not part of the check, but required of the draft: one stated thesis, every line tagged fact or inference, and no order and no size.
+check: exit-code
+One command, one exit code: `python3 desk/memo_check.py <memo.md>` (a program the desk would run; it does not exist in the repo yet). Input is the memo file. Each assertion is one clause:
+- Thesis: exactly one line starting "THESIS:".
+- Kill condition: exactly one line starting "KILL:" that holds a metric name, a numeric threshold, and a YYYY-MM-DD date (regex).
+- Tags: every other non-blank line starts "FACT:" or "INFERENCE:".
+- No order, no size: no line contains an order or sizing verb or a share count or dollar amount to trade.
+An empty memo, or a memo with no KILL: line, is a valid refusal result and exits 0 only when it prints "unsupported".
 ## Rung
-rung: L3
-A strong model drafts; a person checks the thesis and kill condition. Do not claim a pass without that read.
+rung: L1
+One fast-model pass drafts the memo; the program does every check. Escalate only if the program fails for a reason other than a missing date.
 ## Forbidden move
-Writing a kill condition that cannot be observed (for example "if sentiment turns"), or adding an order or a size. Tag every line fact or inference.
+Writing a kill condition that cannot be observed (for example "if sentiment turns"), or adding an order or a size.
 ## Tool
 tool: none
 scope: none
