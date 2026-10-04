@@ -1,34 +1,154 @@
 {
- "shelf": "sales",
- "now": "assisted; useful mechanism is clustering and question generation; send and spend denied",
- "stakes": "med",
- "gates": [
-  "send",
-  "pay"
- ],
- "keywords": [
-  "buyer",
-  "prospect",
-  "customer segment",
-  "pitch",
-  "outbound",
-  "objection",
-  "lead",
-  "funnel",
-  "icp",
-  "positioning",
-  "interview quotes",
-  "landing page",
-  "a/b test",
-  "spend",
-  "go-to-market"
- ],
- "directives": {
-  "frame": null,
-  "cluster": null,
-  "question": null,
-  "brief": null,
-  "asset": null,
-  "test": null
- }
+  "shelf": "sales",
+  "now": "assisted; useful mechanism is clustering and question generation; send and spend denied",
+  "stakes": "med",
+  "gates": [
+    "send",
+    "pay"
+  ],
+  "keywords": [
+    "buyer",
+    "prospect",
+    "customer segment",
+    "pitch",
+    "outbound",
+    "objection",
+    "lead",
+    "funnel",
+    "icp",
+    "positioning",
+    "interview quotes",
+    "landing page",
+    "a/b test",
+    "spend",
+    "go-to-market"
+  ],
+  "directives": {
+    "frame": {
+      "trigger": "An offer or market note is present and candidate frames (buyer, job, what they pay for) are asked for.",
+      "doneWhen": "Write frames to frames.json as a list of {buyer, job, pays_for}. `jq -e 'all(.[]; (.buyer|length>0) and (.job|length>0) and (.pays_for|length>0))' frames.json` exits 0. Any frame with an empty buyer is deleted, and the dropped count is printed. An empty list `[]` is a valid result when no buyer can be named.",
+      "checkKind": "schema",
+      "rung": "L1",
+      "forbidden": "Keeping a frame whose buyer is blank, generic, or implied.",
+      "tool": "Bash:jq",
+      "toolScope": "read",
+      "gated": false,
+      "gate": "",
+      "status": "assisted",
+      "checkRunnable": false,
+      "keywords": [
+        "sales frame",
+        "buyer job",
+        "who pays",
+        "what they pay for",
+        "candidate frames"
+      ],
+      "absentTools": []
+    },
+    "cluster": {
+      "trigger": "A file of raw customer or interview quotes is present and grouping is asked for.",
+      "doneWhen": "Write clusters.json as {group: [{quote, source, line}]}. A python3 script reads quotes.txt and exits 0 only if every group holds at least one quote that appears verbatim in quotes.txt at the cited line. It prints \"groups: N, quoted: N/N\". Zero quotes in, zero groups out: it prints \"groups: 0, quoted: 0/0\" and exits 0.",
+      "checkKind": "quote",
+      "rung": "L1",
+      "forbidden": "Inventing a segment that no quote supports, or paraphrasing a quote to pass the match.",
+      "tool": "Bash:python3",
+      "toolScope": "read",
+      "gated": false,
+      "gate": "",
+      "status": "assisted",
+      "checkRunnable": false,
+      "keywords": [
+        "cluster quotes",
+        "group interview quotes",
+        "customer segments from quotes",
+        "quote under each group",
+        "theme the feedback"
+      ],
+      "absentTools": []
+    },
+    "question": {
+      "trigger": "A stated sales gap needs falsifiable explanatory questions.",
+      "doneWhen": "Write questions.json as a list of {question, refuted_if}. `jq -e 'all(.[]; (.question|endswith(\"?\")) and (.refuted_if|length>0) and (has(\"answer\")|not))' questions.json` exits 0. An empty list is valid when no gap is stated.",
+      "checkKind": "schema",
+      "rung": "L1",
+      "forbidden": "Answering the question in the same directive.",
+      "tool": "Bash:jq",
+      "toolScope": "read",
+      "gated": false,
+      "gate": "",
+      "status": "reliable",
+      "checkRunnable": false,
+      "keywords": [
+        "falsifiable question",
+        "why the gap",
+        "what would explain",
+        "hypothesis questions",
+        "refuted if"
+      ],
+      "absentTools": []
+    },
+    "brief": {
+      "trigger": "A named prospect and an upcoming meeting need a pre-call brief from public facts.",
+      "doneWhen": "Every fact line in brief.md is either quoted or marked unsupported. A quoted fact line carries a verbatim quote and public URL fetched by firecrawl_scrape; an unsupported fact line carries the word \"unsupported\", no quote, and no number. A python3 script reads brief.md and exits 0 only if every quoted fact's quote is found in the saved page text (a quote not found exits 1), no digit appears outside a quoted span except on the one \"prepared:\" and one \"meeting:\" line (each an ISO date YYYY-MM-DD, prepared earlier than meeting), and exactly one line starts \"objection:\" with non-empty text. It prints \"facts: N, quoted: Q, unsupported: U, objection: 1, prepared: before\" with Q+U=N. Unsupported facts count as a result and do not fail the check; \"no public facts found\" (N=0) is a valid result (objection and dates still required).",
+      "checkKind": "quote",
+      "rung": "L1",
+      "forbidden": "Inventing metrics with no quoted public source.",
+      "tool": "mcp__FireCrawl__firecrawl_scrape",
+      "toolScope": "read",
+      "gated": false,
+      "gate": "",
+      "status": "assisted",
+      "checkRunnable": false,
+      "keywords": [
+        "prospect brief",
+        "pre-call brief",
+        "meeting prep",
+        "likely objection",
+        "public facts on prospect"
+      ],
+      "absentTools": []
+    },
+    "asset": {
+      "trigger": "A winning frame is recorded and one asset for it is asked for.",
+      "doneWhen": "`python3 -c` over asset.md counts lines and exits 0 only if exactly one line starts \"frame:\" and its id equals the winning id in state, exactly one line starts \"segment:\" and equals the segment named in brief.md, and exactly one line starts \"objection:\" and equals the objection line in brief.md. It prints \"frames: 1/1, segment: 1/1, objection: 1/1\". With no winning frame it prints \"frames: 0/0\" and exits 0; no asset is written.",
+      "checkKind": "count",
+      "rung": "L1",
+      "forbidden": "Producing the other frames alongside the winner.",
+      "tool": "Bash:python3",
+      "toolScope": "read",
+      "gated": false,
+      "gate": "",
+      "status": "assisted",
+      "checkRunnable": false,
+      "keywords": [
+        "landing page copy",
+        "one-pager",
+        "pitch asset",
+        "winning frame copy",
+        "outbound email body"
+      ],
+      "absentTools": []
+    },
+    "test": {
+      "trigger": "A frame and a budget or audience are present and a smallest test plan is asked for.",
+      "doneWhen": "Write test.json with {frame, smallest_action, cap, kill_result, gate}. `jq -e '(.smallest_action|length>0) and (.cap|length>0) and (.kill_result|length>0) and (.gate|length>0)' test.json` exits 0. Nothing is sent or spent; the plan stops at the gate.",
+      "checkKind": "schema",
+      "rung": "L1",
+      "forbidden": "Opening the gate: sending or committing spend because the plan is ready.",
+      "tool": "none",
+      "toolScope": "none",
+      "gated": true,
+      "gate": "ABSENT send, pay (prepare the test sheet with smallest spend and kill result, stop; a person sends or spends)",
+      "status": "gated",
+      "checkRunnable": false,
+      "keywords": [
+        "smallest spend",
+        "kill result",
+        "a/b test plan",
+        "test the frame",
+        "ad test"
+      ],
+      "absentTools": []
+    }
+  }
 }
