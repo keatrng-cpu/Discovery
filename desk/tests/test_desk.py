@@ -147,7 +147,7 @@ class LintEntryTests(unittest.TestCase):
 
     def entry(self, **kw):
         e = {"trigger": "t", "doneWhen": "exit 0", "checkKind": "exit-code", "rung": "L0", "forbidden": "f", "tool": "Bash:python3",
-             "toolScope": "read", "gated": False, "status": "reliable", "keywords": ["software", "legal", "gamma"]}
+             "toolScope": "read", "gated": False, "status": "reliable", "checkRunnable": True, "keywords": ["software", "legal", "gamma"]}
         e.update(kw)
         return e
 
@@ -178,6 +178,12 @@ class LintEntryTests(unittest.TestCase):
 
     def test_unknown_tool_fails(self):
         self.assertTrue(any("not in registry" in e for e in self.lint(tool="Bash:nothing")[0]))
+
+    def test_check_runnable_needs_a_tool_or_a_repo_program(self):
+        self.assertTrue(any("checkRunnable" in e for e in self.lint(tool="none", toolScope="none", checkRunnable=True)[0]))
+        self.assertEqual(self.lint(tool="none", toolScope="none", checkRunnable=True, doneWhen="python3 fixtures/x/check.py exits 0")[0], [])
+        self.assertTrue(any("human-only" in e for e in self.lint(checkKind="human-only", status="assisted", checkRunnable=True)[0]))
+        self.assertTrue(any("true or false" in e for e in self.lint(checkRunnable="yes")[0]))
 
     def test_thin_keywords_fail(self):
         self.assertTrue(any("keywords" in e for e in self.lint(keywords=["a"])[0]))
