@@ -25,11 +25,147 @@
   "flight"
  ],
  "directives": {
-  "triage": null,
-  "draft": null,
-  "brief": null,
-  "pack": null,
-  "book": null,
-  "pay": null
+  "triage": {
+   "trigger": "A mailbox or thread list is present and a triage rule is stated; quiet when no rule exists or the ask is to reply.",
+   "doneWhen": "Program reads the triage log: every opened thread id has a named rule id and a non-empty why-opened line, opened N equals rule-marked N (opened: N/N); 0/0 is valid.",
+   "checkKind": "count",
+   "rung": "L0",
+   "forbidden": "Opening a thread the rule did not mark, or replying while triaging.",
+   "tool": "mcp__Gmail__search_threads",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "triage inbox",
+    "triage headers",
+    "sort inbox by rule",
+    "inbox rule",
+    "which emails to open",
+    "header scan"
+   ],
+   "absentTools": [
+    "mail rule engine"
+   ]
+  },
+  "draft": {
+   "trigger": "Exactly one thread id is named and a reply is wanted; quiet for send or multiple threads.",
+   "doneWhen": "Draft count for the thread rises by exactly 1, sent count unchanged, draft quotes the sender's ask line with message locator; no thread or no ask yields 'no draft: unsupported'.",
+   "checkKind": "state-diff",
+   "rung": "L1",
+   "forbidden": "Sending, replying, or forwarding the draft, or answering a question the thread never asked.",
+   "tool": "mcp__Gmail__create_draft",
+   "toolScope": "draft",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "draft reply",
+    "reply draft",
+    "draft email response",
+    "answer this thread",
+    "draft but do not send"
+   ],
+   "absentTools": [
+    "Gmail list_drafts read",
+    "ask-match verifier"
+   ]
+  },
+  "brief": {
+   "trigger": "Calendar events with start and end times for a stated window are present; quiet when only prose exists.",
+   "doneWhen": "Program computes pairs with startA < endB and startB < endA; brief lists exactly those (overlaps: N/N) naming both events; back-to-back excluded; 0/0 valid; no data is unread.",
+   "checkKind": "count",
+   "rung": "L1",
+   "forbidden": "Calling a back-to-back or near-miss a conflict, or naming an overlap from prose without calendar times.",
+   "tool": "mcp__Google_Calendar__list_events",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "calendar overlaps",
+    "double booked",
+    "schedule conflicts",
+    "day brief",
+    "real overlaps",
+    "week conflicts"
+   ],
+   "absentTools": [
+    "overlap computation program"
+   ]
+  },
+  "pack": {
+   "trigger": "A meeting and source threads or documents are present; quiet when no source is attached.",
+   "doneWhen": "Every agenda item has a source id and verbatim quote with locator; program greps each quote in its source (items: N/N sourced); unsourced items dropped; empty agenda is valid.",
+   "checkKind": "quote",
+   "rung": "L1",
+   "forbidden": "Adding an agenda item from memory alone, or paraphrasing a source into a quote it does not contain.",
+   "tool": "mcp__Gmail__get_thread",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "meeting agenda",
+    "build agenda",
+    "agenda from threads",
+    "agenda items with sources",
+    "pack meeting"
+   ],
+   "absentTools": [
+    "quote-resolution program"
+   ]
+  },
+  "book": {
+   "trigger": "A booking is wanted (travel, appointment, reservation, event); always gated, prepare details and stop.",
+   "doneWhen": "A person confirms the prepared booking sheet and performs the booking; no program can pass this.",
+   "checkKind": "human-only",
+   "rung": "L3",
+   "forbidden": "Creating the event or reservation, submitting a booking form, or reporting a booking as done.",
+   "tool": "none",
+   "toolScope": "none",
+   "gated": true,
+   "gate": "ABSENT book, calendar create_event (prepare the booking sheet, stop; a person books)",
+   "status": "gated",
+   "checkRunnable": false,
+   "keywords": [
+    "book flight",
+    "reservation details",
+    "appointment booking",
+    "book travel",
+    "itinerary booking"
+   ],
+   "absentTools": [
+    "booking tool",
+    "calendar create_event (act, not registered)"
+   ]
+  },
+  "pay": {
+   "trigger": "A payment is wanted (bill, invoice, fee, purchase); always gated, prepare details and stop.",
+   "doneWhen": "A person confirms payee, amount, due date, and source document, then pays; no program can pass this.",
+   "checkKind": "human-only",
+   "rung": "L3",
+   "forbidden": "Submitting a payment, entering card or account numbers, checking out, or reporting a payment as made.",
+   "tool": "none",
+   "toolScope": "none",
+   "gated": true,
+   "gate": "ABSENT pay, payment, checkout (prepare the payment sheet, stop; a person pays)",
+   "status": "gated",
+   "checkRunnable": false,
+   "keywords": [
+    "pay bill",
+    "pay invoice",
+    "payment details",
+    "settle bill",
+    "prepare payment"
+   ],
+   "absentTools": [
+    "payment tool"
+   ]
+  }
  }
 }
