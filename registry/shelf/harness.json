@@ -20,10 +20,124 @@
   "append-only"
  ],
  "directives": {
-  "skill": null,
-  "hook": null,
-  "memory": null,
-  "trace": null,
-  "evolve": null
+  "skill": {
+   "trigger": "A SKILL.md is being authored or its description tuned. One trigger, one trick. Quiet for hook, memory, trace, evolve asks.",
+   "doneWhen": "A fire test exits 0: every positive prompt matches this skill's description and every wrong-task prompt does not. An empty positive set is unsupported, not a pass.",
+   "checkKind": "exit-code",
+   "rung": "L0",
+   "forbidden": "Firing on the wrong task: two triggers, a broad description, or no stated quiet case.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "reliable",
+   "checkRunnable": false,
+   "keywords": [
+    "skill file",
+    "skill description",
+    "wrong-fire",
+    "one trigger",
+    "skill trigger",
+    "quiet case"
+   ],
+   "absentTools": [
+    "skill fire-test harness"
+   ]
+  },
+  "hook": {
+   "trigger": "A lifecycle event (PreToolUse, PostToolUse, Stop) needs a blocking check. Quiet for reminders or prose.",
+   "doneWhen": "python3 .claude/hooks/test_hooks.py exits 0: hook exits 2 on a case where the model would have continued, exits 0 on a clean case. A hook that never fired fails.",
+   "checkKind": "exit-code",
+   "rung": "L0",
+   "forbidden": "Exit 1 or 0 on a bad condition, or warning and letting the model continue; only exit 2 blocks.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "reliable",
+   "checkRunnable": true,
+   "keywords": [
+    "lifecycle hook",
+    "exit 2",
+    "pretooluse",
+    "stop hook",
+    "settings.json hook",
+    "block tool call"
+   ],
+   "absentTools": []
+  },
+  "memory": {
+   "trigger": "A note must be saved or recalled during a coding task, keyed by stage analyze, reproduce, edit, verify.",
+   "doneWhen": "jq -e over the memory file exits 0: every record has stage in analyze, reproduce, edit, verify and a short body; retrieval for one stage returns only that stage. Zero records for a stage is valid.",
+   "checkKind": "schema",
+   "rung": "L1",
+   "forbidden": "Storing an episode blob, or retrieving by similar story instead of by stage.",
+   "tool": "Bash:jq",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "stage key",
+    "subtask memory",
+    "episode blob",
+    "analyze reproduce edit verify",
+    "agent memory",
+    "stage memory"
+   ],
+   "absentTools": [
+    "stage-keyed memory store with retrieval api"
+   ]
+  },
+  "trace": {
+   "trigger": "A log of agent actions is kept as a record of what happened and must be append-only.",
+   "doneWhen": "python3 desk/desk.py verify-trace exits 0 printing 'chain intact'; after tampering a record with a successor it exits 1 naming the line. No trace file is valid (0 records). Tail edit and truncation are not caught.",
+   "checkKind": "exit-code",
+   "rung": "L0",
+   "forbidden": "Giving the agent a write or delete path to its own trace, or trusting its report that the log is intact.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "weak",
+   "checkRunnable": true,
+   "keywords": [
+    "append-only",
+    "tamper",
+    "hash chain",
+    "agent log",
+    "trace file",
+    "audit log"
+   ],
+   "absentTools": [
+    "write-once log sink",
+    "filesystem append-only attribute (chattr +a)"
+   ]
+  },
+  "evolve": {
+   "trigger": "One harness piece was changed and a baseline exists; decide promotion on a held-out task with token count.",
+   "doneWhen": "python3 desk/desk.py promote-gate <json> exits 0 printing PROMOTE only if heldout_pass, tune_pass, and tokens or seconds dropped; HOLD (exit 1) is valid. A person promotes.",
+   "checkKind": "exit-code",
+   "rung": "L0",
+   "forbidden": "Promoting on a tuning-set gain only, or the agent promoting its own change.",
+   "tool": "none",
+   "toolScope": "none",
+   "gated": true,
+   "gate": "ABSENT promote (prepare change, held-out result and token count, stop; a person promotes)",
+   "status": "assisted",
+   "checkRunnable": true,
+   "keywords": [
+    "held-out task",
+    "promote harness",
+    "token count",
+    "harness change",
+    "self-evolve",
+    "tuning set"
+   ],
+   "absentTools": [
+    "held-out benchmark runner with token meter"
+   ]
+  }
  }
 }
