@@ -6,10 +6,12 @@ description: Use when a frozen plan names files and a constrained diff must be a
 A frozen plan lists the files to change and any signature change. Quiet when no plan exists or the plan is still open.
 ## Done-when
 check: state-diff
-`git diff --name-only` lists exactly the files named in the plan and no others (a sorted set comparison of the two lists). An empty diff is a valid result when the plan needs no change: report "diff: empty".
+`git diff --name-only` lists exactly the files named in the plan and no others (a sorted set comparison of the two lists); `git diff -U0` shows no added or removed `def` or `class` line unless the plan lists that signature change; and each hunk the plan marks non-obvious has an added one-line comment inside that hunk. An empty diff is a valid result when the plan needs no change: report "diff: empty".
+
 ## Rung
 rung: L1
-One fast-model pass applies the plan; git compares the file list. Signature stability and per-hunk notes are working rules for the editor, not part of this check. Escalate only if the diff touches a file outside the plan.
+One fast-model pass applies the plan; git output is compared to the plan for files, signature lines and hunk notes. Escalate only if the diff touches a file outside the plan.
+
 ## Forbidden move
 Drift: editing an unnamed file, renaming a public signature, or tidying beyond the plan.
 ## Tool

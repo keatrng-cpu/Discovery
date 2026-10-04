@@ -6,9 +6,9 @@ description: Use when a code change must be proven done by running the project's
 A project directory holds verify_gate.sh and a change claims to be finished. Quiet when no gate script exists: report "gate: absent" and stop.
 ## Done-when
 check: exit-code
-`bash verify_gate.sh` in the project directory exits 0 (unit test, then build, then render-compare against the fixture; the first failure stops it).
-A non-zero exit is a valid result: report RED with the exit code and the first failing line quoted verbatim. Never report GREEN without exit 0.
+`bash verify_gate.sh` in the project directory exits 0 (unit test, then build, then render-compare against the fixture; the first failure stops it). The Stop hook blocks 'done' until it does. The script runs `python3 -m unittest discover -s tests` (tune fixture tests test_simple and test_zero_numerator in tests/test_mod.py), then py_compile, then cmp against fixture.txt, under one exit code. A non-zero exit is a valid result: report RED with the exit code and the first failing line quoted verbatim, declared_done false. No verify_gate.sh in the directory is also a valid result: report "gate: absent" and stop. Never report GREEN without exit 0.
 Worked example: run it inside fixtures/sw-verify/tune/broken (RED) and fixtures/sw-verify/tune/fixed (GREEN).
+
 ## Rung
 rung: L0
 A program alone: run the script, read the exit code, copy one line. No model pass. A red gate goes back to the edit directive, not to a stronger verifier.
