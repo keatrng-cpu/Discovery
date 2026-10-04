@@ -6,7 +6,7 @@ description: Use when a drafted clinical note has empty or MISSING template fiel
 A drafted note with one or more fields marked MISSING or empty. Quiet when every field is filled, or when the ask is to fill a field from inference.
 ## Done-when
 check: count
-A program lists the MISSING or empty template fields by name and counts them. The number of fields named in the ask equals that count, and each named field is one of those fields, by template field name. The ask carries no proposed value. Zero empty fields is a valid result: the output reads "gaps: 0" and asks nothing.
+A program lists the MISSING or empty template fields by name and counts them. The set of field names in the ask equals the program's list of MISSING or empty fields (set equality by template field name): the counts match, every empty field is named, and no filled field is named in place of an empty one. A missing or substituted name fails. The ask carries no proposed value. Zero empty fields is a valid result: the output reads "gaps: 0" and asks nothing.
 ## Rung
 rung: L0
 Listing and counting empty fields is a pure program over the drafted note; the ask is the field names, with no model pass.

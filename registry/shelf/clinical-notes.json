@@ -1,121 +1,121 @@
 {
- "shelf": "clinical-notes",
- "now": "documentation only; no diagnosis, no plan of care; the clinician signs",
- "stakes": "high",
- "gates": [
-  "sign",
-  "diagnose"
- ],
- "keywords": [
-  "clinical",
-  "patient",
-  "soap",
-  "encounter",
-  "clinician",
-  "chart note",
-  "visit",
-  "template field",
-  "symptom",
-  "medical note",
-  "scribe"
- ],
- "directives": {
-  "transcribe": {
-   "trigger": "A transcript and a note template are both present; fill the template fields from what was said. Quiet for diagnosis or plan of care.",
-   "doneWhen": "Every non-MISSING field value is a verbatim substring of the transcript, reported with its turn or line locator and checked by a program; a field the transcript does not state reads the literal MISSING. All-MISSING is a valid result.",
-   "checkKind": "quote",
-   "rung": "L1",
-   "forbidden": "Smoothing a gap into a finding: writing a plausible value, normal exam, or inferred symptom into a field the transcript does not state.",
-   "tool": "Bash:python3",
-   "toolScope": "read",
-   "gated": false,
-   "gate": "",
-   "status": "assisted",
-   "checkRunnable": false,
-   "keywords": [
-    "transcribe visit",
-    "fill template",
-    "soap template",
-    "mark missing",
-    "scribe note",
-    "template fields"
-   ],
-   "absentTools": [
-    "transcript line-trace checker"
-   ]
-  },
-  "gap": {
-   "trigger": "A drafted note has empty or MISSING template fields; ask the clinician for exactly those fields.",
-   "doneWhen": "A program lists the MISSING or empty template fields by name and counts them; count of fields named in the ask equals that count, each by template field name, with no proposed value. Zero gaps is valid: output reads gaps: 0.",
-   "checkKind": "count",
-   "rung": "L0",
-   "forbidden": "Inventing the field: filling an empty field with a guessed value, suggesting an answer, or asking about a filled field.",
-   "tool": "Bash:python3",
-   "toolScope": "read",
-   "gated": false,
-   "gate": "",
-   "status": "assisted",
-   "checkRunnable": false,
-   "keywords": [
-    "empty field",
-    "missing field",
-    "name the gap",
-    "ask clinician",
-    "unfilled field",
-    "note gap"
-   ],
-   "absentTools": [
-    "note template schema validator"
-   ]
-  },
-  "cite": {
-   "trigger": "A drafted note and its source transcript are present; trace each line to the transcript and cut lines it does not hold.",
-   "doneWhen": "Each kept line is followed by a quote that is a verbatim substring of the transcript with a turn or line locator, checked by a program; unmatched lines are cut and listed. All cut or empty transcript is valid: kept 0, cut N.",
-   "checkKind": "quote",
-   "rung": "L1",
-   "forbidden": "Importing history: keeping a line from the chart, a prior visit, or medical knowledge that was not spoken in this transcript.",
-   "tool": "Bash:python3",
-   "toolScope": "read",
-   "gated": false,
-   "gate": "",
-   "status": "assisted",
-   "checkRunnable": false,
-   "keywords": [
-    "cite transcript",
-    "trace line",
-    "cut unsupported",
-    "line to transcript",
-    "imported history",
-    "verify note lines"
-   ],
-   "absentTools": [
-    "transcript line-trace checker"
-   ]
-  },
-  "sign": {
-   "trigger": "A note has passed transcribe, gap, and cite and awaits the clinician; present it and stop.",
-   "doneWhen": "A program diffs the presented note against the note that passed cite: the only difference is an empty signature block. Any added assessment, impression, plan of care, agent-written signature, attestation, or signed date fails the diff. Presenting the cite-passed note unchanged with an empty signature block is the valid result. Only the clinician signs, outside this session.",
-   "checkKind": "state-diff",
-   "rung": "L0",
-   "forbidden": "Becoming a diagnosis: adding an assessment, impression, or plan of care, or marking the note signed, approved, or final on the clinician's behalf.",
-   "tool": "none",
-   "toolScope": "none",
-   "gated": true,
-   "gate": "ABSENT sign, diagnose (present the note, stop; the clinician signs)",
-   "status": "gated",
-   "checkRunnable": false,
-   "keywords": [
-    "sign note",
-    "clinician signature",
-    "present note",
-    "attest",
-    "finalize note",
-    "ready to sign"
-   ],
-   "absentTools": [
-    "signature tool",
-    "clinician attestation service"
-   ]
+  "shelf": "clinical-notes",
+  "now": "documentation only; no diagnosis, no plan of care; the clinician signs",
+  "stakes": "high",
+  "gates": [
+    "sign",
+    "diagnose"
+  ],
+  "keywords": [
+    "clinical",
+    "patient",
+    "soap",
+    "encounter",
+    "clinician",
+    "chart note",
+    "visit",
+    "template field",
+    "symptom",
+    "medical note",
+    "scribe"
+  ],
+  "directives": {
+    "transcribe": {
+      "trigger": "A transcript and a note template are both present; fill the template fields from what was said. Quiet for diagnosis or plan of care.",
+      "doneWhen": "Every non-MISSING field value is a verbatim substring of the transcript, reported with its turn or line locator and checked by a program; a field the transcript does not state reads the literal MISSING. All-MISSING is a valid result.",
+      "checkKind": "quote",
+      "rung": "L1",
+      "forbidden": "Smoothing a gap into a finding: writing a plausible value, normal exam, or inferred symptom into a field the transcript does not state.",
+      "tool": "Bash:python3",
+      "toolScope": "read",
+      "gated": false,
+      "gate": "",
+      "status": "assisted",
+      "checkRunnable": false,
+      "keywords": [
+        "transcribe visit",
+        "fill template",
+        "soap template",
+        "mark missing",
+        "scribe note",
+        "template fields"
+      ],
+      "absentTools": [
+        "transcript line-trace checker"
+      ]
+    },
+    "gap": {
+      "trigger": "A drafted note has empty or MISSING template fields; ask the clinician for exactly those fields.",
+      "doneWhen": "A program lists the MISSING or empty template fields by name and counts them; the set of field names in the ask equals that list (set equality by template field name, so every empty field is named and no filled field is named in its place), with no proposed value. Zero gaps is valid: output reads gaps: 0.",
+      "checkKind": "count",
+      "rung": "L0",
+      "forbidden": "Inventing the field: filling an empty field with a guessed value, suggesting an answer, or asking about a filled field.",
+      "tool": "Bash:python3",
+      "toolScope": "read",
+      "gated": false,
+      "gate": "",
+      "status": "assisted",
+      "checkRunnable": false,
+      "keywords": [
+        "empty field",
+        "missing field",
+        "name the gap",
+        "ask clinician",
+        "unfilled field",
+        "note gap"
+      ],
+      "absentTools": [
+        "note template schema validator"
+      ]
+    },
+    "cite": {
+      "trigger": "A drafted note and its source transcript are present; trace each line to the transcript and cut lines it does not hold.",
+      "doneWhen": "Each kept line is followed by a quote that is a verbatim substring of the transcript with a turn or line locator, checked by a program; unmatched lines are cut and listed. All cut or empty transcript is valid: kept 0, cut N.",
+      "checkKind": "quote",
+      "rung": "L1",
+      "forbidden": "Importing history: keeping a line from the chart, a prior visit, or medical knowledge that was not spoken in this transcript.",
+      "tool": "Bash:python3",
+      "toolScope": "read",
+      "gated": false,
+      "gate": "",
+      "status": "assisted",
+      "checkRunnable": false,
+      "keywords": [
+        "cite transcript",
+        "trace line",
+        "cut unsupported",
+        "line to transcript",
+        "imported history",
+        "verify note lines"
+      ],
+      "absentTools": [
+        "transcript line-trace checker"
+      ]
+    },
+    "sign": {
+      "trigger": "A note has passed transcribe, gap, and cite and awaits the clinician; present it and stop.",
+      "doneWhen": "A program diffs the presented note against the note that passed cite: the only difference is an empty signature block. Any added assessment, impression, plan of care, agent-written signature, attestation, or signed date fails the diff. Presenting the cite-passed note unchanged with an empty signature block is the valid result. Only the clinician signs, outside this session.",
+      "checkKind": "state-diff",
+      "rung": "L0",
+      "forbidden": "Becoming a diagnosis: adding an assessment, impression, or plan of care, or marking the note signed, approved, or final on the clinician's behalf.",
+      "tool": "none",
+      "toolScope": "none",
+      "gated": true,
+      "gate": "ABSENT sign, diagnose (present the note, stop; the clinician signs)",
+      "status": "gated",
+      "checkRunnable": false,
+      "keywords": [
+        "sign note",
+        "clinician signature",
+        "present note",
+        "attest",
+        "finalize note",
+        "ready to sign"
+      ],
+      "absentTools": [
+        "signature tool",
+        "clinician attestation service"
+      ]
+    }
   }
- }
 }
