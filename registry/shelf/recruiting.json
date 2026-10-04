@@ -106,9 +106,7 @@
     "missing evidence",
     "candidate comparison sheet"
    ],
-   "absentTools": [
-    "blind-review redaction tool for style normalization"
-   ]
+   "absentTools": []
   },
   "decide": {
    "trigger": "A compare grid exists and the ask is to decide, pick, or hire. Prepare the sheet and stop; a person hires.",
@@ -130,10 +128,7 @@
     "make offer",
     "who to hire"
    ],
-   "absentTools": [
-    "hiring tool",
-    "offer or send tool"
-   ]
+   "absentTools": []
   }
  }
 }
