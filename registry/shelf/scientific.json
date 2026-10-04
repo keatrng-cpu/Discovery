@@ -93,7 +93,7 @@
   },
   "analyze": {
    "trigger": "Raw tabular or sequencing data files are present and a result is wanted. Quiet for proprietary instrument dumps no script can read: report unsupported.",
-   "doneWhen": "One program only: the analysis script, run from raw files alone, exits 0. In that run it regenerates the figure, writes result and interpretation as separate files, and runs a leave-one-out pass that flags OUTLIER-DEPENDENT when dropping one point flips the result, exiting non-zero if the flag is missing. A failed rerun means nothing is claimed; unsupported input is a valid result.",
+   "doneWhen": "The verifier, not the script's author, reruns the analysis script in a clean directory with only the raw files; exit code 0 passes. Non-zero, missing script, or skipped rerun means nothing is claimed; unsupported input is a valid result.",
    "checkKind": "exit-code",
    "rung": "L0",
    "forbidden": "Reporting a number or figure the script did not produce, or hiding single-outlier dependence: if dropping one point flips the result, say so.",
@@ -118,7 +118,7 @@
   },
   "update": {
    "trigger": "An old hypothesis record and a result file are both present. Quiet when no result file exists or a new hypothesis from scratch is wanted.",
-   "doneWhen": "Each cited result is quoted verbatim from the result file with a file and line locator that a program confirms. A quote not at its locator fails; no change forced is a valid result.",
+   "doneWhen": "One program over the update record, old hypothesis record, and result file passes only if every cited quote equals the text at its file:line locator, every old branch id is in exactly one of dropped or kept, every dropped branch points at a cited quote, and proposed next measurements number at most 1. No change forced (nothing dropped, zero measurements) is a valid result.",
    "checkKind": "quote",
    "rung": "L1",
    "forbidden": "Keeping a dead branch because it was the old one, citing a result not in the file, or proposing more than the next measurement.",
@@ -140,7 +140,7 @@
   },
   "manuscript": {
    "trigger": "Result files and a figure exist and a draft is wanted. Quiet when no result files exist or when the ask is a verdict on the claim.",
-   "doneWhen": "One program scans the single draft file, body and self-review alike, and flags each line holding a number with no file:line locator in a result file or a verdict or settled-claim word; it passes when it flags zero lines. An empty draft for empty results is valid.",
+   "doneWhen": "One program scans the single draft file, body and self-review alike, and flags each line holding a number with no file:line locator in a result file or a verdict or settled-claim word, and flags a self-review section whose heading lacks the word DRAFT; it passes when it flags zero lines. A draft with no self-review or an empty draft for empty results is valid.",
    "checkKind": "quote",
    "rung": "L1",
    "forbidden": "Upgrading the draft self-review into a verdict, or stating a claim as settled; the human owns the claim.",
