@@ -8,8 +8,8 @@ A topic or source notes are present and no outline exists. Quiet when an outline
 check: count
 `python3` over the outline file exits 0 and prints "claims: N/N slotted": N claim lines, each with a unique order slot, and zero prose lines (a line that is neither a numbered claim nor blank). A claim with no slot is cut, not kept. An empty outline ("claims: 0/0") is a valid result when the source holds no claim.
 ## Rung
-rung: L0
-A program counts claims and slots; no model is needed to list them from a short source. Escalate only if the count tool exits non-zero for a reason other than a missing slot.
+rung: L1
+One fast-model pass turns the topic or source notes into slotted claims; a program counts claims and slots. Escalate only if the count tool exits non-zero for a reason other than a missing slot.
 ## Forbidden move
 Writing prose or a transition sentence in the outline, or keeping a claim that has no slot.
 ## Tool

@@ -25,7 +25,7 @@
    "trigger": "A topic or source notes are present and no outline exists. Quiet when an outline file is given and the ask is prose, or when the ask is to shorten or fact-check.",
    "doneWhen": "`python3` over the outline file exits 0 and prints \"claims: N/N slotted\": N claim lines, each with a unique order slot, and zero prose lines (a line that is neither a numbered claim nor blank). A claim with no slot is cut, not kept. An empty outline (\"claims: 0/0\") is a valid result when the source holds no claim.",
    "checkKind": "count",
-   "rung": "L0",
+   "rung": "L1",
    "forbidden": "Writing prose or a transition sentence in the outline, or keeping a claim that has no slot.",
    "tool": "Bash:python3",
    "toolScope": "read",
@@ -44,7 +44,7 @@
   },
   "draft": {
    "trigger": "An outline file and a voice file are both present. Quiet when only one exists, or when the ask is cutting, channel change, or fact-checking.",
-   "doneWhen": "`python3` over the draft and outline exits 0 and prints \"paragraphs: N/N mapped\": each paragraph carries one outline claim id, every id appears once, and no paragraph is unmapped. An unmapped paragraph is a new claim and fails. The check is the claim mapping only; banned-default scanning is a separate check.",
+   "doneWhen": "`python3` over the draft, the outline, and the voice file exits 0 and prints \"violations: 0\": violations = paragraphs with no outline claim id or a repeated one (an unmapped paragraph is a new claim) + outline ids missing from the draft + hits of any phrase listed under the voice file's \"Bans\" heading (the banned defaults). One count, one exit code. The rest of the voice file is style a program cannot read; it stays a human read. A missing voice file is a valid result: stop and report \"voice file absent\".",
    "checkKind": "count",
    "rung": "L1",
    "forbidden": "Adding a claim that is not in the outline, to fill a paragraph or smooth a transition.",
@@ -62,13 +62,13 @@
     "no new claims"
    ],
    "absentTools": [
-    "banned-defaults checker",
-    "claim extractor"
+    "claim extractor",
+    "voice-style checker"
    ]
   },
   "cut": {
    "trigger": "A finished piece is present with a length target. Quiet when the ask is new material, a restyle, or a channel change.",
-   "doneWhen": "`python3` counts claims in the original and the cut and exits 0 only when cut_claims <= original_claims, printing \"claims: A -> B\" with B <= A. A diff of claim lines shows only deletions. Equal counts are a valid result.",
+   "doneWhen": "`python3` over the original and the cut exits 0 only when words fell and nothing was inserted: cut words < original words, and the cut's tokens are an ordered subsequence of the original's (a diff shows only deletions), so no new claim can be swapped in at equal count and no restyle passes. It prints \"claims: A -> B; words: X -> Y; inserted: 0\" with B <= A. Equal claim counts are a valid result. A cut that rewords to shorten fails and goes to a person.",
    "checkKind": "count",
    "rung": "L1",
    "forbidden": "Adding a claim while shortening, or restyling the piece into a new one.",
@@ -92,7 +92,7 @@
   },
   "variant": {
    "trigger": "A source piece, a frozen fact list, and a target channel are present. Quiet when no fact list exists or when the ask is to change the offer or numbers.",
-   "doneWhen": "`python3` reads the fact list (offer, numbers, names, one per line) and exits 0 only when every item appears verbatim in the variant, printing \"facts: N/N kept\". A missing item exits non-zero and names the line. An empty fact list prints \"facts: 0/0\" and is valid.",
+   "doneWhen": "`python3` over the fact list (offer, numbers, names, one per line), the source piece, the variant, and the voice file exits 0 and prints \"violations: 0\": violations = fact-list items not verbatim in the variant + digit-bearing tokens in the variant found in neither the source piece nor the fact list (an added number) + hits of any phrase under the voice file's \"Bans\" heading. A missing item exits non-zero and names the line. An empty fact list prints \"facts: 0/0\" and is valid. An added non-numeric fact is not detectable by program; it stays a human read.",
    "checkKind": "count",
    "rung": "L1",
    "forbidden": "Changing a number, dropping the offer, or adding a fact while adapting to the channel.",
@@ -112,15 +112,16 @@
     "keep the offer"
    ],
    "absentTools": [
-    "fact-list extractor"
+    "fact-list extractor",
+    "voice-style checker"
    ]
   },
   "series": {
    "trigger": "A brand file and a previous piece are present. Quiet when no brand file exists; session chat is never the memory.",
-   "doneWhen": "`cmp` over the ban list extracted from the brand file and the ban list the new piece declares exits 0, and the previous piece's ban list matches the same file. The draft does not restate the rules. A missing brand file is a valid result: stop and report \"brand file absent\".",
+   "doneWhen": "`cmp` over two files exits 0: bans.expected (the ban lines read from the brand file's \"Bans\" heading) and bans.kept (the same lines minus any whose phrase occurs in the new piece, so a piece that restates a ban also drops it). Exit 1 names the first differing line. One check: the new piece keeps the brand file's bans. The previous piece is context for voice, not a second measured check. A missing brand file is a valid result: stop and report \"brand file absent\".",
    "checkKind": "exit-code",
    "rung": "L1",
-   "forbidden": "Taking rules from session chat instead of the brand file, or restating the rules inside the draft.",
+   "forbidden": "Taking rules from session chat instead of the brand file, or restating the rules inside the draft (a restated ban phrase also fails cmp).",
    "tool": "Bash:cmp",
    "toolScope": "read",
    "gated": false,
@@ -141,7 +142,7 @@
   },
   "fact": {
    "trigger": "A piece with factual claims is present. Quiet when the piece holds no checkable claim or the ask is style.",
-   "doneWhen": "Every claim line ends with either a source quote plus locator (page, line, or item) or the label \"unsupported\", and a program prints \"claims: N = S sourced + U unsupported\" with N equal to the claim count. Zero sourced is a valid result. A claim left with neither is cut or labelled; there is no third option.",
+   "doneWhen": "`python3` over the piece and the source corpus exits 0 and prints \"claims: N = S sourced + U unsupported\" with N equal to the claim count. A claim line ends with exactly one of: the label \"unsupported\", or a quote plus locator (doc, line) whose quote appears verbatim at that line of that source (localsearch finds it; the program compares the text). A quote absent from the cited line, a missing locator, or any other label (\"likely\", \"reportedly\") exits non-zero naming the claim line. Zero sourced is a valid result.",
    "checkKind": "quote",
    "rung": "L1",
    "forbidden": "Upgrading a label by tone: a hedged or confident claim passed off as sourced without a matching quote, or a third state such as \"likely\".",
