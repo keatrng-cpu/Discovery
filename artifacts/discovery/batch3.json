@@ -1,0 +1,319 @@
+[
+ {
+  "id": "K03",
+  "name": "Vercel",
+  "type": "connector",
+  "status": "installed",
+  "desc": "Analyze, debug, and manage projects and deployments.",
+  "facts": "Tools: deployments, runtime logs, docs search, project and env management, domains; includes purchase tools (act).",
+  "readiness": 5
+ },
+ {
+  "id": "K06",
+  "name": "Gmail",
+  "type": "connector",
+  "status": "installed",
+  "desc": "Draft replies, summarize threads, and search your inbox.",
+  "facts": "Tools: search_threads, get_thread, create_draft, labels; also send_message, reply, forward (act).",
+  "readiness": 5
+ },
+ {
+  "id": "K09",
+  "name": "Notion",
+  "type": "connector",
+  "status": "installed",
+  "desc": "Search, update, and power workflows across tools from your Notion workspace.",
+  "facts": "Tools: notion-search, fetch, create-pages, update-page, query data sources, comments, upload skill.",
+  "readiness": 5
+ },
+ {
+  "id": "K12",
+  "name": "Zapier",
+  "type": "connector",
+  "status": "installed",
+  "desc": "Automate workflows across thousands of apps via conversation.",
+  "facts": "Server text says 9,000+ apps. Tools: discover and enable actions, execute read actions, execute write actions, skills, connections.",
+  "readiness": 5
+ },
+ {
+  "id": "K15",
+  "name": "apify",
+  "type": "connector",
+  "status": "installed",
+  "desc": "Marketplace of Actors for scraping and data extraction.",
+  "facts": "Tools: search-actors, fetch-actor-details, call-actor, get-dataset-items, rag-web-browser, web-fetch, docs search.",
+  "readiness": 5
+ },
+ {
+  "id": "K18",
+  "name": "Figma",
+  "type": "connector",
+  "status": "installed",
+  "desc": "Generate diagrams and better code from Figma context.",
+  "facts": "Tools: get_design_context, get_variable_defs, get_screenshot, search_design_system, code connect, generate_diagram, use_figma.",
+  "readiness": 5
+ },
+ {
+  "id": "K21",
+  "name": "Webflow",
+  "type": "connector",
+  "status": "installed",
+  "desc": "Design pages, manage CMS content, add motion, analyze traffic, and launch the whole site from a prompt, inside the permissions your workspace already has.",
+  "facts": "Tools: pages, CMS, components, styles, interactions, forms, localization, sitemap, webhooks, scripts.",
+  "readiness": 5
+ },
+ {
+  "id": "K24",
+  "name": "FireCrawl",
+  "type": "connector",
+  "status": "needs-auth",
+  "desc": "Search, scrape, crawl and map the web; paper-index search; page monitors.",
+  "facts": "Two installed entries show needs_reconnect; keyless hosted search and scrape worked this session. Tools: firecrawl_search, scrape, map, crawl, research_search_papers, monitor_*, agent.",
+  "readiness": 3
+ },
+ {
+  "id": "K27",
+  "name": "n8n",
+  "type": "connector",
+  "status": "needs-auth",
+  "desc": "Access and run your n8n workflows.",
+  "facts": "Failed to connect this session (404 from the MCP endpoint).",
+  "readiness": 3
+ },
+ {
+  "id": "K30",
+  "name": "monday.com",
+  "type": "connector",
+  "status": "needs-auth",
+  "desc": "Project management and CRM: projects, tasks, portfolios, boards, workflows, dashboards.",
+  "facts": "installState needs_reconnect; not enabled in chat.",
+  "readiness": 3
+ },
+ {
+  "id": "K33",
+  "name": "Parallel Search",
+  "type": "connector",
+  "status": "available",
+  "desc": "Free, token-efficient web search.",
+  "facts": "Tools: web_search, web_fetch. Authless. Not installed.",
+  "readiness": 3
+ },
+ {
+  "id": "K36",
+  "name": "Cloudflare Developer Platform",
+  "type": "connector",
+  "status": "available",
+  "desc": "Build applications with compute, storage, and AI.",
+  "facts": "Tools: Workers, KV namespaces, accounts (about 24 tools). Not installed.",
+  "readiness": 2
+ },
+ {
+  "id": "K39",
+  "name": "Shopify",
+  "type": "connector",
+  "status": "available",
+  "desc": "Build, manage, and analyze your Shopify store.",
+  "facts": "Tools: search_products, create-product, list-orders, list-customers (about 25 tools).",
+  "readiness": 2
+ },
+ {
+  "id": "K42",
+  "name": "Pipedrive",
+  "type": "connector",
+  "status": "available",
+  "desc": "Find deals, update records, manage activities in a live CRM.",
+  "facts": "About 33 tools: addDeal, addPerson, getActivities, convertLeadToDeal.",
+  "readiness": 2
+ },
+ {
+  "id": "P02",
+  "name": "claude-code-review-council",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Six-specialist code review orchestrator: correctness, security, policy and trust boundary, test evidence, architecture, interface.",
+  "facts": "1 skill, 6 agents, a PreToolUse hook. Community.",
+  "readiness": 2,
+  "reach": "privileged",
+  "tier": "community"
+ },
+ {
+  "id": "P05",
+  "name": "agentic-council",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Convene 20 specialists on hard engineering problems; sibling councils for finance, people, and revenue.",
+  "facts": "About 65 skills (threat-model, testing-strategy, failure-mode-analysis, finance-reconciliation, schema-design), 9 commands, 36 agents. Community.",
+  "readiness": 2,
+  "reach": "privileged",
+  "tier": "community"
+ },
+ {
+  "id": "P08",
+  "name": "incident.io",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Incident response and investigation, on-call schedules and escalations, runbook and skill authoring; bundles the official MCP server.",
+  "facts": "5 skills, MCP server incident_io. Partner.",
+  "readiness": 2,
+  "reach": "remote",
+  "tier": "partner"
+ },
+ {
+  "id": "P11",
+  "name": "data (Anthropic Knowledge Work)",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Write SQL, explore datasets, generate insights, build visualizations and dashboards, turn raw data into stories.",
+  "facts": "10 skills (sql-queries, validate-data, statistical-analysis, build-dashboard); MCP servers incl. bigquery, snowflake, databricks, hex, amplitude. Anthropic catalog.",
+  "readiness": 2,
+  "reach": "remote",
+  "tier": "anthropic"
+ },
+ {
+  "id": "P14",
+  "name": "databricks",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Databricks skills for the CLI, Apps, Lakebase, Model Serving, Jobs, Pipelines, DABs, serverless migration.",
+  "facts": "30 skills, 3 hooks (PostToolUse, SessionStart, UserPromptSubmit). Partner.",
+  "readiness": 2,
+  "reach": "privileged",
+  "tier": "partner"
+ },
+ {
+  "id": "P17",
+  "name": "equity-research (Anthropic FSI)",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Earnings analysis, earnings preview, initiating coverage, catalyst calendar, thesis tracker, morning note, sector overview, model update.",
+  "facts": "9 skills, 9 commands, no MCP server, no hooks. Anthropic Financial Services.",
+  "readiness": 3,
+  "reach": "contained",
+  "tier": "anthropic"
+ },
+ {
+  "id": "P20",
+  "name": "Product Marketing",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Positioning and messaging: ideal customer profile, competitive landscape, message house, sourced and gated proof points, a playbook for Sales and CS.",
+  "facts": "9 skills and 9 commands, no MCP, no hooks. Community.",
+  "readiness": 3,
+  "reach": "contained",
+  "tier": "community"
+ },
+ {
+  "id": "P23",
+  "name": "anchor-memory",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Verifiable, self-policing project memory for coding agents: ledger, @meta anchors, integrity hooks, memory-init scaffold.",
+  "facts": "7 skills, hooks PreCompact, SessionStart, Stop. Community.",
+  "readiness": 2,
+  "reach": "privileged",
+  "tier": "community"
+ },
+ {
+  "id": "P26",
+  "name": "Samautomation Workflows (n8n)",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Build or repair importable n8n workflow JSON, check its structure, test valid, duplicate and invalid events in isolation.",
+  "facts": "1 skill with a read-only checker and a manual fixture tested on n8n 2.23.4; no account connection, no network requests, no activation.",
+  "readiness": 3,
+  "reach": "contained",
+  "tier": "community"
+ },
+ {
+  "id": "P29",
+  "name": "HandwritingOCR",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Turn scans and photos of handwritten or printed documents into text and tables.",
+  "facts": "1 skill, MCP handwritingocr. Community.",
+  "readiness": 2,
+  "reach": "remote",
+  "tier": "community"
+ },
+ {
+  "id": "S02",
+  "name": "venture-launch-playbook",
+  "type": "skill",
+  "status": "installed",
+  "desc": "End-to-end workflow for launching a revenue-ready web business at $0 infrastructure cost, with a quality ladder and competitor recon so each launch beats the last.",
+  "facts": "User skill, enabled.",
+  "readiness": 5
+ },
+ {
+  "id": "S05",
+  "name": "docs",
+  "type": "skill",
+  "status": "installed",
+  "desc": "Editable docs people share and comment on; exports to Word, PDF, Markdown or Google Docs; the default for any document.",
+  "facts": "Enabled; pairs with the Claude Docs connector.",
+  "readiness": 5
+ },
+ {
+  "id": "S08",
+  "name": "mcp-builder",
+  "type": "skill",
+  "status": "installed",
+  "desc": "Guide for building high-quality MCP servers in Python (FastMCP) or TypeScript.",
+  "facts": "Enabled.",
+  "readiness": 5
+ },
+ {
+  "id": "S11",
+  "name": "docx",
+  "type": "skill",
+  "status": "installed",
+  "desc": "Create, read, edit Word documents and templates, including tracked changes and comments.",
+  "facts": "Enabled.",
+  "readiness": 5
+ },
+ {
+  "id": "S14",
+  "name": "code-review (skill)",
+  "type": "skill",
+  "status": "session",
+  "desc": "Review the current diff, PR number or branch for correctness bugs at a chosen effort level; --comment posts inline, --fix applies findings.",
+  "facts": "Session skill.",
+  "readiness": 5
+ },
+ {
+  "id": "S17",
+  "name": "loop",
+  "type": "skill",
+  "status": "session",
+  "desc": "Run a prompt or slash command on a recurring interval, or self-paced.",
+  "facts": "Session skill.",
+  "readiness": 5
+ },
+ {
+  "id": "S20",
+  "name": "update-config",
+  "type": "skill",
+  "status": "session",
+  "desc": "Configure the Claude Code harness through settings.json: hooks, permissions, environment variables.",
+  "facts": "Session skill.",
+  "readiness": 5
+ },
+ {
+  "id": "S23",
+  "name": "artifact-capabilities",
+  "type": "skill",
+  "status": "session",
+  "desc": "Runtime capabilities for published Artifact pages: live data, shared state, a database, asking Claude, file storage.",
+  "facts": "Session skill.",
+  "readiness": 5
+ },
+ {
+  "id": "S26",
+  "name": "learn",
+  "type": "skill",
+  "status": "installed",
+  "desc": "Teaching mode for learning how and why something works: explanations, quizzes, sequencing.",
+  "facts": "Enabled.",
+  "readiness": 5
+ }
+]

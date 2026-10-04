@@ -1,0 +1,319 @@
+[
+ {
+  "id": "K02",
+  "name": "Supabase",
+  "type": "connector",
+  "status": "installed",
+  "desc": "Manage databases, authentication, and storage.",
+  "facts": "Tools: execute_sql, apply_migration, list_tables, get_advisors, query_logs, deploy_edge_function, search_docs, branches, generate_typescript_types.",
+  "readiness": 5
+ },
+ {
+  "id": "K05",
+  "name": "Stripe",
+  "type": "connector",
+  "status": "installed",
+  "desc": "Payment processing and financial infrastructure tools.",
+  "facts": "Tools: get_balance_summary, stripe_analytics, stripe_api_read, stripe_api_write, stripe_api_search, search_stripe_documentation, stripe_implementation_planner.",
+  "readiness": 5
+ },
+ {
+  "id": "K08",
+  "name": "Google Drive",
+  "type": "connector",
+  "status": "installed",
+  "desc": "Search, read, and upload files.",
+  "facts": "Tools: search_files, read_file_content, download_file_content, create_file, copy_file, share_file, trash_file.",
+  "readiness": 5
+ },
+ {
+  "id": "K11",
+  "name": "Airtable",
+  "type": "connector",
+  "status": "installed",
+  "desc": "Bring your structured data to Claude.",
+  "facts": "Tools: search_bases, list and search records, create, update, delete records, fields, tables, automations, interfaces.",
+  "readiness": 5
+ },
+ {
+  "id": "K14",
+  "name": "Browserbase",
+  "type": "connector",
+  "status": "installed",
+  "desc": "Cloud browser sessions for Claude (catalog description empty).",
+  "facts": "Tools: start, navigate, act, extract, observe, end.",
+  "readiness": 5
+ },
+ {
+  "id": "K17",
+  "name": "Windsor.ai",
+  "type": "connector",
+  "status": "installed",
+  "desc": "Connect Meta Ads, Google Ads, TikTok Ads, LinkedIn Ads and 320 more sources.",
+  "facts": "Read: get_data, get_fields, get_connectors. Write actions (execute_action) on Meta, Google, TikTok, LinkedIn, Microsoft ads, Instagram, Google Business Profile, Klaviyo, Amazon.",
+  "readiness": 5
+ },
+ {
+  "id": "K20",
+  "name": "Adobe for creativity",
+  "type": "connector",
+  "status": "installed",
+  "desc": "Design, combine, and edit with Adobe pro tools.",
+  "facts": "About 70 tools: Express design, Acrobat PDF operations, image edits, fonts, video resize and render, asset storage. Requires adobe_mandatory_init first.",
+  "readiness": 5
+ },
+ {
+  "id": "K23",
+  "name": "Grok",
+  "type": "connector",
+  "status": "installed",
+  "desc": "A second model as a tool, plus image and video generation (catalog description empty).",
+  "facts": "Tools: grok_chat, grok_generate_image, grok_generate_video, grok_check_video_status.",
+  "readiness": 5
+ },
+ {
+  "id": "K26",
+  "name": "Sentry",
+  "type": "connector",
+  "status": "needs-auth",
+  "desc": "Search, query, and debug errors intelligently.",
+  "facts": "installState needs_reconnect; not enabled in chat.",
+  "readiness": 3
+ },
+ {
+  "id": "K29",
+  "name": "Intuit QuickBooks",
+  "type": "connector",
+  "status": "needs-auth",
+  "desc": "Business finances made simple.",
+  "facts": "installState not_connected. About 70 tools: profit and loss, cash flow, industry benchmarking, transaction import.",
+  "readiness": 3
+ },
+ {
+  "id": "K32",
+  "name": "Exa",
+  "type": "connector",
+  "status": "available",
+  "desc": "Web search and code docs search.",
+  "facts": "Tools: web_search_exa, get_code_context_exa. Not installed.",
+  "readiness": 2
+ },
+ {
+  "id": "K35",
+  "name": "Neon",
+  "type": "connector",
+  "status": "available",
+  "desc": "Postgres, object storage, managed auth.",
+  "facts": "Tools incl. create_branch, compare_database_schema, complete_database_migration, complete_query_tuning (about 35 tools). Not installed.",
+  "readiness": 2
+ },
+ {
+  "id": "K38",
+  "name": "Datadog",
+  "type": "connector",
+  "status": "available",
+  "desc": "Debug and resolve issues using Datadog telemetry.",
+  "facts": "About 180 tools: logs, metrics, monitors, events search.",
+  "readiness": 2
+ },
+ {
+  "id": "K41",
+  "name": "Bigdata.com",
+  "type": "connector",
+  "status": "available",
+  "desc": "AI grounding layer for finance: market data, SEC filings, earnings calls, sentiment, news, private documents, all cited.",
+  "facts": "Tools: bigdata_search, company and market tearsheets, events calendar, fetch_document (about 16 tools).",
+  "readiness": 2
+ },
+ {
+  "id": "P01",
+  "name": "code-review (Anthropic plugin)",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Automated code review for pull requests using multiple specialized agents with confidence-based scoring.",
+  "facts": "One slash command. Publisher: Anthropic, directory review.",
+  "readiness": 2,
+  "reach": "privileged",
+  "tier": "anthropic"
+ },
+ {
+  "id": "P04",
+  "name": "Decibel Superpowers",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Superpowers remix with project tracking and reduced ceremony: brainstorming, planning, TDD, systematic debugging, subagent-driven development, git worktrees, verification before completion.",
+  "facts": "18 skills, 3 commands, a code-reviewer agent, a SessionStart hook. Community.",
+  "readiness": 2,
+  "reach": "privileged",
+  "tier": "community"
+ },
+ {
+  "id": "P07",
+  "name": "swagger-contract-testing (PactFlow)",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Expert assistant for PactFlow and Pact contract testing: consumer-driven contracts, provider verification, can-i-deploy, OpenAPI parsing.",
+  "facts": "5 skills, 6 agents, MCP server smartbear, PostToolUse and SessionStart hooks. Partner.",
+  "readiness": 2,
+  "reach": "remote",
+  "tier": "partner"
+ },
+ {
+  "id": "P10",
+  "name": "Starglass Research",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Host-led research, skeptical review and mechanical evidence checks across official records.",
+  "facts": "1 skill, MCP server starglass-research, PostToolUse hook. Community.",
+  "readiness": 2,
+  "reach": "remote",
+  "tier": "community"
+ },
+ {
+  "id": "P13",
+  "name": "aws-data-analytics",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Data lake, analytics, search and ETL with S3 Tables, Glue, Athena, Redshift, OpenSearch.",
+  "facts": "9 skills, MCP aws-mcp. Partner: AWS.",
+  "readiness": 2,
+  "reach": "remote",
+  "tier": "partner"
+ },
+ {
+  "id": "P16",
+  "name": "dataink",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Skills for effective data communication: visualization, storytelling, infographics, dashboard layout, table design, visualization review, based on Tufte, Few, Knaflic.",
+  "facts": "6 skills, PostToolUse hook. Community.",
+  "readiness": 2,
+  "reach": "privileged",
+  "tier": "community"
+ },
+ {
+  "id": "P19",
+  "name": "marketing (Anthropic Knowledge Work)",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Create content, plan campaigns, analyze performance across channels, keep brand voice consistent, track competitors.",
+  "facts": "8 skills (seo-audit, email-sequence, campaign-plan, brand-review, competitive-brief); MCP incl. ahrefs, canva, figma, gmail, hubspot, klaviyo, notion, slack.",
+  "readiness": 2,
+  "reach": "remote",
+  "tier": "anthropic"
+ },
+ {
+  "id": "P22",
+  "name": "Cairn Memory: CLAUDE.md and agent memory that stays true",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Puts each fact in the cheapest memory layer that will still be found (CLAUDE.md, AGENTS.md, rules, auto memory, repo docs) and audits it with 25 self-tested checks.",
+  "facts": "1 skill, no hooks, no MCP. Community.",
+  "readiness": 3,
+  "reach": "contained",
+  "tier": "community"
+ },
+ {
+  "id": "P25",
+  "name": "HubSpot Sales",
+  "type": "plugin",
+  "status": "available",
+  "desc": "HubSpot sales workflows: contact import, call prep, daily brief, follow-up drafting, call logging, contact lookup, pipeline overview.",
+  "facts": "9 skills, 2 agents, MCP hubspot. Partner: HubSpot.",
+  "readiness": 2,
+  "reach": "remote",
+  "tier": "partner"
+ },
+ {
+  "id": "P28",
+  "name": "writing-quality",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Intent-aware drafting, rewriting, detect-only review, claim boundaries, and final prose validation.",
+  "facts": "4 skills (writing-enforcer, claim-boundary-checker, business-writing-intent-enforcer, router). Community.",
+  "readiness": 3,
+  "reach": "contained",
+  "tier": "community"
+ },
+ {
+  "id": "S01",
+  "name": "forge-web-stack",
+  "type": "skill",
+  "status": "installed",
+  "desc": "Build web apps, dashboards, capture forms and AI features on the VitaForge/PANTHEON stack: Netlify functions calling the Claude API, passcode-gated dashboards over Airtable; accuracy mandate (code computes every number).",
+  "facts": "User skill, enabled.",
+  "readiness": 5
+ },
+ {
+  "id": "S04",
+  "name": "firecrawl (skill)",
+  "type": "skill",
+  "status": "installed",
+  "desc": "Web search (catalog description is two words).",
+  "facts": "User skill, enabled; the FireCrawl connector entries need reconnect.",
+  "readiness": 5
+ },
+ {
+  "id": "S07",
+  "name": "skill-creator",
+  "type": "skill",
+  "status": "installed",
+  "desc": "Create, modify and evaluate skills; run evals, benchmark with variance analysis, optimize descriptions for triggering.",
+  "facts": "Enabled.",
+  "readiness": 5
+ },
+ {
+  "id": "S10",
+  "name": "xlsx",
+  "type": "skill",
+  "status": "installed",
+  "desc": "Open, edit, create and clean spreadsheets (xlsx, csv, tsv) with formulas and formatting.",
+  "facts": "Enabled.",
+  "readiness": 5
+ },
+ {
+  "id": "S13",
+  "name": "dataviz",
+  "type": "skill",
+  "status": "session",
+  "desc": "Chart, dashboard and data-visualization method: form heuristic, color formula with a runnable validator, mark specs, interaction rules.",
+  "facts": "Session skill.",
+  "readiness": 5
+ },
+ {
+  "id": "S16",
+  "name": "simplify",
+  "type": "skill",
+  "status": "session",
+  "desc": "Review changed code for reuse, simplification, efficiency, altitude cleanups, then apply the fixes.",
+  "facts": "Session skill.",
+  "readiness": 5
+ },
+ {
+  "id": "S19",
+  "name": "workflow-authoring",
+  "type": "skill",
+  "status": "session",
+  "desc": "Reference for writing Workflow scripts: parallel agents, pipelines, resume, quality patterns such as adversarial verify and loop-until-dry.",
+  "facts": "Session skill.",
+  "readiness": 5
+ },
+ {
+  "id": "S22",
+  "name": "session-start-hook",
+  "type": "skill",
+  "status": "session",
+  "desc": "Create SessionStart hooks so cloud sessions can run tests and linters.",
+  "facts": "Session skill.",
+  "readiness": 5
+ },
+ {
+  "id": "S25",
+  "name": "web-artifacts-builder",
+  "type": "skill",
+  "status": "installed",
+  "desc": "Build multi-component HTML artifacts with React, Tailwind CSS and shadcn/ui.",
+  "facts": "Enabled.",
+  "readiness": 5
+ }
+]

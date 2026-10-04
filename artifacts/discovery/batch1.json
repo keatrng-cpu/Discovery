@@ -1,0 +1,319 @@
+[
+ {
+  "id": "K01",
+  "name": "GitHub",
+  "type": "connector",
+  "status": "session",
+  "desc": "Repos, issues, pull requests, branches, code search, Actions logs, secret scanning, review threads; merge is act-scope.",
+  "facts": "Tools present this session: get_file_contents, pull_request_read, search_code, run_secret_scanning, create_pull_request, merge_pull_request. Not listed as a claude.ai connector.",
+  "readiness": 5
+ },
+ {
+  "id": "K04",
+  "name": "Netlify",
+  "type": "connector",
+  "status": "installed",
+  "desc": "Create, deploy, manage, and secure websites on Netlify.",
+  "facts": "Tools: project, deploy, team, extension service readers and updaters; coding-context fetch.",
+  "readiness": 5
+ },
+ {
+  "id": "K07",
+  "name": "Google Calendar",
+  "type": "connector",
+  "status": "installed",
+  "desc": "Manage your schedule and coordinate meetings.",
+  "facts": "Tools: list_events, search_events, suggest_time, get_event; create_event, update_event, delete_event (act).",
+  "readiness": 5
+ },
+ {
+  "id": "K10",
+  "name": "Slack",
+  "type": "connector",
+  "status": "installed",
+  "desc": "Send messages, create canvases, and fetch Slack data.",
+  "facts": "Tools: search public and private, read channel and thread, send_message, schedule_message, canvases, reactions.",
+  "readiness": 5
+ },
+ {
+  "id": "K13",
+  "name": "Make",
+  "type": "connector",
+  "status": "installed",
+  "desc": "Run Make scenarios and manage your Make account.",
+  "facts": "Tools: scenarios run, create, activate; data stores; webhooks; executions; blueprint validation.",
+  "readiness": 5
+ },
+ {
+  "id": "K16",
+  "name": "Semrush",
+  "type": "connector",
+  "status": "installed",
+  "desc": "SEO, keyword research, competitor analysis, traffic and market analytics, backlink analysis, domain analysis, and PPC.",
+  "facts": "Tools: keyword_research, organic_research, competitors_research, domain_overview, backlinks_research, site_audit, position_tracking, execute_report.",
+  "readiness": 5
+ },
+ {
+  "id": "K19",
+  "name": "Canva",
+  "type": "connector",
+  "status": "installed",
+  "desc": "Search, create, autofill, and export Canva designs.",
+  "facts": "Tools: generate-design, edit-design, export-design, brand templates, brand kits, comments, resize.",
+  "readiness": 5
+ },
+ {
+  "id": "K22",
+  "name": "Alpha Vantage MCP Server",
+  "type": "connector",
+  "status": "installed",
+  "desc": "Stock market data: stocks, options, fundamentals, earnings, SEC filings, indices, news, exchange rates, commodities, and trading signals.",
+  "facts": "About 150 read tools incl. EARNINGS, INCOME_STATEMENT, TIME_SERIES_DAILY, technical indicators, economic series. Read-only data.",
+  "readiness": 5
+ },
+ {
+  "id": "K25",
+  "name": "Brevo",
+  "type": "connector",
+  "status": "needs-auth",
+  "desc": "Analyze campaigns, know your audience and create drafts.",
+  "facts": "installState needs_reconnect; not enabled in chat. In the user's stack.",
+  "readiness": 3
+ },
+ {
+  "id": "K28",
+  "name": "Lightfield",
+  "type": "connector",
+  "status": "needs-auth",
+  "desc": "CRM that remembers everything and works for you.",
+  "facts": "installState connect_incomplete; needs OAuth in claude.ai connector settings.",
+  "readiness": 3
+ },
+ {
+  "id": "K31",
+  "name": "Postman",
+  "type": "connector",
+  "status": "installed-off",
+  "desc": "Give API context to your coding agents.",
+  "facts": "Connected at org level but not enabled in this chat.",
+  "readiness": 4
+ },
+ {
+  "id": "K34",
+  "name": "Microsoft Learn",
+  "type": "connector",
+  "status": "available",
+  "desc": "Search trusted Microsoft documentation.",
+  "facts": "Tools: microsoft_docs_search, microsoft_docs_fetch, microsoft_code_sample_search. Authless.",
+  "readiness": 3
+ },
+ {
+  "id": "K37",
+  "name": "PostHog",
+  "type": "connector",
+  "status": "available",
+  "desc": "Query, analyze, and manage product analytics insights.",
+  "facts": "Tools: query-run, HogQL generation from a question, insight create and update (about 57 tools).",
+  "readiness": 2
+ },
+ {
+  "id": "K40",
+  "name": "Paxton Legal Research",
+  "type": "connector",
+  "status": "available",
+  "desc": "Research U.S. law with citations you can open and verify.",
+  "facts": "Tools: search_case_law, get_citator_info, get_source_text, search_administrative_decisions, search_legal_research.",
+  "readiness": 2
+ },
+ {
+  "id": "K43",
+  "name": "Supermetrics Marketing Analytics",
+  "type": "connector",
+  "status": "available",
+  "desc": "Google Ads, Facebook Ads, Google Analytics, TikTok, LinkedIn, Instagram, YouTube and 200+ sources.",
+  "facts": "Tools: data_source_discovery, field_discovery, data_query, async results. Overlaps the installed Windsor.ai.",
+  "readiness": 2
+ },
+ {
+  "id": "P03",
+  "name": "finecomb: exhaustive code review and security audit",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Exhaustive review and security audit checklist: root-cause facets, 46 general dimensions, 78 specialties, 33 language tables, evidence levels, report format.",
+  "facts": "Markdown only, read-only by default, for code you own or are authorized to assess. 1 skill.",
+  "readiness": 3,
+  "reach": "contained",
+  "tier": "community"
+ },
+ {
+  "id": "P06",
+  "name": "42crunch-api-security-testing",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Catch API security issues during development: audit, scan, remediate, validate with guardrails.",
+  "facts": "5 skills incl. 42crunch-audit, 42crunch-scan, generate-oas. Partner: 42Crunch.",
+  "readiness": 3,
+  "reach": "contained",
+  "tier": "partner"
+ },
+ {
+  "id": "P09",
+  "name": "Research Desk",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Verify every citation against OpenAlex and arXiv, turn a paper into a literature note with page references, weighted decision matrix, council of independent answers with a judge.",
+  "facts": "4 skills (citation-check, research-litnote, decision-matrix, llm-council), MCP server reference-lookup. Community.",
+  "readiness": 2,
+  "reach": "remote",
+  "tier": "community"
+ },
+ {
+  "id": "P12",
+  "name": "Windsor.ai Ads and Marketing Data (plugin)",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Manage and analyze Google, Meta, Instagram, TikTok, LinkedIn and Microsoft Ads through Windsor.ai; report on campaigns, search terms, wasted spend; combine with GA4, Search Console, HubSpot, Stripe and 350+ sources.",
+  "facts": "34 skills, 11 commands, 2 agents, MCP windsor-ai. Can pause campaigns, change budgets and bids. Partner. The Windsor.ai connector is already installed.",
+  "readiness": 2,
+  "reach": "remote",
+  "tier": "partner"
+ },
+ {
+  "id": "P15",
+  "name": "bigquery-data-analytics",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Connect, query, and generate insights for BigQuery datasets.",
+  "facts": "1 skill, MCP bigquery. Author: Google LLC; listed tier community.",
+  "readiness": 2,
+  "reach": "remote",
+  "tier": "community"
+ },
+ {
+  "id": "P18",
+  "name": "sales (Anthropic Knowledge Work)",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Prep calls, summarize and follow up, research accounts, review deals and pipeline, write the forecast, using the CRM, email, calendar and chat tools your team uses or uploaded files.",
+  "facts": "36 skills; MCP servers incl. hubspot, salesforce, gmail, google calendar, slack, notion, apollo, clay, gong. Updates records, drafts or sends email, books meetings when asked.",
+  "readiness": 2,
+  "reach": "remote",
+  "tier": "anthropic"
+ },
+ {
+  "id": "P21",
+  "name": "Marketing Psychology Kit",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Evidence grades and consumer-protection rule checks for marketing psychology: grade claims against studies, audit pages for levers, check countdowns, stock badges, was-prices, trials and cancellation paths against dated US, EU and UK rules.",
+  "facts": "5 skills (dark-pattern-check, evidence-check, persuasion-audit, price-framing). Community.",
+  "readiness": 3,
+  "reach": "contained",
+  "tier": "community"
+ },
+ {
+  "id": "P24",
+  "name": "Vertiso Memory",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Portable, user-owned memory: durable recall, hybrid search, cross-session handoffs and checkpoints via a remote OAuth MCP server.",
+  "facts": "4 skills (checkpoint, handoff, handoff-resume, wrap-up), MCP vertiso-memory. Community.",
+  "readiness": 2,
+  "reach": "remote",
+  "tier": "community"
+ },
+ {
+  "id": "P27",
+  "name": "Customer Research Kit",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Traceable customer research from pasted text: quote ledger with ids, theme-by-source count table, fixed evidence-strength rule, contradictions, self-check that every quote appears verbatim, pseudonymised participants.",
+  "facts": "5 skills (churn-analysis, interview-synthesis, icp-profile, feedback-analysis, interview-guide); no connectors.",
+  "readiness": 3,
+  "reach": "contained",
+  "tier": "community"
+ },
+ {
+  "id": "P30",
+  "name": "Pendo Analytics",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Product analytics in Claude: account health, feature adoption, session replay triage, feedback analysis.",
+  "facts": "5 skills; requires the Pendo connector and a Pendo subscription. Anthropic Knowledge Work catalog.",
+  "readiness": 2,
+  "reach": "remote",
+  "tier": "anthropic"
+ },
+ {
+  "id": "S03",
+  "name": "form-filler",
+  "type": "skill",
+  "status": "installed",
+  "desc": "Drive the user's Chrome to fill forms and official filings (LLC formation, state registrations, EIN) and pause only for passwords, card numbers, SSN and signatures.",
+  "facts": "User skill, enabled.",
+  "readiness": 5
+ },
+ {
+  "id": "S06",
+  "name": "google-workspace",
+  "type": "skill",
+  "status": "installed",
+  "desc": "Create or change Google Docs, Sheets and Slides in Drive, with helper scripts for document positions, cell ranges and slide layout.",
+  "facts": "Enabled.",
+  "readiness": 5
+ },
+ {
+  "id": "S09",
+  "name": "pdf",
+  "type": "skill",
+  "status": "installed",
+  "desc": "Read, merge, split, rotate, watermark, create, fill, encrypt, OCR PDFs.",
+  "facts": "Enabled.",
+  "readiness": 5
+ },
+ {
+  "id": "S12",
+  "name": "pptx",
+  "type": "skill",
+  "status": "installed",
+  "desc": "Create, read, edit PowerPoint decks and templates, speaker notes and layouts.",
+  "facts": "Enabled.",
+  "readiness": 5
+ },
+ {
+  "id": "S15",
+  "name": "security-review (skill)",
+  "type": "skill",
+  "status": "session",
+  "desc": "Complete a security review of the pending changes on the current branch.",
+  "facts": "Session skill.",
+  "readiness": 5
+ },
+ {
+  "id": "S18",
+  "name": "claude-api",
+  "type": "skill",
+  "status": "session",
+  "desc": "Reference for the Claude API and Anthropic SDK: model ids, pricing, parameters, streaming, tool use, MCP, agents, caching, token counting.",
+  "facts": "Session skill.",
+  "readiness": 5
+ },
+ {
+  "id": "S21",
+  "name": "fewer-permission-prompts",
+  "type": "skill",
+  "status": "session",
+  "desc": "Scan transcripts for common read-only Bash and MCP calls and add a prioritized allowlist to project settings.",
+  "facts": "Session skill.",
+  "readiness": 5
+ },
+ {
+  "id": "S24",
+  "name": "morning",
+  "type": "skill",
+  "status": "installed",
+  "desc": "Render the morning brief as an HTML artifact or set it up as a recurring weekday task.",
+  "facts": "Enabled.",
+  "readiness": 5
+ }
+]
