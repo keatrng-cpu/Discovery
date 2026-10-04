@@ -1,0 +1,19 @@
+---
+name: markets-memo
+description: Use when a one-page investment memo needs a thesis and an observable kill condition. Quiet for orders, position sizing, or pure extraction.
+---
+## Trigger
+Sourced facts exist and the ask is a thesis memo. Quiet when the ask is to buy, sell, or size a position.
+## Done-when
+check: human-only
+A person reads the kill condition line and confirms it is an observable: it names a metric, a threshold, and a date. That is the one check; no program can judge observability.
+Not part of the check, but required of the draft: one stated thesis, every line tagged fact or inference, and no order and no size.
+## Rung
+rung: L3
+A strong model drafts; a person checks the thesis and kill condition. Do not claim a pass without that read.
+## Forbidden move
+Writing a kill condition that cannot be observed (for example "if sentiment turns"), or adding an order or a size. Tag every line fact or inference.
+## Tool
+tool: none
+scope: none
+gate: ABSENT broker, order (prepare the thesis and kill condition, stop; a person places any order or size)
