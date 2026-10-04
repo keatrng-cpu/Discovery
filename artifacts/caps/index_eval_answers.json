@@ -1,0 +1,343 @@
+[
+ {
+  "i": 0,
+  "ids": [
+   "bigdata",
+   "alpha-vantage"
+  ]
+ },
+ {
+  "i": 1,
+  "ids": []
+ },
+ {
+  "i": 2,
+  "ids": [
+   "alpha-vantage"
+  ]
+ },
+ {
+  "i": 3,
+  "ids": [
+   "parallel-search",
+   "firecrawl"
+  ]
+ },
+ {
+  "i": 4,
+  "ids": []
+ },
+ {
+  "i": 5,
+  "ids": []
+ },
+ {
+  "i": 6,
+  "ids": [
+   "google-drive"
+  ]
+ },
+ {
+  "i": 7,
+  "ids": [
+   "firecrawl",
+   "parallel-search"
+  ]
+ },
+ {
+  "i": 8,
+  "ids": [
+   "airtable"
+  ]
+ },
+ {
+  "i": 9,
+  "ids": [
+   "skill-pptx",
+   "google-drive"
+  ]
+ },
+ {
+  "i": 10,
+  "ids": [
+   "context7"
+  ]
+ },
+ {
+  "i": 11,
+  "ids": [
+   "bigdata"
+  ]
+ },
+ {
+  "i": 12,
+  "ids": [
+   "stripe"
+  ]
+ },
+ {
+  "i": 13,
+  "ids": [
+   "skill-form-filler"
+  ]
+ },
+ {
+  "i": 14,
+  "ids": []
+ },
+ {
+  "i": 15,
+  "ids": []
+ },
+ {
+  "i": 16,
+  "ids": [
+   "netlify"
+  ]
+ },
+ {
+  "i": 17,
+  "ids": [
+   "skill-skill-creator"
+  ]
+ },
+ {
+  "i": 18,
+  "ids": [
+   "vercel"
+  ]
+ },
+ {
+  "i": 19,
+  "ids": []
+ },
+ {
+  "i": 20,
+  "ids": [
+   "skill-xlsx"
+  ]
+ },
+ {
+  "i": 21,
+  "ids": [
+   "parallel-search"
+  ]
+ },
+ {
+  "i": 22,
+  "ids": [
+   "skill-venture-launch-playbook",
+   "parallel-search"
+  ]
+ },
+ {
+  "i": 23,
+  "ids": [
+   "skill-google-workspace"
+  ]
+ },
+ {
+  "i": 24,
+  "ids": []
+ },
+ {
+  "i": 25,
+  "ids": []
+ },
+ {
+  "i": 26,
+  "ids": []
+ },
+ {
+  "i": 27,
+  "ids": []
+ },
+ {
+  "i": 28,
+  "ids": [
+   "google-drive"
+  ]
+ },
+ {
+  "i": 29,
+  "ids": [
+   "tomtom"
+  ]
+ },
+ {
+  "i": 30,
+  "ids": [
+   "skill-mcp-builder",
+   "airtable"
+  ]
+ },
+ {
+  "i": 31,
+  "ids": [
+   "google-calendar"
+  ]
+ },
+ {
+  "i": 32,
+  "ids": []
+ },
+ {
+  "i": 33,
+  "ids": [
+   "make"
+  ]
+ },
+ {
+  "i": 34,
+  "ids": [
+   "alpha-vantage",
+   "skill-dataviz"
+  ]
+ },
+ {
+  "i": 35,
+  "ids": [
+   "airtable",
+   "skill-dataviz"
+  ]
+ },
+ {
+  "i": 36,
+  "ids": []
+ },
+ {
+  "i": 37,
+  "ids": [
+   "parallel-search"
+  ]
+ },
+ {
+  "i": 38,
+  "ids": [
+   "google-calendar",
+   "gmail"
+  ]
+ },
+ {
+  "i": 39,
+  "ids": []
+ },
+ {
+  "i": 40,
+  "ids": [
+   "parallel-search"
+  ]
+ },
+ {
+  "i": 41,
+  "ids": []
+ },
+ {
+  "i": 42,
+  "ids": [
+   "github",
+   "skill-code-review"
+  ]
+ },
+ {
+  "i": 43,
+  "ids": [
+   "figma"
+  ]
+ },
+ {
+  "i": 44,
+  "ids": [
+   "apify"
+  ]
+ },
+ {
+  "i": 45,
+  "ids": [
+   "openseo"
+  ]
+ },
+ {
+  "i": 46,
+  "ids": [
+   "alpha-vantage",
+   "skill-xlsx"
+  ]
+ },
+ {
+  "i": 47,
+  "ids": [
+   "google-calendar"
+  ]
+ },
+ {
+  "i": 48,
+  "ids": []
+ },
+ {
+  "i": 49,
+  "ids": [
+   "zapier"
+  ]
+ },
+ {
+  "i": 50,
+  "ids": [
+   "supabase"
+  ]
+ },
+ {
+  "i": 51,
+  "ids": [
+   "openseo"
+  ]
+ },
+ {
+  "i": 52,
+  "ids": [
+   "gmail"
+  ]
+ },
+ {
+  "i": 53,
+  "ids": []
+ },
+ {
+  "i": 54,
+  "ids": [
+   "parallel-search",
+   "firecrawl"
+  ]
+ },
+ {
+  "i": 55,
+  "ids": [
+   "windsor"
+  ]
+ },
+ {
+  "i": 56,
+  "ids": [
+   "skill-docx"
+  ]
+ },
+ {
+  "i": 57,
+  "ids": [
+   "skill-forge-web-stack",
+   "skill-claude-api"
+  ]
+ },
+ {
+  "i": 58,
+  "ids": [
+   "notion"
+  ]
+ },
+ {
+  "i": 59,
+  "ids": [
+   "skill-forge-web-stack"
+  ]
+ }
+]

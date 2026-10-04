@@ -392,6 +392,916 @@
    "path": "fixtures/re-triage/check.py",
    "check": "exit-code",
    "note": "held-out checker for reverse-engineering triage: re-derives the answer from file and readelf -h"
+  },
+  {
+   "name": "mcp__Airtable__search_bases",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Airtable__list_bases",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Airtable__list_tables_for_base",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Airtable__get_table_schema",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Airtable__list_records_for_table",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Airtable__search_records",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Airtable__analyze_table",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Supabase__list_projects",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Supabase__get_advisors",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Supabase__query_logs",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Netlify__netlify-project-services-reader",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Netlify__netlify-deploy-services-reader",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Netlify__netlify-team-services-reader",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Netlify__get-netlify-coding-context",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Vercel__list_teams",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Vercel__list_projects",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Vercel__get_project",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Vercel__list_deployments",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Vercel__get_deployment",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Vercel__get_runtime_logs",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Vercel__get_runtime_errors",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Vercel__list_deployment_events",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Stripe__get_balance_summary",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Stripe__stripe_analytics",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Stripe__stripe_api_read",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Stripe__stripe_api_search",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Stripe__stripe_api_details",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Stripe__search_stripe_documentation",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Stripe__list_available_accounts_or_orgs",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Semrush__domain_overview",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Semrush__organic_research",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Semrush__competitors_research",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Semrush__backlinks_research",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Semrush__traffic_overview",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Semrush__position_tracking",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Semrush__site_audit",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Semrush__get_report_schema",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Semrush__execute_report",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__OpenSEO__list_projects",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__OpenSEO__get_keyword_metrics",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__OpenSEO__get_domain_keyword_suggestions",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__OpenSEO__research_keywords",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__OpenSEO__get_ranked_keywords",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__OpenSEO__find_serp_competitors",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__OpenSEO__get_serp_results",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__OpenSEO__get_audit_issues",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__OpenSEO__get_audit_pages",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__OpenSEO__get_audit_status",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__OpenSEO__get_local_rank_grid",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__OpenSEO__get_local_serp_results",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__OpenSEO__search_local_businesses",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__OpenSEO__get_search_opportunities",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__OpenSEO__estimate_rank_tracker_cost",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Alpha_Vantage_MCP_Server__GLOBAL_QUOTE",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Alpha_Vantage_MCP_Server__TIME_SERIES_DAILY",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Alpha_Vantage_MCP_Server__TIME_SERIES_INTRADAY",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Alpha_Vantage_MCP_Server__COMPANY_OVERVIEW",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Alpha_Vantage_MCP_Server__BALANCE_SHEET",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Alpha_Vantage_MCP_Server__CASH_FLOW",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Alpha_Vantage_MCP_Server__NEWS_SENTIMENT",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Alpha_Vantage_MCP_Server__SYMBOL_SEARCH",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Alpha_Vantage_MCP_Server__MARKET_STATUS",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Alpha_Vantage_MCP_Server__ATR",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Bigdata_com__find_securities",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Bigdata_com__bigdata_search",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Bigdata_com__bigdata_company_tearsheet",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Bigdata_com__bigdata_fetch_document",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Bigdata_com__bigdata_events_calendar",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Bigdata_com__bigdata_market_tearsheet",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Bigdata_com__bigdata_sentiment_tearsheet",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Context7__resolve-library-id",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Context7__query-docs",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Parallel_Search__web_search",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Parallel_Search__web_fetch",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__TomTom_Maps__tomtom-geocode",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__TomTom_Maps__tomtom-reverse-geocode",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__TomTom_Maps__tomtom-routing",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__TomTom_Maps__tomtom-reachable-range",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__TomTom_Maps__tomtom-traffic",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__TomTom_Maps__tomtom-poi-search",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__TomTom_Maps__tomtom-fuzzy-search",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__TomTom_Maps__tomtom-nearby",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__TomTom_Maps__tomtom-area-search",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__TomTom_Maps__tomtom-search-along-route",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Windsor_ai__get_connectors",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Windsor_ai__get_fields",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Windsor_ai__list_actions",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Gmail__get_message",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Gmail__list_labels",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Google_Calendar__search_events",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Google_Calendar__get_event",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Google_Calendar__list_calendars",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Google_Calendar__suggest_time",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Google_Drive__search_files",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Google_Drive__read_file_content",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Google_Drive__get_file_metadata",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Google_Drive__list_recent_files",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Google_Drive__download_file_content",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Notion__notion-search",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Notion__notion-fetch",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Notion__notion-query-data-sources",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Notion__notion-get-comments",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Notion__notion-list-recent-pages",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__github__list_commits",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__github__list_branches",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__github__list_issues",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__github__list_pull_requests",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__github__actions_list",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__github__get_job_logs",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Make__scenarios_list",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Make__scenarios_get",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Make__executions_list",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Make__executions_get",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Make__apps_list",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Make__validate_blueprint_schema",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Zapier__list_zapier_connections",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Zapier__discover_zapier_actions",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Zapier__inspect_zapier_actions",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Zapier__execute_zapier_read_action",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__apify__search-actors",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__apify__fetch-actor-details",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__apify__get-dataset-items",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Browserbase__start",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "state-diff",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Browserbase__navigate",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "state-diff",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Browserbase__observe",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "state-diff",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Browserbase__extract",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "state-diff",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Browserbase__end",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "state-diff",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Figma__get_metadata",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Figma__search_design_system",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
+  },
+  {
+   "name": "mcp__Figma__whoami",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "added_by": "user request 2026-10-04: auto-route connectors; read and draft scope only"
   }
  ],
  "proposed": [

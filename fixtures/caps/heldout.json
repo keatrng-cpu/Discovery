@@ -1,0 +1,536 @@
+[
+ {
+  "prompt": "one pager on Palantir for the TradeSmith playbook: key numbers, what would prove the thesis wrong, and a source on every claim",
+  "must": [
+   "bigdata",
+   "alpha-vantage"
+  ],
+  "ok": [
+   "skill-docx",
+   "skill-pdf"
+  ],
+  "why": "cited research plus market numbers into a document"
+ },
+ {
+  "prompt": "morning. long day ahead",
+  "must": [],
+  "ok": [],
+  "why": "no connector or skill needed"
+ },
+ {
+  "prompt": "where's NVDA trading, and what do the RSI and 50 day look like",
+  "must": [
+   "alpha-vantage"
+  ],
+  "ok": [],
+  "why": "quote plus indicators as retrieved numbers"
+ },
+ {
+  "prompt": "open the city permit page and tell me what fields the application asks for",
+  "must": [
+   "browserbase"
+  ],
+  "ok": [
+   "firecrawl",
+   "parallel-search"
+  ],
+  "why": "cloud browser read of a form page"
+ },
+ {
+  "prompt": "I'm wiped. does it make sense to take Sundays off or is that dumb for a solo founder",
+  "must": [],
+  "ok": [],
+  "why": "no connector or skill needed"
+ },
+ {
+  "prompt": "ok good, got it",
+  "must": [],
+  "ok": [],
+  "why": "no connector or skill needed"
+ },
+ {
+  "prompt": "what does the VitaForge operating agreement PDF say about distributions to members",
+  "must": [
+   "skill-pdf"
+  ],
+  "ok": [
+   "google-drive"
+  ],
+  "why": "read a PDF"
+ },
+ {
+  "prompt": "find duplexes for sale in Grand Forks under 300k off the listing sites",
+  "must": [
+   "firecrawl"
+  ],
+  "ok": [
+   "apify",
+   "browserbase"
+  ],
+  "why": "scrape listing pages"
+ },
+ {
+  "prompt": "how many jobs are booked Thursday and Friday, and which of the four slots are still open",
+  "must": [
+   "airtable"
+  ],
+  "ok": [
+   "google-calendar"
+  ],
+  "why": "bookings live in the founder's bookings tracker"
+ },
+ {
+  "prompt": "build a lender deck for the Ellingson Estates refi, units, rents, and where we stand",
+  "must": [
+   "skill-pptx"
+  ],
+  "ok": [
+   "skill-xlsx",
+   "google-drive"
+  ],
+  "why": "slide deck"
+ },
+ {
+  "prompt": "what's the current syntax for a scheduled serverless function so I can run a nightly job",
+  "must": [
+   "context7"
+  ],
+  "ok": [
+   "netlify",
+   "vercel"
+  ],
+  "why": "current framework docs not recalled API shapes"
+ },
+ {
+  "prompt": "what did Deere management say on the last earnings call about margins? need the quote and a link",
+  "must": [
+   "bigdata"
+  ],
+  "ok": [
+   "alpha-vantage"
+  ],
+  "why": "cited transcript quote"
+ },
+ {
+  "prompt": "how's revenue this month vs last",
+  "must": [
+   "stripe"
+  ],
+  "ok": [
+   "airtable"
+  ],
+  "why": "exact revenue figures come from the payment processor"
+ },
+ {
+  "prompt": "get the Wyoming annual report for Pantheon LLC filled out in the browser, I'll take it from there",
+  "must": [
+   "skill-form-filler"
+  ],
+  "ok": [],
+  "why": "state registration form filled, stops before final submit"
+ },
+ {
+  "prompt": "give me a quick checklist for walking a customer through a haul quote before we start",
+  "must": [],
+  "ok": [],
+  "why": "no connector or skill needed"
+ },
+ {
+  "prompt": "explain what a cap rate is like I'm new to this",
+  "must": [],
+  "ok": [],
+  "why": "no connector or skill needed"
+ },
+ {
+  "prompt": "Netlify build failed last night, why",
+  "must": [
+   "netlify"
+  ],
+  "ok": [
+   "github"
+  ],
+  "why": "deploy state and build output"
+ },
+ {
+  "prompt": "my weekly Pick It Up E recap routine needs to become a reusable skill, and test that it actually works",
+  "must": [
+   "skill-skill-creator"
+  ],
+  "ok": [],
+  "why": "create and evaluate a skill"
+ },
+ {
+  "prompt": "pull the errors from the last hour on the Penny Power API",
+  "must": [
+   "vercel"
+  ],
+  "ok": [
+   "github",
+   "supabase"
+  ],
+  "why": "runtime errors and logs"
+ },
+ {
+  "prompt": "is it smarter to knock down the truck loan early or keep cash for the slow winter, just your take",
+  "must": [],
+  "ok": [],
+  "why": "no connector or skill needed"
+ },
+ {
+  "prompt": "rent roll sheet for Ellingson Estates: unit, rent, lease end, and a formula that totals the year",
+  "must": [
+   "skill-xlsx"
+  ],
+  "ok": [
+   "skill-google-workspace"
+  ],
+  "why": "spreadsheet with formulas"
+ },
+ {
+  "prompt": "what's Wyoming charging for an LLC annual report this year and when is it due",
+  "must": [
+   "parallel-search"
+  ],
+  "ok": [
+   "firecrawl"
+  ],
+  "why": "current fee and deadline"
+ },
+ {
+  "prompt": "I want to launch a junk removal quote calculator at zero hosting cost. Walk me through the plan and look at who's already doing it",
+  "must": [
+   "skill-venture-launch-playbook"
+  ],
+  "ok": [
+   "firecrawl",
+   "parallel-search",
+   "skill-forge-web-stack"
+  ],
+  "why": "zero-cost launch with competitor recon"
+ },
+ {
+  "prompt": "set up a Google Sheet to track jobs by day with a total column",
+  "must": [
+   "skill-google-workspace"
+  ],
+  "ok": [
+   "skill-xlsx",
+   "airtable"
+  ],
+  "why": "create a Google Sheet in Drive"
+ },
+ {
+  "prompt": "give me five name ideas for a fall leaf cleanup special",
+  "must": [],
+  "ok": [],
+  "why": "no connector or skill needed"
+ },
+ {
+  "prompt": "haha yesterday's gutter job was brutal",
+  "must": [],
+  "ok": [],
+  "why": "no connector or skill needed"
+ },
+ {
+  "prompt": "is 'we haul it, you relax' a better tagline than 'clean sweep'? your gut",
+  "must": [],
+  "ok": [],
+  "why": "no connector or skill needed"
+ },
+ {
+  "prompt": "what's the difference between an LLC and an S corp in plain words",
+  "must": [],
+  "ok": [],
+  "why": "no connector or skill needed"
+ },
+ {
+  "prompt": "what does the move-out cleaning clause say in the Cherry St lease",
+  "must": [
+   "google-drive"
+  ],
+  "ok": [
+   "skill-pdf"
+  ],
+  "why": "read the founder's own lease file"
+ },
+ {
+  "prompt": "from the shop how much of Thompson and Manvel can I hit within 20 minutes of driving",
+  "must": [
+   "tomtom"
+  ],
+  "ok": [],
+  "why": "reachable-range question for the service area"
+ },
+ {
+  "prompt": "I want Claude to be able to look up my bookings directly. Build a small server for that",
+  "must": [
+   "skill-mcp-builder"
+  ],
+  "ok": [
+   "airtable"
+  ],
+  "why": "build an MCP server"
+ },
+ {
+  "prompt": "find me a two hour window Wednesday afternoon for a big junk job",
+  "must": [
+   "google-calendar"
+  ],
+  "ok": [
+   "airtable"
+  ],
+  "why": "free slots"
+ },
+ {
+  "prompt": "if I charge $85 and the job takes 40 minutes of labor for one guy and a truck, is that a decent margin? just reason it out",
+  "must": [],
+  "ok": [],
+  "why": "no connector or skill needed"
+ },
+ {
+  "prompt": "which of my automations broke overnight",
+  "must": [
+   "make"
+  ],
+  "ok": [
+   "zapier",
+   "airtable"
+  ],
+  "why": "execution history and failures"
+ },
+ {
+  "prompt": "chart gold against silver over the past year",
+  "must": [
+   "alpha-vantage",
+   "skill-dataviz"
+  ],
+  "ok": [],
+  "why": "commodity history then chart"
+ },
+ {
+  "prompt": "chart of jobs by service type from the Airtable jobs table for last quarter",
+  "must": [
+   "airtable",
+   "skill-dataviz"
+  ],
+  "ok": [
+   "skill-xlsx"
+  ],
+  "why": "read jobs then chart them"
+ },
+ {
+  "prompt": "write a two line text I can use to tell a customer we're running 30 minutes late",
+  "must": [],
+  "ok": [],
+  "why": "no connector or skill needed"
+ },
+ {
+  "prompt": "has Google changed the rules for service-area businesses lately",
+  "must": [
+   "parallel-search"
+  ],
+  "ok": [
+   "firecrawl"
+  ],
+  "why": "volatile platform rules"
+ },
+ {
+  "prompt": "do I have a meeting with the lender coming up, and is there an email thread about it? Draft me a short reply to the newest message so I can look it over",
+  "must": [
+   "google-calendar",
+   "gmail"
+  ],
+  "ok": [],
+  "why": "calendar read plus email search and draft"
+ },
+ {
+  "prompt": "thanks, that worked",
+  "must": [],
+  "ok": [],
+  "why": "no connector or skill needed"
+ },
+ {
+  "prompt": "what's a 30 year fixed going for today and what does FHA require to refi a rental I've held about a year",
+  "must": [
+   "parallel-search"
+  ],
+  "ok": [],
+  "why": "current rates and program rules"
+ },
+ {
+  "prompt": "brainstorm a slogan for Pick It Up E, short and punchy",
+  "must": [],
+  "ok": [],
+  "why": "no connector or skill needed"
+ },
+ {
+  "prompt": "look over my last commit on the penny power repo and tell me if anything would break in prod",
+  "must": [
+   "github",
+   "skill-code-review"
+  ],
+  "ok": [
+   "skill-security-review"
+  ],
+  "why": "read the commit then review for bugs"
+ },
+ {
+  "prompt": "pull the brand colors and fonts out of our Figma file so the new landing page matches",
+  "must": [
+   "figma"
+  ],
+  "ok": [
+   "skill-forge-web-stack"
+  ],
+  "why": "read design variables and tokens"
+ },
+ {
+  "prompt": "pull reviews on the other junk crews in the Grand Forks area, I want to know what people gripe about",
+  "must": [
+   "apify"
+  ],
+  "ok": [
+   "openseo",
+   "firecrawl"
+  ],
+  "why": "maps reviews dataset for competitors"
+ },
+ {
+  "prompt": "where do we show up when someone searches junk removal in East Grand Forks",
+  "must": [
+   "openseo"
+  ],
+  "ok": [
+   "windsor",
+   "semrush"
+  ],
+  "why": "map-pack and local SERP rank"
+ },
+ {
+  "prompt": "put the last 90 days of SPY closes in a spreadsheet with a 20 day average column",
+  "must": [
+   "alpha-vantage",
+   "skill-xlsx"
+  ],
+  "ok": [],
+  "why": "price history then a formula-driven sheet"
+ },
+ {
+  "prompt": "what's on my plate this week, anything overlapping",
+  "must": [
+   "google-calendar"
+  ],
+  "ok": [],
+  "why": "events and conflicts"
+ },
+ {
+  "prompt": "when does it make sense to add a second truck, rough rule of thumb",
+  "must": [],
+  "ok": [],
+  "why": "no connector or skill needed"
+ },
+ {
+  "prompt": "check whether the Zapier connection to Brevo is still live and what actions I could run from it",
+  "must": [
+   "zapier"
+  ],
+  "ok": [
+   "make"
+  ],
+  "why": "inspect connections and available actions"
+ },
+ {
+  "prompt": "run a security check on our Supabase project",
+  "must": [
+   "supabase"
+  ],
+  "ok": [],
+  "why": "security advisors"
+ },
+ {
+  "prompt": "what should I be targeting for leaf cleanup and gutter cleaning this fall, and how hard is each to rank for",
+  "must": [
+   "semrush"
+  ],
+  "ok": [
+   "openseo"
+  ],
+  "why": "keyword volume and difficulty"
+ },
+ {
+  "prompt": "find the county landfill permit email",
+  "must": [
+   "gmail"
+  ],
+  "ok": [],
+  "why": "search email threads"
+ },
+ {
+  "prompt": "rewrite this so it sounds less stiff: 'We provide residential debris removal services at competitive rates.'",
+  "must": [],
+  "ok": [],
+  "why": "no connector or skill needed"
+ },
+ {
+  "prompt": "what are the other haulers around here charging for a single appliance pickup? need a real range, not a guess",
+  "must": [
+   "parallel-search",
+   "firecrawl"
+  ],
+  "ok": [
+   "apify",
+   "openseo"
+  ],
+  "why": "volatile competitor prices: search then scrape their pages"
+ },
+ {
+  "prompt": "how many people called us off the Google listing last month",
+  "must": [
+   "windsor"
+  ],
+  "ok": [
+   "openseo"
+  ],
+  "why": "Google Business Profile metrics"
+ },
+ {
+  "prompt": "write a one page work agreement for tenant turn jobs in Word",
+  "must": [
+   "skill-docx"
+  ],
+  "ok": [],
+  "why": "Word document"
+ },
+ {
+  "prompt": "add a chat box to the booking page that answers pricing questions using the Claude API, and tell me what it would cost at 2,000 chats a month",
+  "must": [
+   "skill-forge-web-stack",
+   "skill-claude-api"
+  ],
+  "ok": [
+   "context7"
+  ],
+  "why": "page with AI feature plus API pricing reference"
+ },
+ {
+  "prompt": "find the Notion page where I wrote up how we price gutter jobs",
+  "must": [
+   "notion"
+  ],
+  "ok": [
+   "google-drive"
+  ],
+  "why": "SOP lookup in the workspace"
+ },
+ {
+  "prompt": "build a booking page for Pick It Up E where you pick a date and one of four slots and it saves the lead",
+  "must": [
+   "skill-forge-web-stack"
+  ],
+  "ok": [
+   "airtable",
+   "netlify"
+  ],
+  "why": "single-file front end with serverless function and capture form"
+ }
+]

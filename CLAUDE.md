@@ -33,7 +33,11 @@ Static system, tools, this file, one skill, then the session. Do not switch mode
 ## Hooks (`.claude/settings.json`)
 - Stop: re-runs `contract.md` Done-when checks; exit 2 blocks. Capped at 3 blocks per red streak, then a STOP-FORCED record goes to the trace.
 - PreToolUse: denies gate verbs, send-class commands, unregistered and un-added act tools, and any write to the trace.
+- SessionStart: injects the capability index. UserPromptSubmit: injects matched capabilities and the tool-load call. Both are advisory and fail open; neither calls a model.
 - PostToolUse: appends a hash-chained record to `trace/trace.jsonl`. Nothing deletes it. `python3 desk/desk.py verify-trace` must exit 0.
+
+## Auto-routing (connectors, plugins, skills)
+`registry/capabilities.json` is the map; `registry/capabilities.index.md` is generated from it. SessionStart shows the index once; UserPromptSubmit adds the matched entries and the exact `ToolSearch select:` call. Use a matched read or draft entry without being asked and name it in one clause. Every `load` tool is scope read or draft; `never_auto` tools are act scope and stay gated. After editing the map run `python3 desk/desk.py caps-register --write`, then `caps-index --write`, then `caps-lint`.
 
 ## Invention
 Only `.claude/skills/invention/SKILL.md`. Exactly three candidates and one kill, each naming a real tool and a done-when, shadow-run beside the current skill, promoted only if the held-out check holds and tokens or time drop. The agent does not promote itself.

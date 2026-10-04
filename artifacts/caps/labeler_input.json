@@ -1,0 +1,230 @@
+[
+ {
+  "id": "airtable",
+  "kind": "connector",
+  "name": "Airtable",
+  "use": "read the founder's Airtable bases: bookings, leads, jobs, venture trackers; schema, records, search"
+ },
+ {
+  "id": "supabase",
+  "kind": "connector",
+  "name": "Supabase",
+  "use": "inspect the Supabase backend: tables, SELECT queries, security and performance advisors, logs, docs"
+ },
+ {
+  "id": "netlify",
+  "kind": "connector",
+  "name": "Netlify",
+  "use": "read Netlify site, deploy and team state (builds, deploy status, config)"
+ },
+ {
+  "id": "vercel",
+  "kind": "connector",
+  "name": "Vercel",
+  "use": "read Vercel projects, deployments, runtime logs and errors; search Vercel docs"
+ },
+ {
+  "id": "stripe",
+  "kind": "connector",
+  "name": "Stripe",
+  "use": "read Stripe revenue, balance, charges, customers and docs for exact figures"
+ },
+ {
+  "id": "semrush",
+  "kind": "connector",
+  "name": "Semrush",
+  "use": "SEO data: keyword volume and difficulty, competitors, backlinks, organic traffic, position tracking, site audits"
+ },
+ {
+  "id": "openseo",
+  "kind": "connector",
+  "name": "OpenSEO",
+  "use": "local and site SEO: map-pack rank grids, local SERPs, site audit results, SERP competitors, keyword metrics"
+ },
+ {
+  "id": "alpha-vantage",
+  "kind": "connector",
+  "name": "Alpha Vantage",
+  "use": "market data as retrieved numbers: quotes, price history, fundamentals, earnings, indicators, news sentiment"
+ },
+ {
+  "id": "bigdata",
+  "kind": "connector",
+  "name": "Bigdata.com",
+  "use": "cited finance research: SEC filings, earnings call transcripts, tearsheets, sentiment, news; every claim has a source link"
+ },
+ {
+  "id": "context7",
+  "kind": "connector",
+  "name": "Context7",
+  "use": "current library, framework and SDK documentation instead of recalled API shapes"
+ },
+ {
+  "id": "parallel-search",
+  "kind": "connector",
+  "name": "Parallel Search",
+  "use": "authless web search and page fetch for current or volatile facts: prices, rates, laws, versions, platform rules, news"
+ },
+ {
+  "id": "firecrawl",
+  "kind": "connector",
+  "name": "FireCrawl",
+  "use": "scrape or crawl a specific page or site into markdown or JSON: competitor pages, listings, pricing, page monitors"
+ },
+ {
+  "id": "tomtom",
+  "kind": "connector",
+  "name": "TomTom Maps",
+  "use": "geocoding, routing, drive times, reachable range, traffic and POI search for service-area and route questions"
+ },
+ {
+  "id": "windsor",
+  "kind": "connector",
+  "name": "Windsor.ai",
+  "use": "read ad, analytics and Google Business Profile metrics across 300+ sources"
+ },
+ {
+  "id": "gmail",
+  "kind": "connector",
+  "name": "Gmail",
+  "use": "search and read email threads; create drafts. Sending, replying and forwarding are gated and absent"
+ },
+ {
+  "id": "google-calendar",
+  "kind": "connector",
+  "name": "Google Calendar",
+  "use": "read the calendar: events, free slots, conflicts, suggested times. Creating or changing events is gated"
+ },
+ {
+  "id": "google-drive",
+  "kind": "connector",
+  "name": "Google Drive",
+  "use": "find and read the founder's own Drive files: docs, sheets, contracts, leases. Sharing and deleting are gated"
+ },
+ {
+  "id": "notion",
+  "kind": "connector",
+  "name": "Notion",
+  "use": "search and read the Notion workspace: pages, databases, meeting notes, SOPs. Creating or editing pages is gated"
+ },
+ {
+  "id": "github",
+  "kind": "connector",
+  "name": "GitHub",
+  "use": "read GitHub repos in scope: files, code search, commits, branches, issues, PRs, Actions logs, secret scanning"
+ },
+ {
+  "id": "make",
+  "kind": "connector",
+  "name": "Make",
+  "use": "read Make scenarios, executions and blueprints; validate a blueprint. Running, activating or deleting scenarios is gated"
+ },
+ {
+  "id": "zapier",
+  "kind": "connector",
+  "name": "Zapier",
+  "use": "inspect Zapier connections and available actions; run read actions. Write actions are gated"
+ },
+ {
+  "id": "apify",
+  "kind": "connector",
+  "name": "Apify",
+  "use": "find scraping Actors and read their dataset output: maps listings, reviews, social, directories. Running Actors is gated"
+ },
+ {
+  "id": "browserbase",
+  "kind": "connector",
+  "name": "Browserbase",
+  "use": "cloud browser (not your computer): open pages, observe, extract. Clicking and typing (act) is gated"
+ },
+ {
+  "id": "figma",
+  "kind": "connector",
+  "name": "Figma",
+  "use": "read Figma designs: design context, screenshots, variables and tokens, component search"
+ },
+ {
+  "id": "skill-xlsx",
+  "kind": "skill",
+  "name": "xlsx",
+  "use": "open, build, clean and format spreadsheets (xlsx, csv, tsv) with formulas so code computes the numbers"
+ },
+ {
+  "id": "skill-pdf",
+  "kind": "skill",
+  "name": "pdf",
+  "use": "read, fill, merge, split, OCR and create PDFs"
+ },
+ {
+  "id": "skill-docx",
+  "kind": "skill",
+  "name": "docx",
+  "use": "create and edit Word documents"
+ },
+ {
+  "id": "skill-pptx",
+  "kind": "skill",
+  "name": "pptx",
+  "use": "build and edit PowerPoint decks"
+ },
+ {
+  "id": "skill-forge-web-stack",
+  "kind": "skill",
+  "name": "forge-web-stack",
+  "use": "build web apps, dashboards, capture forms and AI features on the Netlify + Airtable + Claude API stack"
+ },
+ {
+  "id": "skill-venture-launch-playbook",
+  "kind": "skill",
+  "name": "venture-launch-playbook",
+  "use": "launch a revenue-ready web business at $0 infrastructure with a quality ladder and competitor recon"
+ },
+ {
+  "id": "skill-form-filler",
+  "kind": "skill",
+  "name": "form-filler",
+  "use": "fill LLC, EIN and state registration forms in the browser; stops before passwords, card numbers and the final Submit"
+ },
+ {
+  "id": "skill-google-workspace",
+  "kind": "skill",
+  "name": "google-workspace",
+  "use": "create or change Google Docs, Sheets and Slides in the founder's Drive"
+ },
+ {
+  "id": "skill-dataviz",
+  "kind": "skill",
+  "name": "dataviz",
+  "use": "chart, dashboard and data-visualization method with a runnable color validator"
+ },
+ {
+  "id": "skill-claude-api",
+  "kind": "skill",
+  "name": "claude-api",
+  "use": "Claude API and Anthropic SDK reference: model ids, pricing, caching, tool use, token counting"
+ },
+ {
+  "id": "skill-security-review",
+  "kind": "skill",
+  "name": "security-review",
+  "use": "security review of the pending changes on the current branch"
+ },
+ {
+  "id": "skill-code-review",
+  "kind": "skill",
+  "name": "code-review",
+  "use": "review a diff, PR or branch for correctness bugs"
+ },
+ {
+  "id": "skill-skill-creator",
+  "kind": "skill",
+  "name": "skill-creator",
+  "use": "create, modify and evaluate skills with measured evals"
+ },
+ {
+  "id": "skill-mcp-builder",
+  "kind": "skill",
+  "name": "mcp-builder",
+  "use": "build MCP servers in Python (FastMCP) or TypeScript"
+ }
+]

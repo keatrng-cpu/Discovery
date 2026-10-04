@@ -25,6 +25,9 @@ token cap: lead pass and one worker pass measured from transcripts and written t
 | d8b | Trace tamper (edit, delete, reorder) fails verification | `python3 .claude/hooks/test_hooks.py trace` |
 | d9 | Unit tests pass | `python3 -m unittest discover -s desk/tests -q` |
 | d10 | Report lists files created, checks run, and what was not built because a tool was absent | `python3 desk/desk.py report-check plan.md` |
+| d11 | Capability map lints clean: only read or draft tools auto-load, no gate verb, no act tool, index fresh | `python3 desk/desk.py caps-lint` |
+| d12 | Prompt and session-start hooks name the exact tool-load call, stay silent on chit-chat, fail open, and never name an act tool | `python3 .claude/hooks/test_hooks.py route` |
+| d13 | Recorded index-proxy answers plus the matcher meet the pre-registered thresholds on the held-out prompts (arithmetic re-run; the model answers are a recorded file) | `python3 desk/desk.py caps-score fixtures/caps/heldout.json artifacts/caps/index_eval_answers.json` |
 
 ## Per-task contract template (the router emits this; no contract, no start)
 shelf: | directive: | stakes: low/med/high | novelty: low/high

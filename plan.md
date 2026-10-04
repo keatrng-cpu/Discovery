@@ -66,3 +66,29 @@ The 35 still voted down fail on: A3 (done-when does not enforce an element the b
 - Check programs for the other 115 directives were not written; their done-when names the check form, and `checkRunnable` says false where that is so.
 - The trace chain cannot detect an edit to the last record or truncation of the tail; real append-only needs a filesystem attribute or a remote write-once sink. Shell enforcement in the PreToolUse hook is pattern matching, not a sandbox.
 - No pull request: the remote has only this branch, so there is no base branch to merge into. A person has to create one that shares this history.
+
+## Addendum: auto-routing layer (connectors, plugins, skills)
+
+### What was built
+- `registry/capabilities.json`: 44 entries (38 live: 24 connectors and 14 skills; 6 not live and ignored by the router) and 5 venture bundles. `desk/caps.py` is the matcher: a strong signal scores 3, distinct weak signals 1 each (cap 3), a venture bundle +1 per member, route at 3, top 5, at most 18 tools. Code only; no model call.
+- Hooks in `.claude/settings.json`: SessionStart injects `registry/capabilities.index.md` (generated, 7,395 chars) once; UserPromptSubmit injects the matched entries, the exact `ToolSearch select:` call, a gate line, and the desk router line when `route` returns one ready directive.
+- 130 read or draft MCP tools registered in `registry/tools.json` with `added_by` naming the user request. No act tool was registered. Every `load` tool is allowed by the PreToolUse gate and every `never_auto` tool is denied by it (unit test).
+- New commands: `caps`, `caps-lint` (also run by `lint`), `caps-register`, `caps-index`, `caps-eval`, `caps-score`. Contract rows d11 to d13.
+
+### Measured (held-out: 60 prompts a draft-blind model wrote from the capability list only; labels are that model's judgment; thresholds committed in 08164dc before any held-out run)
+| system | recall | precision | no-tool prompts that fired | against the pre-registered bar |
+|---|---|---|---|---|
+| keyword matcher alone | 0.385 | 0.889 | 0.062 | FAIL recall (bar 0.80) |
+| model shown only the index (subagent proxy) | 0.942 | 0.982 | 0.0 | pass |
+| union (what the two hooks deliver) | 0.962 | 0.938 | 0.062 | pass |
+- The matcher failed on plain-language prompts that name no tool (21 of 44 positive prompts got no injection). Signals were tuned on a 30-prompt tune set of my own before the single held-out run; none was changed after it. The index is the answer to that failure, not a retune.
+- The index figure is a proxy: a subagent told to choose capabilities, which overstates what a model does unprompted in a real session. Same model family as the labeler, n=60, one run. Treat 0.94 as an upper bound.
+- Latency over 7 runs each: matched prompt 146 ms median, chit-chat 81 ms, session start 22 ms. Per-prompt injection averaged 244 chars on the held-out prompts (max 1,308); the index is about 7.4k chars once per session.
+
+### Not built, not verified
+- The hooks were exercised by subprocess with the documented payloads. They were not observed firing inside a live session, and an interactive session holds project hooks back until the folder is trusted.
+- No `permissions.allow` entries were added, so the harness may still ask to approve each MCP call.
+- Project scope only: other repos and accounts see nothing until this is packaged as a plugin.
+- The route log (ids and a char count, no prompt text) is written to the ignored trace directory but nothing joins it to tool use yet.
+- Account skill descriptions (the firecrawl skill's is two words) cannot be changed from this repo.
+- `mcp__Supabase__execute_sql` is registered read; a scope label cannot stop a write, so the rule is SELECT only by instruction.

@@ -1,0 +1,1670 @@
+{
+ "_doc": "Auto-route map. Read by .claude/hooks/userpromptsubmit_route.py via desk/caps.py. Matching is code: a strong signal scores 3, a distinct weak signal 1, a venture bundle +1 to each member; an entry routes at score >= threshold. Only status=live entries route. `load` tools are scope read or draft only (lint-enforced against registry/tools.json); `never_auto` lists act-scope tools that stay gated. Connector tool prefix is mcp__<server>__ and is already in `load`.",
+ "threshold": 3,
+ "weights": {
+  "strong": 3,
+  "weak": 1,
+  "bundle": 1
+ },
+ "max_caps": 5,
+ "max_tools": 18,
+ "off_switch": [
+  "without (using )?(any )?(connectors?|tools|plugins?)",
+  "no (connectors?|tools|plugins?)",
+  "don'?t use (any )?(connectors?|tools|plugins?)",
+  "offline only"
+ ],
+ "account_skills": [
+  "anthropic-skills:xlsx",
+  "anthropic-skills:pdf",
+  "anthropic-skills:docx",
+  "anthropic-skills:pptx",
+  "anthropic-skills:forge-web-stack",
+  "anthropic-skills:venture-launch-playbook",
+  "anthropic-skills:form-filler",
+  "anthropic-skills:google-workspace",
+  "dataviz",
+  "claude-api",
+  "security-review",
+  "code-review",
+  "anthropic-skills:skill-creator",
+  "anthropic-skills:mcp-builder"
+ ],
+ "capabilities": [
+  {
+   "id": "airtable",
+   "kind": "connector",
+   "name": "Airtable",
+   "status": "live",
+   "priority": 4,
+   "use": "read the founder's Airtable bases: bookings, leads, jobs, venture trackers; schema, records, search",
+   "load": [
+    "mcp__Airtable__search_bases",
+    "mcp__Airtable__list_bases",
+    "mcp__Airtable__list_tables_for_base",
+    "mcp__Airtable__get_table_schema",
+    "mcp__Airtable__list_records_for_table",
+    "mcp__Airtable__search_records",
+    "mcp__Airtable__analyze_table"
+   ],
+   "check": "schema",
+   "draft_tools": [],
+   "never_auto": [
+    "mcp__Airtable__create_records_for_table",
+    "mcp__Airtable__update_records_for_table",
+    "mcp__Airtable__delete_records_for_table",
+    "mcp__Airtable__create_table",
+    "mcp__Airtable__create_automation"
+   ],
+   "strong": [
+    "airtable",
+    "(rows?|records?|entries) (in|from|of) (the |my |our )?[\\w ]{1,20} (table|base)"
+   ],
+   "weak": [
+    "crm",
+    "leads?",
+    "bookings?",
+    "jobs? (log|list|table)",
+    "records?",
+    "tables?",
+    "trackers?",
+    "pipeline",
+    "database",
+    "rows?"
+   ]
+  },
+  {
+   "id": "supabase",
+   "kind": "connector",
+   "name": "Supabase",
+   "status": "live",
+   "priority": 2,
+   "use": "inspect the Supabase backend: tables, SELECT queries, security and performance advisors, logs, docs",
+   "load": [
+    "mcp__Supabase__list_projects",
+    "mcp__Supabase__list_tables",
+    "mcp__Supabase__execute_sql",
+    "mcp__Supabase__get_advisors",
+    "mcp__Supabase__query_logs",
+    "mcp__Supabase__search_docs"
+   ],
+   "check": "schema",
+   "draft_tools": [],
+   "note": "execute_sql is registered read: SELECT only. A scope label cannot stop a write; never send DDL or DML.",
+   "never_auto": [
+    "mcp__Supabase__apply_migration",
+    "mcp__Supabase__deploy_edge_function",
+    "mcp__Supabase__create_project",
+    "mcp__Supabase__create_branch",
+    "mcp__Supabase__merge_branch",
+    "mcp__Supabase__delete_branch",
+    "mcp__Supabase__reset_branch",
+    "mcp__Supabase__pause_project"
+   ],
+   "strong": [
+    "supabase",
+    "postgres(ql)?",
+    "row[- ]level security",
+    "\\brls\\b",
+    "edge functions?"
+   ],
+   "weak": [
+    "database",
+    "sql",
+    "migrations?",
+    "schema",
+    "auth(entication)?",
+    "advisors?",
+    "logs?",
+    "tables?"
+   ]
+  },
+  {
+   "id": "netlify",
+   "kind": "connector",
+   "name": "Netlify",
+   "status": "live",
+   "priority": 7,
+   "use": "read Netlify site, deploy and team state (builds, deploy status, config)",
+   "load": [
+    "mcp__Netlify__netlify-project-services-reader",
+    "mcp__Netlify__netlify-deploy-services-reader",
+    "mcp__Netlify__netlify-team-services-reader",
+    "mcp__Netlify__get-netlify-coding-context"
+   ],
+   "check": "schema",
+   "draft_tools": [],
+   "never_auto": [
+    "mcp__Netlify__netlify-deploy-services-updater",
+    "mcp__Netlify__netlify-project-services-updater",
+    "mcp__Netlify__netlify-extension-services-updater"
+   ],
+   "strong": [
+    "netlify"
+   ],
+   "weak": [
+    "deploy(s|ed|ing|ment|ments)?",
+    "build (failed|log|logs)",
+    "site (is )?down",
+    "redirects?",
+    "static site",
+    "forms?"
+   ]
+  },
+  {
+   "id": "vercel",
+   "kind": "connector",
+   "name": "Vercel",
+   "status": "live",
+   "priority": 6,
+   "use": "read Vercel projects, deployments, runtime logs and errors; search Vercel docs",
+   "load": [
+    "mcp__Vercel__list_teams",
+    "mcp__Vercel__list_projects",
+    "mcp__Vercel__get_project",
+    "mcp__Vercel__list_deployments",
+    "mcp__Vercel__get_deployment",
+    "mcp__Vercel__get_runtime_logs",
+    "mcp__Vercel__get_runtime_errors",
+    "mcp__Vercel__list_deployment_events",
+    "mcp__Vercel__search_vercel_documentation"
+   ],
+   "check": "schema",
+   "draft_tools": [],
+   "never_auto": [
+    "mcp__Vercel__buy_domain",
+    "mcp__Vercel__buy_pro",
+    "mcp__Vercel__buy_credits",
+    "mcp__Vercel__create_deployment",
+    "mcp__Vercel__delete_project",
+    "mcp__Vercel__update_project",
+    "mcp__Vercel__request_rollback",
+    "mcp__Vercel__pause_project"
+   ],
+   "strong": [
+    "vercel"
+   ],
+   "weak": [
+    "deploy(s|ed|ing|ment|ments)?",
+    "serverless",
+    "runtime (logs?|errors?)",
+    "edge",
+    "preview",
+    "build (failed|log|logs)"
+   ]
+  },
+  {
+   "id": "stripe",
+   "kind": "connector",
+   "name": "Stripe",
+   "status": "live",
+   "priority": 8,
+   "use": "read Stripe revenue, balance, charges, customers and docs for exact figures",
+   "load": [
+    "mcp__Stripe__get_balance_summary",
+    "mcp__Stripe__stripe_analytics",
+    "mcp__Stripe__stripe_api_read",
+    "mcp__Stripe__stripe_api_search",
+    "mcp__Stripe__stripe_api_details",
+    "mcp__Stripe__search_stripe_documentation",
+    "mcp__Stripe__list_available_accounts_or_orgs"
+   ],
+   "check": "schema",
+   "draft_tools": [],
+   "never_auto": [
+    "mcp__Stripe__stripe_api_write",
+    "mcp__Stripe__manage_stripe_accounts"
+   ],
+   "strong": [
+    "stripe",
+    "payment links?",
+    "mrr",
+    "payouts?",
+    "revenue (this|last|so far|to date|today|yesterday|ytd|numbers?)",
+    "how (are we|is the business|am i) doing on (revenue|sales|money)",
+    "how much (did|have|do) (we|i) (make|made|earn\\w*|take in)"
+   ],
+   "weak": [
+    "revenue",
+    "balance",
+    "charges?",
+    "subscriptions?",
+    "refunds?",
+    "deposits?",
+    "invoices?",
+    "customers?",
+    "sales"
+   ]
+  },
+  {
+   "id": "semrush",
+   "kind": "connector",
+   "name": "Semrush",
+   "status": "live",
+   "priority": 3,
+   "use": "SEO data: keyword volume and difficulty, competitors, backlinks, organic traffic, position tracking, site audits",
+   "load": [
+    "mcp__Semrush__keyword_research",
+    "mcp__Semrush__domain_overview",
+    "mcp__Semrush__organic_research",
+    "mcp__Semrush__competitors_research",
+    "mcp__Semrush__backlinks_research",
+    "mcp__Semrush__traffic_overview",
+    "mcp__Semrush__position_tracking",
+    "mcp__Semrush__site_audit",
+    "mcp__Semrush__get_report_schema",
+    "mcp__Semrush__execute_report"
+   ],
+   "check": "schema",
+   "draft_tools": [],
+   "cost": "metered (API units)",
+   "never_auto": [],
+   "strong": [
+    "semrush",
+    "keyword research",
+    "keyword difficulty",
+    "search volume",
+    "backlinks?",
+    "domain authority",
+    "organic traffic",
+    "serp",
+    "keyword (volume|difficulty|data|ideas?|metrics|gaps?|suggestions?)",
+    "volume (and|&) difficulty"
+   ],
+   "weak": [
+    "seo",
+    "rank(ing|ings|s)?",
+    "competitors?",
+    "keywords?",
+    "traffic",
+    "google search",
+    "visibility"
+   ]
+  },
+  {
+   "id": "openseo",
+   "kind": "connector",
+   "name": "OpenSEO",
+   "status": "live",
+   "priority": 15,
+   "use": "local and site SEO: map-pack rank grids, local SERPs, site audit results, SERP competitors, keyword metrics",
+   "load": [
+    "mcp__OpenSEO__list_projects",
+    "mcp__OpenSEO__get_keyword_metrics",
+    "mcp__OpenSEO__get_domain_keyword_suggestions",
+    "mcp__OpenSEO__research_keywords",
+    "mcp__OpenSEO__get_ranked_keywords",
+    "mcp__OpenSEO__find_serp_competitors",
+    "mcp__OpenSEO__get_serp_results",
+    "mcp__OpenSEO__get_audit_issues",
+    "mcp__OpenSEO__get_audit_pages",
+    "mcp__OpenSEO__get_audit_status",
+    "mcp__OpenSEO__get_local_rank_grid",
+    "mcp__OpenSEO__get_local_serp_results",
+    "mcp__OpenSEO__search_local_businesses",
+    "mcp__OpenSEO__get_search_opportunities",
+    "mcp__OpenSEO__estimate_rank_tracker_cost"
+   ],
+   "check": "schema",
+   "draft_tools": [],
+   "cost": "credits (confirm batches over 2000)",
+   "never_auto": [
+    "mcp__OpenSEO__create_rank_tracker",
+    "mcp__OpenSEO__run_rank_tracker",
+    "mcp__OpenSEO__run_site_audit",
+    "mcp__OpenSEO__add_rank_tracking_keywords",
+    "mcp__OpenSEO__remove_rank_tracking_keywords",
+    "mcp__OpenSEO__create_project",
+    "mcp__OpenSEO__update_project_context",
+    "mcp__OpenSEO__save_keywords",
+    "mcp__OpenSEO__remove_saved_keywords",
+    "mcp__OpenSEO__save_report",
+    "mcp__OpenSEO__save_report_template",
+    "mcp__OpenSEO__delete_report",
+    "mcp__OpenSEO__delete_report_template",
+    "mcp__OpenSEO__delete_site_audit",
+    "mcp__OpenSEO__set_report_sharing"
+   ],
+   "strong": [
+    "openseo",
+    "rank tracker",
+    "map pack",
+    "local pack",
+    "local rank",
+    "rank grid",
+    "local seo",
+    "google business profile rank\\w*"
+   ],
+   "weak": [
+    "seo",
+    "site audit",
+    "audit",
+    "gbp",
+    "google business profile",
+    "rank(ing|ings|s)?",
+    "serp",
+    "local search",
+    "near me"
+   ]
+  },
+  {
+   "id": "alpha-vantage",
+   "kind": "connector",
+   "name": "Alpha Vantage",
+   "status": "live",
+   "priority": 1,
+   "use": "market data as retrieved numbers: quotes, price history, fundamentals, earnings, indicators, news sentiment",
+   "load": [
+    "mcp__Alpha_Vantage_MCP_Server__GLOBAL_QUOTE",
+    "mcp__Alpha_Vantage_MCP_Server__TIME_SERIES_DAILY",
+    "mcp__Alpha_Vantage_MCP_Server__TIME_SERIES_INTRADAY",
+    "mcp__Alpha_Vantage_MCP_Server__COMPANY_OVERVIEW",
+    "mcp__Alpha_Vantage_MCP_Server__EARNINGS",
+    "mcp__Alpha_Vantage_MCP_Server__INCOME_STATEMENT",
+    "mcp__Alpha_Vantage_MCP_Server__BALANCE_SHEET",
+    "mcp__Alpha_Vantage_MCP_Server__CASH_FLOW",
+    "mcp__Alpha_Vantage_MCP_Server__NEWS_SENTIMENT",
+    "mcp__Alpha_Vantage_MCP_Server__SYMBOL_SEARCH",
+    "mcp__Alpha_Vantage_MCP_Server__MARKET_STATUS",
+    "mcp__Alpha_Vantage_MCP_Server__ATR"
+   ],
+   "check": "schema",
+   "draft_tools": [],
+   "never_auto": [],
+   "strong": [
+    "alpha ?vantage",
+    "earnings",
+    "\\beps\\b",
+    "stock price",
+    "share price",
+    "tickers?",
+    "income statement",
+    "balance sheet",
+    "cash flow",
+    "\\brsi\\b",
+    "\\bmacd\\b",
+    "\\batr\\b",
+    "forex",
+    "fx rates?",
+    "commodit(y|ies)",
+    "treasury yields?",
+    "\\bcpi\\b",
+    "\\$[a-z]{1,5}"
+   ],
+   "weak": [
+    "stocks?",
+    "options",
+    "quotes?",
+    "price",
+    "market",
+    "volatility",
+    "dividends?",
+    "futures",
+    "etfs?",
+    "candles?",
+    "chart"
+   ]
+  },
+  {
+   "id": "bigdata",
+   "kind": "connector",
+   "name": "Bigdata.com",
+   "status": "live",
+   "priority": 17,
+   "use": "cited finance research: SEC filings, earnings call transcripts, tearsheets, sentiment, news; every claim has a source link",
+   "load": [
+    "mcp__Bigdata_com__find_securities",
+    "mcp__Bigdata_com__bigdata_search",
+    "mcp__Bigdata_com__bigdata_company_tearsheet",
+    "mcp__Bigdata_com__bigdata_fetch_document",
+    "mcp__Bigdata_com__bigdata_events_calendar",
+    "mcp__Bigdata_com__bigdata_market_tearsheet",
+    "mcp__Bigdata_com__bigdata_sentiment_tearsheet"
+   ],
+   "check": "quote",
+   "draft_tools": [],
+   "cost": "metered (subscription)",
+   "never_auto": [
+    "mcp__Bigdata_com__bigdata_upload_document"
+   ],
+   "strong": [
+    "bigdata",
+    "sec filings?",
+    "10-?k",
+    "10-?q",
+    "8-?k",
+    "earnings calls?",
+    "call transcripts?",
+    "tearsheets?"
+   ],
+   "weak": [
+    "filings?",
+    "sentiment",
+    "analysts?",
+    "investors?",
+    "company research",
+    "thesis",
+    "sector",
+    "earnings",
+    "news"
+   ]
+  },
+  {
+   "id": "context7",
+   "kind": "connector",
+   "name": "Context7",
+   "status": "live",
+   "priority": 28,
+   "use": "current library, framework and SDK documentation instead of recalled API shapes",
+   "load": [
+    "mcp__Context7__resolve-library-id",
+    "mcp__Context7__query-docs"
+   ],
+   "check": "quote",
+   "draft_tools": [],
+   "never_auto": [],
+   "strong": [
+    "context7",
+    "api reference",
+    "docs? for",
+    "documentation",
+    "(latest|new|current|recent) (\\w+[ -]){0,3}(sdk|library|framework|package)",
+    "(sdk|library|framework|package) (docs?|syntax|usage|changes?|changelog|breaking)"
+   ],
+   "weak": [
+    "syntax",
+    "sdk",
+    "library",
+    "framework",
+    "version",
+    "deprecated",
+    "migrat\\w+",
+    "install",
+    "configure",
+    "react",
+    "tailwind",
+    "next\\.?js",
+    "node",
+    "python"
+   ]
+  },
+  {
+   "id": "parallel-search",
+   "kind": "connector",
+   "name": "Parallel Search",
+   "status": "live",
+   "priority": 32,
+   "use": "authless web search and page fetch for current or volatile facts: prices, rates, laws, versions, platform rules, news",
+   "load": [
+    "mcp__Parallel_Search__web_search",
+    "mcp__Parallel_Search__web_fetch"
+   ],
+   "check": "quote",
+   "draft_tools": [],
+   "never_auto": [],
+   "strong": [
+    "search (the )?(web|internet|online)",
+    "look ?up",
+    "google it",
+    "find (out )?(online|on the web)",
+    "latest news",
+    "(current|latest|today'?s|up[- ]to[- ]date|this (week|month|year)'?s?) (\\w+[ -]){0,3}(price|prices|rate|rates|law|laws|version|versions|rules?|regulations?|fees?|deadlines?|requirements?|policy|policies|limits?|hours|costs?)"
+   ],
+   "weak": [
+    "current",
+    "latest",
+    "today",
+    "news",
+    "recent",
+    "online",
+    "compare",
+    "best",
+    "reviews?",
+    "rules? (for|in)",
+    "regulations?",
+    "https?://\\S+"
+   ],
+   "neg": [
+    "github\\.com/\\S+/(pull|issues)/",
+    "claude\\.ai/(artifact|code)/"
+   ]
+  },
+  {
+   "id": "firecrawl",
+   "kind": "connector",
+   "name": "FireCrawl",
+   "status": "live",
+   "priority": 14,
+   "use": "scrape or crawl a specific page or site into markdown or JSON: competitor pages, listings, pricing, page monitors",
+   "load": [
+    "mcp__FireCrawl__firecrawl_search",
+    "mcp__FireCrawl__firecrawl_scrape"
+   ],
+   "check": "quote",
+   "draft_tools": [],
+   "note": "connector entries show needs_reconnect; keyless search and scrape worked in this session",
+   "never_auto": [],
+   "strong": [
+    "scrape",
+    "crawl",
+    "extract (data|text|content|fields) from",
+    "sitemap",
+    "competitor'?s? (site|pages?|pricing|website)",
+    "read (this|that|the) (page|url|site|article)"
+   ],
+   "weak": [
+    "page content",
+    "website",
+    "landing pages?",
+    "listings?",
+    "pricing page",
+    "https?://\\S+"
+   ],
+   "neg": [
+    "github\\.com/\\S+/(pull|issues)/",
+    "claude\\.ai/(artifact|code)/",
+    "figma\\.com"
+   ]
+  },
+  {
+   "id": "tomtom",
+   "kind": "connector",
+   "name": "TomTom Maps",
+   "status": "live",
+   "priority": 33,
+   "use": "geocoding, routing, drive times, reachable range, traffic and POI search for service-area and route questions",
+   "load": [
+    "mcp__TomTom_Maps__tomtom-geocode",
+    "mcp__TomTom_Maps__tomtom-reverse-geocode",
+    "mcp__TomTom_Maps__tomtom-routing",
+    "mcp__TomTom_Maps__tomtom-reachable-range",
+    "mcp__TomTom_Maps__tomtom-traffic",
+    "mcp__TomTom_Maps__tomtom-poi-search",
+    "mcp__TomTom_Maps__tomtom-fuzzy-search",
+    "mcp__TomTom_Maps__tomtom-nearby",
+    "mcp__TomTom_Maps__tomtom-area-search",
+    "mcp__TomTom_Maps__tomtom-search-along-route"
+   ],
+   "check": "schema",
+   "draft_tools": [],
+   "never_auto": [],
+   "strong": [
+    "tomtom",
+    "geocode",
+    "drive ?times?",
+    "routing",
+    "route (optimi[sz]ation|planning)",
+    "service area",
+    "directions",
+    "reachable",
+    "distance (between|from|to)",
+    "how far",
+    "\\d+ ?(minutes?|mins?|miles?) (from|away|apart|between|out)",
+    "how long (does it take )?to (drive|get)",
+    "drive (time|distance)"
+   ],
+   "weak": [
+    "route",
+    "miles",
+    "map",
+    "addresses?",
+    "stops?",
+    "drive",
+    "travel time",
+    "zip codes?"
+   ]
+  },
+  {
+   "id": "windsor",
+   "kind": "connector",
+   "name": "Windsor.ai",
+   "status": "live",
+   "priority": 41,
+   "use": "read ad, analytics and Google Business Profile metrics across 300+ sources",
+   "load": [
+    "mcp__Windsor_ai__get_connectors",
+    "mcp__Windsor_ai__get_fields",
+    "mcp__Windsor_ai__get_data",
+    "mcp__Windsor_ai__list_actions"
+   ],
+   "check": "schema",
+   "draft_tools": [],
+   "never_auto": [
+    "mcp__Windsor_ai__execute_action",
+    "mcp__Windsor_ai__create_destination_task",
+    "mcp__Windsor_ai__upload_files",
+    "mcp__Windsor_ai__create_custom_field"
+   ],
+   "strong": [
+    "windsor",
+    "ad spend",
+    "meta ads",
+    "google ads",
+    "tiktok ads",
+    "\\broas\\b",
+    "\\bcpc\\b",
+    "\\bcpa\\b",
+    "\\bga4\\b",
+    "google analytics",
+    "search console",
+    "google business profile (insights|metrics|views|calls)"
+   ],
+   "weak": [
+    "ads?",
+    "campaigns?",
+    "facebook",
+    "instagram",
+    "analytics",
+    "gbp",
+    "google business profile",
+    "reviews?",
+    "impressions",
+    "clicks"
+   ]
+  },
+  {
+   "id": "gmail",
+   "kind": "connector",
+   "name": "Gmail",
+   "status": "live",
+   "priority": 11,
+   "use": "search and read email threads; create drafts. Sending, replying and forwarding are gated and absent",
+   "load": [
+    "mcp__Gmail__search_threads",
+    "mcp__Gmail__get_thread",
+    "mcp__Gmail__get_message",
+    "mcp__Gmail__list_labels",
+    "mcp__Gmail__create_draft"
+   ],
+   "check": "schema",
+   "draft_tools": [
+    "mcp__Gmail__create_draft"
+   ],
+   "never_auto": [
+    "mcp__Gmail__send_message",
+    "mcp__Gmail__reply",
+    "mcp__Gmail__forward",
+    "mcp__Gmail__trash_message",
+    "mcp__Gmail__trash_thread",
+    "mcp__Gmail__mark_message_spam",
+    "mcp__Gmail__update_message_labels"
+   ],
+   "strong": [
+    "gmail",
+    "inbox",
+    "my e-?mails?",
+    "email threads?",
+    "unread",
+    "draft (a |an |the )?(reply|e-?mail|response|follow[- ]?up)",
+    "reply to (the|that|his|her|their|my)"
+   ],
+   "weak": [
+    "e-?mails?",
+    "threads?",
+    "landlords?",
+    "customers?",
+    "follow[- ]?up",
+    "quote requests?",
+    "messages?"
+   ]
+  },
+  {
+   "id": "google-calendar",
+   "kind": "connector",
+   "name": "Google Calendar",
+   "status": "live",
+   "priority": 19,
+   "use": "read the calendar: events, free slots, conflicts, suggested times. Creating or changing events is gated",
+   "load": [
+    "mcp__Google_Calendar__list_events",
+    "mcp__Google_Calendar__search_events",
+    "mcp__Google_Calendar__get_event",
+    "mcp__Google_Calendar__list_calendars",
+    "mcp__Google_Calendar__suggest_time"
+   ],
+   "check": "schema",
+   "draft_tools": [],
+   "never_auto": [
+    "mcp__Google_Calendar__create_event",
+    "mcp__Google_Calendar__update_event",
+    "mcp__Google_Calendar__delete_event",
+    "mcp__Google_Calendar__respond_to_event"
+   ],
+   "strong": [
+    "calendar",
+    "schedule (a|the|my)",
+    "availability",
+    "open (slots?|days?)",
+    "what'?s on (my )?(schedule|calendar)",
+    "meetings?",
+    "appointments?",
+    "double[- ]?booked",
+    "conflicts?"
+   ],
+   "weak": [
+    "slots?",
+    "tomorrow",
+    "monday|tuesday|wednesday|thursday|friday|saturday",
+    "booked",
+    "reschedule",
+    "free",
+    "next \\d+ days"
+   ]
+  },
+  {
+   "id": "google-drive",
+   "kind": "connector",
+   "name": "Google Drive",
+   "status": "live",
+   "priority": 10,
+   "use": "find and read the founder's own Drive files: docs, sheets, contracts, leases. Sharing and deleting are gated",
+   "load": [
+    "mcp__Google_Drive__search_files",
+    "mcp__Google_Drive__read_file_content",
+    "mcp__Google_Drive__get_file_metadata",
+    "mcp__Google_Drive__list_recent_files",
+    "mcp__Google_Drive__download_file_content"
+   ],
+   "check": "quote",
+   "draft_tools": [],
+   "never_auto": [
+    "mcp__Google_Drive__share_file",
+    "mcp__Google_Drive__trash_file",
+    "mcp__Google_Drive__create_file",
+    "mcp__Google_Drive__update_file",
+    "mcp__Google_Drive__copy_file"
+   ],
+   "strong": [
+    "google drive",
+    "my drive",
+    "in drive",
+    "gdrive",
+    "drive folder",
+    "shared (doc|file|folder)"
+   ],
+   "weak": [
+    "docs?",
+    "documents?",
+    "files?",
+    "folders?",
+    "contracts?",
+    "leases?",
+    "find the",
+    "sheets?"
+   ]
+  },
+  {
+   "id": "notion",
+   "kind": "connector",
+   "name": "Notion",
+   "status": "live",
+   "priority": 16,
+   "use": "search and read the Notion workspace: pages, databases, meeting notes, SOPs. Creating or editing pages is gated",
+   "load": [
+    "mcp__Notion__notion-search",
+    "mcp__Notion__notion-fetch",
+    "mcp__Notion__notion-query-data-sources",
+    "mcp__Notion__notion-get-comments",
+    "mcp__Notion__notion-list-recent-pages"
+   ],
+   "check": "quote",
+   "draft_tools": [],
+   "never_auto": [
+    "mcp__Notion__notion-create-pages",
+    "mcp__Notion__notion-update-page",
+    "mcp__Notion__notion-move-pages",
+    "mcp__Notion__notion-create-database",
+    "mcp__Notion__notion-update-data-source",
+    "mcp__Notion__notion-create-comment",
+    "mcp__Notion__notion-duplicate-page"
+   ],
+   "strong": [
+    "notion"
+   ],
+   "weak": [
+    "wiki",
+    "knowledge base",
+    "meeting notes",
+    "workspace",
+    "sops?",
+    "playbooks?",
+    "runbooks?",
+    "my notes"
+   ]
+  },
+  {
+   "id": "github",
+   "kind": "connector",
+   "name": "GitHub",
+   "status": "live",
+   "priority": 18,
+   "use": "read GitHub repos in scope: files, code search, commits, branches, issues, PRs, Actions logs, secret scanning",
+   "load": [
+    "mcp__github__get_file_contents",
+    "mcp__github__search_code",
+    "mcp__github__list_commits",
+    "mcp__github__list_branches",
+    "mcp__github__issue_read",
+    "mcp__github__pull_request_read",
+    "mcp__github__list_issues",
+    "mcp__github__list_pull_requests",
+    "mcp__github__actions_list",
+    "mcp__github__get_job_logs"
+   ],
+   "check": "quote",
+   "draft_tools": [],
+   "never_auto": [
+    "mcp__github__merge_pull_request",
+    "mcp__github__push_files",
+    "mcp__github__create_or_update_file",
+    "mcp__github__delete_file",
+    "mcp__github__issue_write",
+    "mcp__github__update_pull_request",
+    "mcp__github__actions_run_trigger"
+   ],
+   "strong": [
+    "github",
+    "pull requests?",
+    "\\bprs?\\b",
+    "pr #?\\d+",
+    "ci (failed|failing|is red|red)",
+    "workflow runs?",
+    "branch(es)?",
+    "commits?"
+   ],
+   "weak": [
+    "repo(sitory)?",
+    "merge",
+    "diff",
+    "actions",
+    "issues?",
+    "checks?",
+    "review"
+   ]
+  },
+  {
+   "id": "make",
+   "kind": "connector",
+   "name": "Make",
+   "status": "live",
+   "priority": 13,
+   "use": "read Make scenarios, executions and blueprints; validate a blueprint. Running, activating or deleting scenarios is gated",
+   "load": [
+    "mcp__Make__scenarios_list",
+    "mcp__Make__scenarios_get",
+    "mcp__Make__executions_list",
+    "mcp__Make__executions_get",
+    "mcp__Make__apps_list",
+    "mcp__Make__validate_blueprint_schema"
+   ],
+   "check": "schema",
+   "draft_tools": [],
+   "never_auto": [
+    "mcp__Make__scenarios_run",
+    "mcp__Make__scenarios_activate",
+    "mcp__Make__scenarios_deactivate",
+    "mcp__Make__scenarios_create",
+    "mcp__Make__scenarios_update",
+    "mcp__Make__scenarios_delete",
+    "mcp__Make__hooks_create",
+    "mcp__Make__data-store-records_create",
+    "mcp__Make__data-store-records_delete"
+   ],
+   "strong": [
+    "make\\.com",
+    "make (scenario|automation|blueprint)",
+    "scenarios?",
+    "automat(e|es|ed|ion|ions|ing)",
+    "webhooks?",
+    "integromat",
+    "recurring (task|job|workflow)"
+   ],
+   "weak": [
+    "workflow",
+    "trigger",
+    "every (day|week|morning|monday|night)",
+    "integrations?"
+   ]
+  },
+  {
+   "id": "zapier",
+   "kind": "connector",
+   "name": "Zapier",
+   "status": "live",
+   "priority": 27,
+   "use": "inspect Zapier connections and available actions; run read actions. Write actions are gated",
+   "load": [
+    "mcp__Zapier__list_zapier_connections",
+    "mcp__Zapier__discover_zapier_actions",
+    "mcp__Zapier__inspect_zapier_actions",
+    "mcp__Zapier__execute_zapier_read_action"
+   ],
+   "check": "schema",
+   "draft_tools": [],
+   "never_auto": [
+    "mcp__Zapier__execute_zapier_write_action",
+    "mcp__Zapier__enable_zapier_action",
+    "mcp__Zapier__disable_zapier_action",
+    "mcp__Zapier__write_code_action",
+    "mcp__Zapier__manage_zapier_connections"
+   ],
+   "strong": [
+    "zapier",
+    "zaps?"
+   ],
+   "weak": [
+    "automat\\w+",
+    "integrations?",
+    "connect .{1,30} to",
+    "trigger",
+    "webhooks?",
+    "workflow"
+   ]
+  },
+  {
+   "id": "apify",
+   "kind": "connector",
+   "name": "Apify",
+   "status": "live",
+   "priority": 21,
+   "use": "find scraping Actors and read their dataset output: maps listings, reviews, social, directories. Running Actors is gated",
+   "load": [
+    "mcp__apify__search-actors",
+    "mcp__apify__fetch-actor-details",
+    "mcp__apify__get-dataset-items"
+   ],
+   "check": "schema",
+   "draft_tools": [],
+   "cost": "metered (platform credits)",
+   "never_auto": [
+    "mcp__apify__call-actor",
+    "mcp__apify__abort-actor-run"
+   ],
+   "strong": [
+    "apify",
+    "scrape (google maps|instagram|facebook|linkedin|reviews|yelp|nextdoor)",
+    "google maps (leads|listings|scrape)"
+   ],
+   "weak": [
+    "scrap(e|ing|er)",
+    "leads? lists?",
+    "competitor reviews",
+    "directory",
+    "listings?",
+    "dataset"
+   ]
+  },
+  {
+   "id": "browserbase",
+   "kind": "connector",
+   "name": "Browserbase",
+   "status": "live",
+   "priority": 51,
+   "use": "cloud browser (not your computer): open pages, observe, extract. Clicking and typing (act) is gated",
+   "load": [
+    "mcp__Browserbase__start",
+    "mcp__Browserbase__navigate",
+    "mcp__Browserbase__observe",
+    "mcp__Browserbase__extract",
+    "mcp__Browserbase__end"
+   ],
+   "check": "state-diff",
+   "draft_tools": [],
+   "never_auto": [
+    "mcp__Browserbase__act"
+   ],
+   "strong": [
+    "browserbase",
+    "headless browser",
+    "cloud browser",
+    "screenshot (of|the) (site|page|website)",
+    "log ?in to"
+   ],
+   "weak": [
+    "browser",
+    "website",
+    "screenshot",
+    "render",
+    "javascript"
+   ]
+  },
+  {
+   "id": "figma",
+   "kind": "connector",
+   "name": "Figma",
+   "status": "live",
+   "priority": 70,
+   "use": "read Figma designs: design context, screenshots, variables and tokens, component search",
+   "load": [
+    "mcp__Figma__get_design_context",
+    "mcp__Figma__get_screenshot",
+    "mcp__Figma__get_variable_defs",
+    "mcp__Figma__get_metadata",
+    "mcp__Figma__search_design_system",
+    "mcp__Figma__whoami"
+   ],
+   "check": "quote",
+   "draft_tools": [],
+   "never_auto": [
+    "mcp__Figma__use_figma",
+    "mcp__Figma__create_new_file",
+    "mcp__Figma__upload_assets",
+    "mcp__Figma__send_code_connect_mappings",
+    "mcp__Figma__add_code_connect_map"
+   ],
+   "strong": [
+    "figma",
+    "figjam",
+    "design tokens?",
+    "design system"
+   ],
+   "weak": [
+    "mockup",
+    "design",
+    "components?",
+    "frame",
+    "prototype"
+   ]
+  },
+  {
+   "id": "skill-xlsx",
+   "kind": "skill",
+   "name": "xlsx",
+   "status": "live",
+   "priority": 12,
+   "use": "open, build, clean and format spreadsheets (xlsx, csv, tsv) with formulas so code computes the numbers",
+   "skill": "anthropic-skills:xlsx",
+   "never_auto": [],
+   "strong": [
+    "spreadsheets?",
+    "\\.xlsx",
+    "\\.csv",
+    "\\.tsv",
+    "excel",
+    "pivot",
+    "\\bcsv\\b"
+   ],
+   "weak": [
+    "formulas?",
+    "columns?",
+    "rows?",
+    "financial model",
+    "budget",
+    "forecast"
+   ]
+  },
+  {
+   "id": "skill-pdf",
+   "kind": "skill",
+   "name": "pdf",
+   "status": "live",
+   "priority": 26,
+   "use": "read, fill, merge, split, OCR and create PDFs",
+   "skill": "anthropic-skills:pdf",
+   "never_auto": [],
+   "strong": [
+    "\\.pdf",
+    "\\bpdfs?\\b",
+    "fill (out )?(the |a )?(pdf|form)",
+    "merge pdfs?",
+    "\\bocr\\b"
+   ],
+   "weak": [
+    "scan(ned)?",
+    "signed copy",
+    "contract",
+    "form"
+   ]
+  },
+  {
+   "id": "skill-docx",
+   "kind": "skill",
+   "name": "docx",
+   "status": "live",
+   "priority": 59,
+   "use": "create and edit Word documents",
+   "skill": "anthropic-skills:docx",
+   "never_auto": [],
+   "strong": [
+    "\\.docx",
+    "word doc(ument)?",
+    "as a word"
+   ],
+   "weak": [
+    "report",
+    "proposal",
+    "letterhead",
+    "memo",
+    "letter",
+    "contract"
+   ]
+  },
+  {
+   "id": "skill-pptx",
+   "kind": "skill",
+   "name": "pptx",
+   "status": "live",
+   "priority": 82,
+   "use": "build and edit PowerPoint decks",
+   "skill": "anthropic-skills:pptx",
+   "never_auto": [],
+   "strong": [
+    "\\.pptx",
+    "slide ?decks?",
+    "powerpoint",
+    "pitch deck",
+    "presentation"
+   ],
+   "weak": [
+    "slides?",
+    "deck",
+    "pitch"
+   ]
+  },
+  {
+   "id": "skill-forge-web-stack",
+   "kind": "skill",
+   "name": "forge-web-stack",
+   "status": "live",
+   "priority": 5,
+   "use": "build web apps, dashboards, capture forms and AI features on the Netlify + Airtable + Claude API stack",
+   "skill": "anthropic-skills:forge-web-stack",
+   "never_auto": [],
+   "strong": [
+    "landing pages?",
+    "capture forms?",
+    "web ?app",
+    "static site",
+    "single[- ]file html",
+    "netlify functions?",
+    "build (me )?(a |the |an )?(site|page|app|tool|dashboard|website)",
+    "ai feature",
+    "\\bforge\\b",
+    "(build|write|add|create|make) (a |the |an )?(serverless|netlify) functions?"
+   ],
+   "weak": [
+    "html",
+    "front ?end",
+    "site",
+    "deploy",
+    "passcode",
+    "form",
+    "webpage",
+    "page",
+    "dashboard"
+   ]
+  },
+  {
+   "id": "skill-venture-launch-playbook",
+   "kind": "skill",
+   "name": "venture-launch-playbook",
+   "status": "live",
+   "priority": 20,
+   "use": "launch a revenue-ready web business at $0 infrastructure with a quality ladder and competitor recon",
+   "skill": "anthropic-skills:venture-launch-playbook",
+   "never_auto": [],
+   "strong": [
+    "launch (a |the |my )?(new )?(site|business|venture|storefront|product)",
+    "new venture",
+    "grade my site",
+    "quality ladder",
+    "competitor recon",
+    "storefront"
+   ],
+   "weak": [
+    "venture",
+    "launch",
+    "first dollar",
+    "revenue[- ]ready",
+    "new business",
+    "idea"
+   ]
+  },
+  {
+   "id": "skill-form-filler",
+   "kind": "skill",
+   "name": "form-filler",
+   "status": "live",
+   "priority": 34,
+   "use": "fill LLC, EIN and state registration forms in the browser; stops before passwords, card numbers and the final Submit",
+   "skill": "anthropic-skills:form-filler",
+   "never_auto": [],
+   "strong": [
+    "\\bllc\\b",
+    "\\bein\\b",
+    "wyobiz",
+    "registered agent",
+    "articles of (organization|incorporation)",
+    "state registration",
+    "secretary of state",
+    "fill (out )?(the )?(application|filing|form)"
+   ],
+   "weak": [
+    "filing",
+    "register",
+    "application",
+    "portal",
+    "\\birs\\b",
+    "annual report"
+   ]
+  },
+  {
+   "id": "skill-google-workspace",
+   "kind": "skill",
+   "name": "google-workspace",
+   "status": "live",
+   "priority": 25,
+   "use": "create or change Google Docs, Sheets and Slides in the founder's Drive",
+   "skill": "anthropic-skills:google-workspace",
+   "never_auto": [],
+   "strong": [
+    "google (sheets?|slides?|docs?)",
+    "gsheets?",
+    "slides? (in|for) google"
+   ],
+   "weak": [
+    "sheet",
+    "doc",
+    "slide",
+    "share with"
+   ]
+  },
+  {
+   "id": "skill-dataviz",
+   "kind": "skill",
+   "name": "dataviz",
+   "status": "live",
+   "priority": 37,
+   "use": "chart, dashboard and data-visualization method with a runnable color validator",
+   "skill": "dataviz",
+   "never_auto": [],
+   "strong": [
+    "charts?",
+    "graphs?",
+    "plots?",
+    "visuali[sz](e|ation|ations)",
+    "dashboards?",
+    "sparklines?",
+    "heatmaps?",
+    "\\bkpis?\\b"
+   ],
+   "weak": [
+    "trend",
+    "over time",
+    "distribution"
+   ]
+  },
+  {
+   "id": "skill-claude-api",
+   "kind": "skill",
+   "name": "claude-api",
+   "status": "live",
+   "priority": 9,
+   "use": "Claude API and Anthropic SDK reference: model ids, pricing, caching, tool use, token counting",
+   "skill": "claude-api",
+   "never_auto": [],
+   "strong": [
+    "anthropic (api|sdk)",
+    "claude api",
+    "prompt caching",
+    "tool use",
+    "model ids?",
+    "claude-(opus|sonnet|haiku|fable)",
+    "messages api",
+    "token count\\w*"
+   ],
+   "weak": [
+    "claude",
+    "llm",
+    "agent",
+    "streaming",
+    "tokens?",
+    "api key",
+    "ai feature",
+    "\\brag\\b"
+   ]
+  },
+  {
+   "id": "skill-security-review",
+   "kind": "skill",
+   "name": "security-review",
+   "status": "live",
+   "priority": 38,
+   "use": "security review of the pending changes on the current branch",
+   "skill": "security-review",
+   "never_auto": [],
+   "strong": [
+    "security review",
+    "vulnerab\\w+",
+    "secret scan\\w*",
+    "exposed (key|secret|token)",
+    "\\bxss\\b",
+    "sql injection",
+    "\\bcsrf\\b",
+    "audit (the )?(code|function|functions|repo)"
+   ],
+   "weak": [
+    "security",
+    "auth",
+    "api key",
+    "secrets?",
+    "before (i |we )?deploy",
+    "env var"
+   ]
+  },
+  {
+   "id": "skill-code-review",
+   "kind": "skill",
+   "name": "code-review",
+   "status": "live",
+   "priority": 39,
+   "use": "review a diff, PR or branch for correctness bugs",
+   "skill": "code-review",
+   "never_auto": [],
+   "strong": [
+    "review (the |my |this )?(diff|pr|pull request|code|changes|branch)",
+    "code review",
+    "bugs? in"
+   ],
+   "weak": [
+    "review",
+    "diff",
+    "refactor",
+    "regression"
+   ]
+  },
+  {
+   "id": "skill-skill-creator",
+   "kind": "skill",
+   "name": "skill-creator",
+   "status": "live",
+   "priority": 29,
+   "use": "create, modify and evaluate skills with measured evals",
+   "skill": "anthropic-skills:skill-creator",
+   "never_auto": [],
+   "strong": [
+    "(create|write|build|make|improve|fix) (a |the |my |an? new )?skill",
+    "skill\\.md",
+    "eval(uate)? (a |the |my )?skill"
+   ],
+   "weak": [
+    "skills?",
+    "trigger description"
+   ]
+  },
+  {
+   "id": "skill-mcp-builder",
+   "kind": "skill",
+   "name": "mcp-builder",
+   "status": "live",
+   "priority": 46,
+   "use": "build MCP servers in Python (FastMCP) or TypeScript",
+   "skill": "anthropic-skills:mcp-builder",
+   "never_auto": [],
+   "strong": [
+    "(build|write|create) (an? )?mcp (server|tool)",
+    "fastmcp"
+   ],
+   "weak": [
+    "mcp",
+    "wrap (an |the )?api"
+   ]
+  },
+  {
+   "id": "brevo",
+   "kind": "connector",
+   "name": "Brevo",
+   "status": "needs-auth",
+   "priority": 36,
+   "use": "not live: Brevo",
+   "load": [],
+   "check": "schema",
+   "draft_tools": [],
+   "never_auto": [],
+   "strong": [
+    "brevo",
+    "email campaigns?",
+    "newsletter",
+    "drip"
+   ],
+   "weak": [
+    "subscribers?",
+    "audience"
+   ]
+  },
+  {
+   "id": "quickbooks",
+   "kind": "connector",
+   "name": "Intuit QuickBooks",
+   "status": "needs-auth",
+   "priority": 42,
+   "use": "not live: Intuit QuickBooks",
+   "load": [],
+   "check": "schema",
+   "draft_tools": [],
+   "never_auto": [],
+   "strong": [
+    "quickbooks",
+    "\\bqbo\\b",
+    "p&l",
+    "profit and loss",
+    "bookkeeping",
+    "month[- ]end"
+   ],
+   "weak": [
+    "ledger",
+    "expenses?"
+   ]
+  },
+  {
+   "id": "local-falcon",
+   "kind": "connector",
+   "name": "Local Falcon",
+   "status": "not-installed",
+   "priority": 23,
+   "use": "not live: Local Falcon",
+   "load": [],
+   "check": "schema",
+   "draft_tools": [],
+   "never_auto": [],
+   "strong": [
+    "local falcon",
+    "geo-?grid"
+   ],
+   "weak": [
+    "map pack"
+   ]
+  },
+  {
+   "id": "cotality",
+   "kind": "connector",
+   "name": "Cotality",
+   "status": "not-installed",
+   "priority": 31,
+   "use": "not live: Cotality",
+   "load": [],
+   "check": "schema",
+   "draft_tools": [],
+   "never_auto": [],
+   "strong": [
+    "cotality",
+    "roof age",
+    "home price index"
+   ],
+   "weak": [
+    "property (data|characteristics)"
+   ]
+  },
+  {
+   "id": "accuweather",
+   "kind": "connector",
+   "name": "AccuWeather",
+   "status": "not-installed",
+   "priority": 35,
+   "use": "not live: AccuWeather",
+   "load": [],
+   "check": "schema",
+   "draft_tools": [],
+   "never_auto": [],
+   "strong": [
+    "accuweather",
+    "forecast",
+    "frost",
+    "freeze"
+   ],
+   "weak": [
+    "weather",
+    "rain",
+    "snow"
+   ]
+  },
+  {
+   "id": "n8n-workflow-check",
+   "kind": "plugin",
+   "name": "Samautomation Workflows (n8n)",
+   "status": "not-installed",
+   "priority": 22,
+   "use": "not live: Samautomation Workflows (n8n)",
+   "load": [],
+   "check": "schema",
+   "draft_tools": [],
+   "never_auto": [],
+   "strong": [
+    "n8n"
+   ],
+   "weak": [
+    "workflow json"
+   ]
+  }
+ ],
+ "bundles": [
+  {
+   "id": "pick-it-up-e",
+   "about": "the Grand Forks haul crew (Pick It Up E)",
+   "signals": [
+    "pick ?it ?up ?e",
+    "pickitupe",
+    "junk (removal|haul\\w*)",
+    "haul(ing)? crew",
+    "leaf (cleanup|haul\\w*|removal)",
+    "leaves",
+    "gutters?",
+    "clean-?outs?",
+    "tenant turns?",
+    "east grand forks",
+    "grand forks",
+    "thompson",
+    "manvel",
+    "red river valley",
+    "\\bgf\\b"
+   ],
+   "members": [
+    "openseo",
+    "semrush",
+    "tomtom",
+    "google-calendar",
+    "airtable",
+    "windsor",
+    "gmail",
+    "parallel-search",
+    "accuweather",
+    "local-falcon"
+   ]
+  },
+  {
+   "id": "markets",
+   "about": "the trading and markets work (TradeSmith)",
+   "signals": [
+    "tradesmith",
+    "\\btjr\\b",
+    "\\bsmc\\b",
+    "smart money",
+    "order blocks?",
+    "liquidity (sweep|grab)",
+    "fair value gaps?",
+    "forex",
+    "futures",
+    "tickers?",
+    "\\$[a-z]{1,5}",
+    "watchlist"
+   ],
+   "members": [
+    "alpha-vantage",
+    "bigdata",
+    "skill-dataviz",
+    "skill-xlsx"
+   ]
+  },
+  {
+   "id": "web-ventures",
+   "about": "the web ventures (American Penny Power, PANTHEON news desk, VitaForge command center)",
+   "signals": [
+    "american penny power",
+    "\\bapp\\b",
+    "pantheon (news|desk)",
+    "news desk",
+    "command center",
+    "vitaforge",
+    "storefront",
+    "landing pages?"
+   ],
+   "members": [
+    "netlify",
+    "vercel",
+    "airtable",
+    "supabase",
+    "skill-forge-web-stack",
+    "semrush"
+   ]
+  },
+  {
+   "id": "entities",
+   "about": "the LLC entities and filings (VitaForge LLC, Pantheon LLC, Ellingson Estates LLC)",
+   "signals": [
+    "vitaforge",
+    "pantheon",
+    "ellingson",
+    "wyoming",
+    "wyobiz",
+    "registered agent",
+    "\\bllc\\b",
+    "\\bein\\b",
+    "operating agreement"
+   ],
+   "members": [
+    "skill-form-filler",
+    "gmail",
+    "google-drive",
+    "google-calendar",
+    "parallel-search",
+    "quickbooks"
+   ]
+  },
+  {
+   "id": "real-estate",
+   "about": "the real estate work (Ellingson Estates, FHA refi, rentals)",
+   "signals": [
+    "ellingson",
+    "\\bfha\\b",
+    "refi(nance)?",
+    "rentals?",
+    "landlords?",
+    "tenants?",
+    "propert(y|ies)",
+    "parcel",
+    "zoning",
+    "comps?",
+    "leases?",
+    "duplex",
+    "mortgage"
+   ],
+   "members": [
+    "airtable",
+    "google-drive",
+    "skill-xlsx",
+    "parallel-search",
+    "cotality"
+   ]
+  }
+ ]
+}

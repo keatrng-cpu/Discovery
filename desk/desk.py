@@ -18,6 +18,12 @@
   tokens-check <file>     validate artifacts/tokens.json
   report                  print the deterministic part of the final report
   report-check <plan.md>  require the report headings and a written body
+  caps <prompt>           what the prompt hook would inject: matched connectors, plugins, skills, the exact tool-load call
+  caps-lint               validate registry/capabilities.json against tools.json and the gate
+  caps-register [--write] register read/draft tools the map loads (never act, never a gate verb)
+  caps-eval <fixture>     precision, recall and false-fire rate of the matcher on labeled prompts vs pre-registered thresholds
+  caps-index [--write]    generate registry/capabilities.index.md, the once-per-session capability index
+  caps-score <fixture> <answers>   score a model's capability picks, the matcher, and their union against labels
 """
 import argparse
 import glob
@@ -30,6 +36,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import caps  # noqa: E402
 import gate  # noqa: E402
 import trace  # noqa: E402
 
@@ -538,6 +545,10 @@ def cmd_lint(a):
     for t in tools.get("proposed", []):
         if not t.get("human_add_required"):
             errs.append(f"tools.json: proposed {t.get('name')} must have human_add_required true")
+    if (ROOT / caps.CAPS_REL).exists():
+        c_errs, c_warns = caps.lint_caps(caps.load_caps(str(ROOT)), tools, str(ROOT), gate)
+        errs += [f"caps: {e}" for e in c_errs]
+        warns += [f"caps: {w}" for w in c_warns]
     shelves = load_shelves()
     if not a.shelf:
         missing = [s for s in SHELF_ORDER if s not in shelves]
@@ -952,6 +963,130 @@ def cmd_report(a):
     return 0
 
 
+def auto_context(prompt):
+    """The one code path behind the prompt hook and `desk.py caps`: (text to inject or None, caps match, router line)."""
+    cmap = caps.load_caps(str(ROOT))
+    r = caps.match(prompt, cmap)
+    router = None
+    if not r["off"] and len(prompt.split()) >= 5:
+        router = caps.route_line(route(prompt))
+    return caps.render(r, router, _gate_verbs_in(prompt)), r, router
+
+
+def cmd_caps(a):
+    text, r, router = auto_context(a.prompt)
+    if a.json:
+        print(json.dumps({"off": r["off"], "matched": r["matched"], "router": router, "text": text}, indent=1))
+    else:
+        print(text if text else "(no capability matched: inject nothing)")
+    return 0
+
+
+def cmd_caps_lint(a):
+    c_errs, c_warns = caps.lint_caps(caps.load_caps(str(ROOT)), load_tools(), str(ROOT), gate)
+    for w in c_warns:
+        print("WARN ", w)
+    for e in c_errs:
+        print("ERROR", e)
+    print(f"caps-lint: {len(c_errs)} error(s), {len(c_warns)} warning(s)")
+    return 1 if c_errs else 0
+
+
+def cmd_caps_register(a):
+    path = ROOT / "registry" / "tools.json"
+    raw = path.read_text()
+    reg = json.loads(raw)
+    new, refused = caps.register_plan(caps.load_caps(str(ROOT)), reg, gate, a.added_by)
+    for t, why in refused:
+        print(f"REFUSED {t}: {why}")
+    for e in new:
+        print(f"+ {e['scope']:5} {e['name']}")
+    print(f"caps-register: {len(new)} to add, {len(refused)} refused")
+    if refused:
+        return 1
+    if a.write and new:
+        if json.dumps(reg, indent=1) + "\n" != raw:
+            print("ERROR tools.json does not round-trip at indent=1; refusing to rewrite it")
+            return 1
+        reg["tools"].extend(new)
+        path.write_text(json.dumps(reg, indent=1) + "\n")
+        print(f"wrote {path.relative_to(ROOT)}")
+    return 0
+
+
+def cmd_caps_eval(a):
+    items = read_json(Path(a.fixture))
+    th = read_json(Path(a.thresholds))
+    cmap = caps.load_caps(str(ROOT))
+    rep, passed = caps.evaluate(items, cmap, th)
+    # the desk router rides the same hook: it must stay quiet on prompts that need nothing
+    neg = [i["prompt"] for i in items if not i["must"] and len(i["prompt"].split()) >= 5]
+    rfire = [p for p in neg if caps.route_line(route(p))]
+    rep["router_negative_fire_rate"] = round(len(rfire) / len(neg), 3) if neg else None
+    rep["router_negative_fires"] = [p[:90] for p in rfire]
+    if "router_negative_fire_max" in th:
+        rep["checks"]["router_negative_fire<="] = (rep["router_negative_fire_rate"] or 0) <= th["router_negative_fire_max"]
+        passed = all(rep["checks"].values())
+    for k in ("n_positive", "n_negative", "recall_micro", "precision_micro", "empty_on_positive", "negative_fire_rate",
+              "router_negative_fire_rate", "act_tool_leaks", "mean_injected_chars", "max_injected_chars"):
+        print(f"{k}: {rep[k]}")
+    for k, v in rep["checks"].items():
+        print(f"{'PASS' if v else 'FAIL'} {k}")
+    for r in rep["rows"]:
+        if r.get("missed") or r.get("extra"):
+            print(f"  miss={r.get('missed', [])} extra={r.get('extra', [])} :: {r['prompt']}")
+    if a.out:
+        Path(a.out).parent.mkdir(parents=True, exist_ok=True)
+        Path(a.out).write_text(json.dumps(rep, indent=1) + "\n")
+    print("caps-eval: " + ("PASS" if passed else "FAIL"))
+    return 0 if passed else 1
+
+
+def cmd_caps_index(a):
+    text = caps.index_text(caps.load_caps(str(ROOT)))
+    path = ROOT / caps.INDEX_REL
+    print(f"index: {len(text)} chars, {text.count(chr(10))} lines (hook cap 10000, budget {caps.INDEX_MAX})")
+    if a.write:
+        path.write_text(text)
+        print(f"wrote {caps.INDEX_REL}")
+    else:
+        print("fresh" if path.exists() and path.read_text() == text else "STALE or missing (run with --write)")
+    return 0 if len(text) <= caps.INDEX_MAX else 1
+
+
+def cmd_caps_score(a):
+    """Score a model's capability picks (answers file) and the matcher, alone and unioned, against labels. The model never grades itself."""
+    items = read_json(Path(a.fixture))
+    th = read_json(Path(a.thresholds))
+    cmap = caps.load_caps(str(ROOT))
+    live = {c["id"] for c in cmap["capabilities"] if c["status"] == "live"}
+    ans = {r["i"]: r["ids"] for r in read_json(Path(a.answers))}
+    if sorted(ans) != list(range(len(items))):
+        print(f"ERROR answers must cover every prompt index 0..{len(items) - 1} exactly once")
+        return 1
+    bad = sorted({i for ids in ans.values() for i in ids} - live)
+    if bad:
+        print(f"ERROR answers name ids that are not live capabilities: {bad}")
+        return 1
+    model = [ans[i] for i in range(len(items))]
+    matcher = [[m["id"] for m in caps.match(it["prompt"], cmap)["matched"]] for it in items]
+    union = [sorted(set(m) | set(x)) for m, x in zip(model, matcher)]
+    ok_all = True
+    for name, sets in (("matcher alone", matcher), ("model with index alone", model), ("union", union)):
+        s = caps.score_sets(items, sets)
+        chk = {"recall>=": (s["recall_micro"] or 0) >= th["recall_micro_min"], "precision>=": (s["precision_micro"] or 0) >= th["precision_micro_min"],
+               "negfire<=": (s["negative_fire_rate"] if s["negative_fire_rate"] is not None else 1) <= th["negative_fire_max"]}
+        print(f"{name:24} recall {s['recall_micro']} precision {s['precision_micro']} empty_on_positive {s['empty_on_positive']} "
+              f"negative_fire {s['negative_fire_rate']} -> " + " ".join(f"{'PASS' if v else 'FAIL'} {k}" for k, v in chk.items()))
+        if name == "union":
+            ok_all = all(chk.values())
+    if a.out:
+        Path(a.out).parent.mkdir(parents=True, exist_ok=True)
+        Path(a.out).write_text(json.dumps({"matcher": caps.score_sets(items, matcher), "model_with_index": caps.score_sets(items, model),
+                                           "union": caps.score_sets(items, union)}, indent=1) + "\n")
+    return 0 if ok_all else 1
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(prog="desk")
     sp = p.add_subparsers(dest="cmd", required=True)
@@ -972,6 +1107,12 @@ def main(argv=None):
     s = sp.add_parser("tokens-check"); s.add_argument("file"); s.set_defaults(f=cmd_tokens_check)
     s = sp.add_parser("report"); s.set_defaults(f=cmd_report)
     s = sp.add_parser("report-check"); s.add_argument("file"); s.set_defaults(f=cmd_report_check)
+    s = sp.add_parser("caps"); s.add_argument("prompt"); s.add_argument("--json", action="store_true"); s.set_defaults(f=cmd_caps)
+    s = sp.add_parser("caps-lint"); s.set_defaults(f=cmd_caps_lint)
+    s = sp.add_parser("caps-register"); s.add_argument("--write", action="store_true"); s.add_argument("--added-by", default="user request 2026-10-04: auto-route connectors; read and draft scope only"); s.set_defaults(f=cmd_caps_register)
+    s = sp.add_parser("caps-index"); s.add_argument("--write", action="store_true"); s.set_defaults(f=cmd_caps_index)
+    s = sp.add_parser("caps-score"); s.add_argument("fixture"); s.add_argument("answers"); s.add_argument("--thresholds", default="fixtures/caps/thresholds.json"); s.add_argument("--out"); s.set_defaults(f=cmd_caps_score)
+    s = sp.add_parser("caps-eval"); s.add_argument("fixture"); s.add_argument("--thresholds", default="fixtures/caps/thresholds.json"); s.add_argument("--out"); s.set_defaults(f=cmd_caps_eval)
     a = p.parse_args(argv)
     return a.f(a)
 

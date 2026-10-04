@@ -349,5 +349,169 @@ class RegistryTests(unittest.TestCase):
                 self.assertTrue(any(l.startswith(d.replace("-", " ")) or l.startswith(d) for l in txt.splitlines()), f"{s}/{d}")
 
 
+import caps  # noqa: E402
+
+
+def _cap(cid="x", **kw):
+    base = {"id": cid, "kind": "connector", "name": cid.title(), "status": "live", "priority": 1, "use": "u", "check": "schema",
+            "load": ["mcp__Srv__read_thing"], "draft_tools": [], "never_auto": [], "strong": ["alpha"], "weak": ["beta", "gamma"]}
+    base.update(kw)
+    return base
+
+
+def _map(*cs, bundles=()):
+    return {"threshold": 3, "weights": {"strong": 3, "weak": 1, "bundle": 1}, "max_caps": 5, "max_tools": 18, "off_switch": ["offline only"],
+            "account_skills": ["acct:skill"], "capabilities": list(cs), "bundles": list(bundles)}
+
+
+def _reg(*tools):
+    return {"tools": [{"name": n, "kind": "mcp", "scope": s, "check": "schema"} for n, s in tools]}
+
+
+class CapsMatchTests(unittest.TestCase):
+    def test_a_strong_signal_routes_and_nothing_else_does(self):
+        r = caps.match("please alpha now", _map(_cap("a"), _cap("b", strong=["zzz"])))
+        self.assertEqual([m["id"] for m in r["matched"]], ["a"])
+
+    def test_one_weak_signal_is_not_enough_two_distinct_are_not_enough_three_are(self):
+        m = _map(_cap("a", strong=["never"], weak=["w1", "w2", "w3"]))
+        self.assertEqual(caps.match("w1", m)["matched"], [])
+        self.assertEqual(caps.match("w1 w2", m)["matched"], [])
+        self.assertEqual([x["id"] for x in caps.match("w1 w2 w3", m)["matched"]], ["a"])
+
+    def test_a_venture_bundle_alone_never_loads_a_tool(self):
+        b = {"id": "v", "signals": ["acme crew"], "members": ["a"]}
+        m = _map(_cap("a", strong=["never"], weak=["w1", "w2"]), bundles=[b])
+        self.assertEqual(caps.match("acme crew", m)["matched"], [])
+        self.assertEqual(caps.match("acme crew w1", m)["matched"], [])
+        self.assertEqual([x["id"] for x in caps.match("acme crew w1 w2", m)["matched"]], ["a"])
+
+    def test_off_switch_and_negatives_and_empty(self):
+        m = _map(_cap("a", neg=["blocked"]))
+        self.assertEqual(caps.match("alpha offline only", m), {"off": True, "matched": []})
+        self.assertEqual(caps.match("alpha blocked", m)["matched"], [])
+        self.assertEqual(caps.match("   ", m), {"off": False, "matched": []})
+
+    def test_only_live_entries_route(self):
+        self.assertEqual(caps.match("alpha", _map(_cap("a", status="needs-auth")))["matched"], [])
+
+    def test_ties_break_by_score_then_priority_and_the_list_is_capped(self):
+        cs = [_cap(f"c{i}", priority=10 - i, strong=["alpha"]) for i in range(8)]
+        got = [x["id"] for x in caps.match("alpha", _map(*cs))["matched"]]
+        self.assertEqual(got, ["c7", "c6", "c5", "c4", "c3"])
+
+    def test_signals_match_whole_words_only(self):
+        self.assertEqual(caps.match("alphabet", _map(_cap("a")))["matched"], [])
+
+    def test_render_names_the_exact_load_call_and_the_gate(self):
+        r = caps.match("alpha", _map(_cap("a")))
+        t = caps.render(r, None, ("send",))
+        self.assertIn("select:mcp__Srv__read_thing", t)
+        self.assertIn("Gate verbs in this prompt (send)", t)
+        self.assertIsNone(caps.render({"off": False, "matched": []}))
+
+
+class CapsRealMapTests(unittest.TestCase):
+    def setUp(self):
+        self.caps = caps.load_caps(str(desk.ROOT))
+        self.reg = desk.load_tools()
+
+    def test_the_real_map_lints_clean(self):
+        errs, _ = caps.lint_caps(self.caps, self.reg, str(desk.ROOT), gate)
+        self.assertEqual(errs, [])
+
+    def test_the_matcher_and_the_gate_agree(self):
+        # everything a route may load is allowed by PreToolUse; every never_auto tool is denied by it
+        for c in self.caps["capabilities"]:
+            if c["status"] != "live":
+                continue
+            for t in c.get("load", []):
+                self.assertTrue(gate.decide(t, {}, self.reg)[0], t)
+            for t in c.get("never_auto", []):
+                self.assertFalse(gate.decide(t, {}, self.reg)[0], t)
+
+    def test_no_route_ever_injects_a_never_auto_tool(self):
+        never = {t for c in self.caps["capabilities"] for t in c.get("never_auto", [])}
+        for p in ["send the invoice and show stripe revenue this month", "semrush keyword research and openseo map pack rank",
+                  "supabase tables and netlify deploys and vercel runtime errors", "gmail inbox and google calendar slots and drive files"]:
+            text = caps.render(caps.match(p, self.caps)) or ""
+            self.assertFalse(any(t in text for t in never), p)
+
+    def test_the_index_is_fresh_small_and_has_no_act_tool(self):
+        text = caps.index_text(self.caps)
+        self.assertEqual(open(os.path.join(str(desk.ROOT), caps.INDEX_REL)).read(), text)
+        self.assertLessEqual(len(text), caps.INDEX_MAX)
+        never = {t for c in self.caps["capabilities"] for t in c.get("never_auto", [])}
+        self.assertFalse(any(t in text for t in never))
+
+    def test_chit_chat_injects_nothing(self):
+        for p in ["thanks, that makes sense", "yes go ahead", "rewrite that last paragraph shorter"]:
+            self.assertIsNone(desk.auto_context(p)[0], p)
+
+
+class CapsLintTests(unittest.TestCase):
+    def lint(self, cap, reg, **kw):
+        m = _map(cap, **kw)
+        with mock.patch.object(caps, "index_text", return_value=""), mock.patch("builtins.open", mock.mock_open(read_data="")), \
+                mock.patch("os.path.exists", side_effect=lambda q: str(q).endswith("capabilities.index.md")):
+            return caps.lint_caps(m, reg, "/nonexistent", gate)[0]
+
+    def test_clean_entry(self):
+        self.assertEqual(self.lint(_cap(), _reg(("mcp__Srv__read_thing", "read"))), [])
+
+    def test_an_act_tool_may_not_be_auto_loaded(self):
+        errs = self.lint(_cap(), _reg(("mcp__Srv__read_thing", "act")))
+        self.assertTrue(any("may not be auto-loaded" in e for e in errs), errs)
+
+    def test_an_unregistered_tool_may_not_be_auto_loaded(self):
+        errs = self.lint(_cap(), _reg())
+        self.assertTrue(any("not in registry" in e for e in errs), errs)
+
+    def test_a_gate_verb_tool_may_not_be_auto_loaded(self):
+        errs = self.lint(_cap(load=["mcp__Srv__send_thing"]), _reg(("mcp__Srv__send_thing", "act")))
+        self.assertTrue(any("gate verb" in e for e in errs), errs)
+
+    def test_a_tool_in_both_load_and_never_auto_fails(self):
+        errs = self.lint(_cap(never_auto=["mcp__Srv__read_thing"]), _reg(("mcp__Srv__read_thing", "read")))
+        self.assertTrue(any("both load and never_auto" in e for e in errs), errs)
+
+    def test_a_never_auto_tool_registered_as_read_fails(self):
+        errs = self.lint(_cap(never_auto=["mcp__Srv__write_thing"]), _reg(("mcp__Srv__read_thing", "read"), ("mcp__Srv__write_thing", "read")))
+        self.assertTrue(any("must be act or absent" in e for e in errs), errs)
+
+    def test_bad_regex_unknown_skill_unknown_bundle_member_and_no_strong_signal_fail(self):
+        errs = self.lint(_cap(strong=["("]), _reg(("mcp__Srv__read_thing", "read")))
+        self.assertTrue(any("bad regex" in e for e in errs), errs)
+        errs = self.lint(_cap(kind="skill", skill="nope:skill", load=[]), _reg())
+        self.assertTrue(any("neither a listed account skill" in e for e in errs), errs)
+        errs = self.lint(_cap(), _reg(("mcp__Srv__read_thing", "read")), bundles=[{"id": "v", "signals": ["x"], "members": ["ghost"]}])
+        self.assertTrue(any("unknown member" in e for e in errs), errs)
+        errs = self.lint(_cap(strong=[]), _reg(("mcp__Srv__read_thing", "read")))
+        self.assertTrue(any("at least one strong signal" in e for e in errs), errs)
+
+    def test_a_draft_tool_must_be_scope_draft(self):
+        errs = self.lint(_cap(draft_tools=["mcp__Srv__read_thing"]), _reg(("mcp__Srv__read_thing", "read")))
+        self.assertTrue(any("not scope draft" in e for e in errs), errs)
+
+
+class CapsRegisterAndScoreTests(unittest.TestCase):
+    def test_register_plan_adds_read_and_draft_and_refuses_gate_verbs_and_never_auto(self):
+        c = _cap(load=["mcp__Srv__read_thing", "mcp__Srv__draft_thing", "mcp__Srv__send_thing", "mcp__Srv__wipe_thing"],
+                 draft_tools=["mcp__Srv__draft_thing"], never_auto=["mcp__Srv__wipe_thing"])
+        new, refused = caps.register_plan(_map(c), _reg(), gate, "t")
+        self.assertEqual({e["name"]: e["scope"] for e in new}, {"mcp__Srv__read_thing": "read", "mcp__Srv__draft_thing": "draft"})
+        self.assertEqual(sorted(t for t, _ in refused), ["mcp__Srv__send_thing", "mcp__Srv__wipe_thing"])
+        self.assertNotIn("act", {e["scope"] for e in new})
+
+    def test_register_plan_skips_tools_already_registered_and_not_live_entries(self):
+        new, _ = caps.register_plan(_map(_cap(), _cap("n", status="not-installed", load=["mcp__Srv__other"])), _reg(("mcp__Srv__read_thing", "read")), gate)
+        self.assertEqual(new, [])
+
+    def test_score_sets_is_plain_arithmetic(self):
+        items = [{"prompt": "a", "must": ["x", "y"], "ok": ["z"]}, {"prompt": "b", "must": ["w"], "ok": []}, {"prompt": "c", "must": [], "ok": []}]
+        s = caps.score_sets(items, [["x", "z"], [], ["q"]])
+        self.assertEqual(s, {"recall_micro": 0.333, "precision_micro": 1.0, "empty_on_positive": 1, "negative_fire_rate": 1.0})
+
+
 if __name__ == "__main__":
     unittest.main()
