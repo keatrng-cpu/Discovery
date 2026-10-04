@@ -24,11 +24,147 @@
   "policy id"
  ],
  "directives": {
-  "classify": null,
-  "draft": null,
-  "known-path": null,
-  "exception": null,
-  "resolve": null,
-  "incident": null
+  "classify": {
+   "trigger": "A ticket text and a policy id list are both present. Quiet when the ask is to reply, resolve, or promise anything.",
+   "doneWhen": "`python3` lookup exits 0 only if the assigned policy id exists in the policy id list and the quoted policy line matches that entry verbatim, reported as `policy-id: <id> line: <file>:<n>`. The result `escalate: no policy id fits` with exit 0 is valid. An id that does not resolve exits non-zero.",
+   "checkKind": "quote",
+   "rung": "L1",
+   "forbidden": "Inventing or paraphrasing a policy id or policy line that is not in the id list. If no id fits, escalate.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "policy id",
+    "classify ticket",
+    "ticket intent",
+    "which policy",
+    "escalate ticket"
+   ],
+   "absentTools": [
+    "policy id list resolver",
+    "helpdesk ticket connector"
+   ]
+  },
+  "draft": {
+   "trigger": "A classified intent with policy id and policy line is present. Quiet when no classification exists or the ask is to grant a refund or exception.",
+   "doneWhen": "`python3` check exits 0 only if the draft contains the classified policy line verbatim, printed as `quoted: <policy-id> line <n>`. A draft that cannot quote its line is not a pass; the result is `unsupported`.",
+   "checkKind": "quote",
+   "rung": "L1",
+   "forbidden": "Promise creep: the draft says or implies a refund, credit, waiver, or exception the policy line does not grant.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "draft reply",
+    "customer reply",
+    "quote policy",
+    "no promise",
+    "reply to ticket"
+   ],
+   "absentTools": [
+    "promise-phrase linter",
+    "helpdesk macro library"
+   ]
+  },
+  "known-path": {
+   "trigger": "A workflow definition with ordered steps and a matching ticket are present. Quiet when no workflow matches; that goes to exception.",
+   "doneWhen": "`python3` diff of system state against the workflow's expected end state exits 0 with `state: matches steps N/N`. Any variance from a step exits non-zero and routes to support-exception; the agent does not improvise.",
+   "checkKind": "state-diff",
+   "rung": "L0",
+   "forbidden": "Improvising: adding, skipping, or reordering a step, or repairing a variance instead of handing it to exception.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "reliable",
+   "checkRunnable": false,
+   "keywords": [
+    "workflow steps",
+    "known path",
+    "runbook",
+    "system state",
+    "macro steps"
+   ],
+   "absentTools": [
+    "workflow engine connector",
+    "helpdesk state reader"
+   ]
+  },
+  "exception": {
+   "trigger": "A known path step failed or a variance was reported. Quiet when state matches the workflow.",
+   "doneWhen": "`python3 exception_record.py record.json` exits 0 only if the record names the failed step, the observed vs expected state, and a handoff owner, and has no remedy field; otherwise exits non-zero. Stop is the valid result.",
+   "checkKind": "exit-code",
+   "rung": "L0",
+   "forbidden": "Guessing a remedy: proposing, trying, or applying a fix after the failure instead of stopping.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "reliable",
+   "checkRunnable": false,
+   "keywords": [
+    "stop and record",
+    "handoff",
+    "path failed",
+    "variance",
+    "hand off ticket"
+   ],
+   "absentTools": [
+    "helpdesk handoff queue connector"
+   ]
+  },
+  "resolve": {
+   "trigger": "A classified ticket with an approved path needs a resolution call prepared. Refund, cancel, and delete requests stop here for a person.",
+   "doneWhen": "The prepared request validates against its typed schema and carries a non-empty idempotency key, with the action not in refund, cancel, delete. The execution itself is not performed by this skill.",
+   "checkKind": "schema",
+   "rung": "L1",
+   "forbidden": "Executing or promising a refund, cancel, or delete, or calling an untyped tool without an idempotency key.",
+   "tool": "none",
+   "toolScope": "none",
+   "gated": true,
+   "gate": "ABSENT refund, cancel, delete, typed resolution tool (prepare the request sheet with idempotency key, stop; a person executes)",
+   "status": "gated",
+   "checkRunnable": false,
+   "keywords": [
+    "idempotency key",
+    "typed tool",
+    "resolve ticket",
+    "prepare refund",
+    "cancel request"
+   ],
+   "absentTools": [
+    "typed support resolution tool",
+    "payment tool"
+   ]
+  },
+  "incident": {
+   "trigger": "Log files or log lines are present and a timeline is asked for. Quiet when no logs exist.",
+   "doneWhen": "`python3` check exits 0 only if every timeline event quotes its log line with `<file>:<line>` locator and timestamps are non-decreasing; each missing interval is printed as `gap: <t1>..<t2>`. An empty log yields `events: 0` and exits 0.",
+   "checkKind": "quote",
+   "rung": "L1",
+   "forbidden": "Filling a gap with a likely story: stating a cause or event no log line supports.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "incident timeline",
+    "log order",
+    "outage",
+    "quote log line",
+    "postmortem timeline"
+   ],
+   "absentTools": [
+    "log store connector"
+   ]
+  }
  }
 }
