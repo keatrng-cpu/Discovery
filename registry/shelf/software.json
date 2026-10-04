@@ -27,7 +27,7 @@
  "directives": {
   "analyze": {
    "trigger": "A failing path, stack trace, or error log is present and the owning file is unknown. Quiet when the ask is to edit, run tests, or explain the whole repo.",
-   "doneWhen": "The map names the entry file from the failing path (file:line quoted from the trace), the one invariant the bug breaks, the files the change must not touch, and one log line quoted verbatim with its line number that proves the entry file ran. No matching log line is a valid result: write unmatched and stop.",
+   "doneWhen": "One log line is quoted verbatim with its line number in the log file, and that line names the entry file taken from the failing path (file:line from the trace). `grep -n` of the quoted text in the log returns that same line number. A log with no matching line is a valid result: write \"unmatched\" and stop; do not guess a file.",
    "checkKind": "quote",
    "rung": "L1",
    "forbidden": "Guessing a file from a noisy log that the grep did not return; naming a file with no quoted line.",
@@ -37,12 +37,20 @@
    "gate": "",
    "status": "reliable",
    "checkRunnable": false,
-   "keywords": ["stack trace", "traceback", "failing path", "entry file", "which file", "invariant", "root cause location"],
+   "keywords": [
+    "stack trace",
+    "traceback",
+    "failing path",
+    "entry file",
+    "which file",
+    "invariant",
+    "root cause location"
+   ],
    "absentTools": []
   },
   "reproduce": {
    "trigger": "A bug report and an existing test harness are present. Quiet when asked to fix it, or when no harness exists.",
-   "doneWhen": "The named smallest command (pytest or python3 -m unittest, one test id, pinned input file) exits non-zero before any edit, and the report quotes the actual output line next to the expected value. git status shows no edited file. No harness is a valid result: report harness absent and stop.",
+   "doneWhen": "The named smallest command (pytest or python3 -m unittest, one test id, pinned input file) exits non-zero on the unedited tree. Red is the pass here. Exit 0 means the bug did not reproduce and the check fails. No harness in the repo is a valid result: report \"harness: absent\" and stop; status holds as reliable only when a harness exists.",
    "checkKind": "exit-code",
    "rung": "L1",
    "forbidden": "Editing source to make the failure appear, or reporting a failure that was not run red.",
@@ -52,12 +60,20 @@
    "gate": "",
    "status": "reliable",
    "checkRunnable": true,
-   "keywords": ["reproduce", "repro", "smallest failing command", "pinned input", "red before fix", "actual vs expected", "failing test case"],
+   "keywords": [
+    "reproduce",
+    "repro",
+    "smallest failing command",
+    "pinned input",
+    "red before fix",
+    "actual vs expected",
+    "failing test case"
+   ],
    "absentTools": []
   },
   "edit": {
    "trigger": "A frozen plan lists the files to change and any signature change. Quiet when no plan exists or the plan is still open.",
-   "doneWhen": "git diff --name-only lists exactly the files named in the plan and no others, public signatures are unchanged unless the plan says so, and each non-obvious hunk carries a one-line note. An empty diff is a valid result when the plan needs no change.",
+   "doneWhen": "`git diff --name-only` lists exactly the files named in the plan and no others (a sorted set comparison of the two lists). An empty diff is a valid result when the plan needs no change: report \"diff: empty\".",
    "checkKind": "state-diff",
    "rung": "L1",
    "forbidden": "Drift: editing an unnamed file, renaming a public signature, or tidying beyond the plan.",
@@ -67,12 +83,21 @@
    "gate": "",
    "status": "assisted",
    "checkRunnable": false,
-   "keywords": ["apply the plan", "frozen plan", "named files only", "signature stable", "constrained diff", "diff matches plan"],
-   "absentTools": ["plan-to-diff matcher"]
+   "keywords": [
+    "apply the plan",
+    "frozen plan",
+    "named files only",
+    "signature stable",
+    "constrained diff",
+    "diff matches plan"
+   ],
+   "absentTools": [
+    "plan-to-diff matcher"
+   ]
   },
   "verify": {
-   "trigger": "A project directory holds verify_gate.sh and a change claims to be finished. Also fires when the Stop hook asks whether work is done. Quiet when no gate script exists: report gate absent and stop.",
-   "doneWhen": "`bash verify_gate.sh` in the project directory exits 0 (unit test, then build, then render-compare against the fixture; the first failure stops it). The Stop hook blocks 'done' until it does.",
+   "trigger": "A project directory holds verify_gate.sh and a change claims to be finished. Quiet when no gate script exists: report gate absent and stop.",
+   "doneWhen": "`bash verify_gate.sh` in the project directory exits 0 (unit test, then build, then render-compare against the fixture; the first failure stops it).",
    "checkKind": "exit-code",
    "rung": "L0",
    "forbidden": "declaring done, or editing any file, on a model read of the output; verify never fixes",
@@ -82,7 +107,15 @@
    "gate": "",
    "status": "reliable",
    "checkRunnable": true,
-   "keywords": ["verify", "is it done", "run the gate", "stop hook", "build passes", "screenshot compare", "verify_gate"],
+   "keywords": [
+    "verify",
+    "is it done",
+    "run the gate",
+    "stop hook",
+    "build passes",
+    "screenshot compare",
+    "verify_gate"
+   ],
    "absentTools": []
   },
   "migrate": {
@@ -97,12 +130,22 @@
    "gate": "",
    "status": "assisted",
    "checkRunnable": false,
-   "keywords": ["migrate", "port", "codemod", "bulk rename", "upgrade across files", "isolated copies", "one file shape"],
-   "absentTools": ["codemod runner with per-file recheck"]
+   "keywords": [
+    "migrate",
+    "port",
+    "codemod",
+    "bulk rename",
+    "upgrade across files",
+    "isolated copies",
+    "one file shape"
+   ],
+   "absentTools": [
+    "codemod runner with per-file recheck"
+   ]
   },
   "review": {
    "trigger": "A diff or pull request is present. Quiet when asked to fix the code or to run tests.",
-   "doneWhen": "Every comment carries file:line and the quoted line text, the quote appears verbatim at that line in git diff output, and each comment is typed logic, security, or performance. Any comment with no matching quote is dropped; zero surviving comments is a valid result.",
+   "doneWhen": "Every comment carries file:line and the quoted line text, and the quote appears verbatim at that line in `git diff` output. Any comment with no matching quote is dropped; zero surviving comments is a valid result: report \"findings: 0\".",
    "checkKind": "quote",
    "rung": "L1",
    "forbidden": "Posting a comment that cannot point at a line, or over-commenting style; cross-file logic no single line shows is reported unsupported, not smoothed.",
@@ -112,12 +155,22 @@
    "gate": "",
    "status": "assisted",
    "checkRunnable": false,
-   "keywords": ["code review", "review the diff", "review this pull request", "logic miss", "security reach", "performance path", "quote the line"],
-   "absentTools": ["cross-file static analyzer"]
+   "keywords": [
+    "code review",
+    "review the diff",
+    "review this pull request",
+    "logic miss",
+    "security reach",
+    "performance path",
+    "quote the line"
+   ],
+   "absentTools": [
+    "cross-file static analyzer"
+   ]
   },
   "onboard": {
    "trigger": "A named request or endpoint and a runtime log are present. Quiet for explain-the-repo or architecture overview asks.",
-   "doneWhen": "The trace lists one entry, each hop to the store with the owning module and a quoted file:line, and exactly one hop matched to a verbatim runtime log line with its log line number. No matching log line is a valid result: report log unmatched and stop. Output ends after that one flow.",
+   "doneWhen": "Exactly one hop is matched to a runtime log line quoted verbatim with its log line number; `grep -n` of the quote in the log returns that number, and the line names the hop's function or file. No log line matching any hop is a valid result: report \"log: unmatched\" and stop.",
    "checkKind": "quote",
    "rung": "L1",
    "forbidden": "Touring the repo: describing modules that are not on the traced request path.",
@@ -127,8 +180,17 @@
    "gate": "",
    "status": "assisted",
    "checkRunnable": false,
-   "keywords": ["onboard", "trace one request", "entry to store", "who owns this hop", "new to this codebase", "request flow"],
-   "absentTools": ["runtime tracing connector"]
+   "keywords": [
+    "onboard",
+    "trace one request",
+    "entry to store",
+    "who owns this hop",
+    "new to this codebase",
+    "request flow"
+   ],
+   "absentTools": [
+    "runtime tracing connector"
+   ]
   }
  }
 }
