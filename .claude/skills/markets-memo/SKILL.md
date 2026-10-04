@@ -6,7 +6,8 @@ description: Use when a one-page investment memo needs a thesis and an observabl
 Sourced facts exist and the ask is a thesis memo. Quiet when the ask is to buy, sell, or size a position.
 ## Done-when
 check: human-only
-A person reads the memo and confirms it states a thesis and that its kill condition is an observable naming a metric, a threshold, and a date. No program can judge observability.
+A person reads the kill condition line and confirms it is an observable: it names a metric, a threshold, and a date. That is the one check; no program can judge observability.
+Not part of the check, but required of the draft: one stated thesis, every line tagged fact or inference, and no order and no size.
 ## Rung
 rung: L3
 A strong model drafts; a person checks the thesis and kill condition. Do not claim a pass without that read.

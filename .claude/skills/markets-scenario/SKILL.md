@@ -6,7 +6,8 @@ description: Use when a thesis must be shown under a move in exactly one variabl
 A baseline input set and a named variable to move. Quiet when two variables are named, or when the ask is to place risk.
 ## Done-when
 check: state-diff
-A diff of baseline inputs versus scenario inputs shows exactly one changed key; all other keys are byte-equal. The output shows the thesis under that move and stops. A move that leaves the thesis unchanged is a valid result.
+A diff of baseline inputs versus scenario inputs shows exactly one changed key, the named variable; all other keys are byte-equal. Two or more changed keys fails.
+Not part of the check, but required of the output: the thesis shown under that move, then stop. A move that leaves the thesis unchanged is a valid result.
 ## Rung
 rung: L1
 Code diffs the input sets; one fast-model pass writes the thesis under the move. Escalate only if the diff shows more than one changed key.
