@@ -75,7 +75,7 @@
   },
   "score": {
    "trigger": "A contact sheet with a per-frame score file from an external scorer. Quiet when no external score exists, or when the ask is the full render.",
-   "doneWhen": "A program over before.json and after.json prints 'changed frames: 1' (only the worst-scoring frame's entry differs); below threshold is a valid result and no full render starts.",
+   "doneWhen": "One program over contact.json, before.json, after.json and the threshold exits 0 only if: before.json names the worst-scoring frame; exactly that frame's entry differs in after.json (changed frames: 1) and no other; after.json carries its rescore; and render_started is false unless every rescore is at or above the threshold. Below threshold is a valid result and an unchanged rescore is reported, not hidden; no external score means unscored.",
    "checkKind": "count",
    "rung": "L1",
    "forbidden": "Fixing more than the worst frame, or starting the full render before the threshold is met (a rescore that does not rise is reported, not hidden).",
@@ -99,7 +99,7 @@
   },
   "asset": {
    "trigger": "A request to make or fix a mesh, UV, or rig asset. Quiet when the ask is to place the asset in a level or to bundle all stages in one prompt.",
-   "doneWhen": "jq -e '([\"mesh\",\"uv\",\"rig\",\"animation\"] as $o | .stages==$o[:(.stages|length)]) and (.imported==false) and (.placed_in_level==false) and (if (.stages|index(\"animation\")) then (.rig.kind==\"default\") and (.animation.count==1) and (.animation.played_on==\"default\") else true end)' asset.json exits 0; a manifest of only completed earlier stages is valid; editor playback stays assisted.",
+   "doneWhen": "jq -e '([\"mesh\",\"uv\",\"rig\",\"animation\"] as $o | .stages==$o[:(.stages|length)]) and (.imported==false) and (.placed_in_level==false) and (if (.stages|index(\"rig\")) then (.rig.kind==\"default\") else true end) and (if (.stages|index(\"animation\")) then (.animation.count==1) and (.animation.played_on==\"default\") else true end)' asset.json exits 0; a manifest of only completed earlier stages is valid; a custom rig fails until one animation played on the default rig; editor playback stays assisted.",
    "checkKind": "schema",
    "rung": "L1",
    "forbidden": "Bundling mesh, UV, rig and animation in one prompt, or importing or placing the asset in the level before one animation played on the default rig.",
@@ -149,7 +149,7 @@
   },
   "engine": {
    "trigger": "An engine project (Unity, Unreal, Godot) on disk and a request to change one system. Quiet when no project is present or the system is unnamed.",
-   "doneWhen": "A program reads systems.json (system name to its file globs), read.json (the pre-edit quote: system path and line, recorded before the first edit) and the output of git diff --name-only, and exits 0 only if the quoted path matches the named system's globs, the quote is non-empty, and every changed path matches the named system's globs; the path walk is reported 'not run' because the connector is absent.",
+   "doneWhen": "One program over systems.json (system name to file globs), read.json (the quote: system path, line number and line text) and git exits 0 only if: the quote is non-empty and its path matches the named system's globs; the quoted line text equals that line of the file at the pre-edit HEAD (git show HEAD:path), proving the read came before the write; and every path in git diff --name-only matches the named system's globs. The path walk is reported 'not run' because the connector is absent; no project or an unnamed system is unsupported, a valid result.",
    "checkKind": "state-diff",
    "rung": "L1",
    "forbidden": "Writing before reading the project (no quoted system path and line before the first edit), or editing a system that was not named first.",
