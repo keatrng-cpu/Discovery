@@ -149,9 +149,17 @@ def _hits(text, kws):
     return out
 
 
+# Stakes inference from task prose uses the owner's gate list only. The wider synonym set in gate.DENY_VERBS is for
+# tool names, where being strict is right; in prose it turns nouns ("checkout service", "reply rate") into false alarms.
+TASK_GATE_VERBS = ("order", "send", "pay", "hire", "sign", "diagnose", "exploit", "payload", "bypass", "decrypt")
+
+
 def _gate_verbs_in(task):
     t = re.sub(r"\b(in order to|in order|order by|sort order|order of)\b", " ", task.lower())
-    return sorted({v for v in gate.DENY_VERBS if re.search(rf"(?<![a-z0-9]){v}(?![a-z0-9])", t)})
+    found = {v for v in TASK_GATE_VERBS if re.search(rf"(?<![a-z0-9]){v}(?![a-z0-9])", t)}
+    if re.search(r"hardware[- ]start", t):
+        found.add("hardware-start")
+    return sorted(found)
 
 
 def _dkw(name, entry):

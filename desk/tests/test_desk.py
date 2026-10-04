@@ -101,6 +101,15 @@ class RouterTests(unittest.TestCase):
         lo = self.r("in order to measure the widget use calipers")
         self.assertEqual(lo["stakes"], "low")
 
+    def test_nouns_that_are_only_tool_name_synonyms_do_not_raise_stakes(self):
+        for word in ("checkout service", "reply rate", "buy-in", "broker mix"):
+            res = self.r(f"measure the widget with calipers for the {word}")
+            self.assertEqual(res["stakes"], "low", word)
+
+    def test_owner_gate_verbs_in_prose_do_raise_stakes(self):
+        for verb in ("order", "send", "pay", "hire", "sign", "diagnose", "exploit", "payload", "bypass", "decrypt", "hardware start"):
+            self.assertEqual(self.r(f"measure the widget with calipers then {verb} it")["stakes"], "high", verb)
+
     def test_unverified_skill_is_novelty_high_and_rung_not_trusted(self):
         c = self.r("measure the widget with calipers")["contracts"][0]
         self.assertEqual(c["novelty"], "high")
