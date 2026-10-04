@@ -6,12 +6,17 @@ description: Use when a proposed fix must be checked for whether the quoted vuln
 A quoted finding with file:line and a proposed patch (branch, commit, or diff) are both present. Quiet when asked to write the fix, apply it, or open the fix task: a human opens that.
 ## Done-when
 check: state-diff
-`git diff <base>..<head> -- <file>` is run and the result is one of: "changed: <quoted old line> -> <quoted new line>" with hunk locator, or "unchanged: <quoted line> at <file>:<line>". An empty diff is a valid result and reads "unchanged". A moved or renamed line that cannot be matched is reported "unmatched", not changed.
+Run `git diff -U0 <base>..<head> -- <file>` and read it against the quoted file:line. Exactly one verdict:
+- "changed: <old> -> <new>" with the @@ hunk locator, when a hunk covers the line and its "-" line equals the quote.
+- "unchanged: <quote> at <file>:<line>", when no hunk covers it. An empty diff is valid and reads unchanged.
+- "unmatched", when the base line at file:line is not the quote.
+The output then ends with "handoff: a human opens the fix task". No issue or pull-request write is made; a result missing the handoff line fails.
 ## Rung
 rung: L0
 The diff is a program. No model judgement of whether the fix is good; only whether the quoted line changed.
 ## Forbidden move
-Declaring the vulnerability fixed because the patch looks plausible, without a diff hunk touching the quoted line.
+Opening, filing, or drafting the fix task, issue, or pull request, so the human hand-off drops out. Also declaring the vulnerability fixed from a plausible patch without a diff hunk touching the quoted line.
 ## Tool
 tool: Bash:git
 scope: read
+The fix-task opener (issue or pull-request write) is absent from this directive; a person opens the fix task.
