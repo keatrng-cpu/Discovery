@@ -46,7 +46,7 @@
   },
   "graph": {
    "trigger": "Transcribed steps and a graph schema are present and the ask is a graph; quiet when no schema is supplied.",
-   "doneWhen": "Graph JSON validates against the supplied schema (validator exit 0 quoted); one node per instrument action, parameters as node fields; edges with no source handoff count 0; empty step list gives an empty valid graph.",
+   "doneWhen": "jq -e filter encoding the supplied schema's required node fields (id, action, params object, source step locator) exits 0 over the graph file, exit code quoted; one node per instrument action with parameters as node fields; GAP stays a GAP field; empty step list gives an empty graph that exits 0.",
    "checkKind": "schema",
    "rung": "L1",
    "forbidden": "Fake edges: linking adjacent nodes without a real handoff, or putting parameters in prose.",
@@ -70,7 +70,7 @@
   },
   "repair": {
    "trigger": "A graph and validator output naming a failing node are present; quiet when no node is named.",
-   "doneWhen": "The diff of the graph shows changes only inside the named node; changed lines outside it are 0; validator output shown before and after with the node id cleared; clean graph with empty diff is valid.",
+   "doneWhen": "git diff -U0 of the graph file mapped to the named node's line range shows changed lines outside that node: 0, count quoted; clean graph with empty diff is valid.",
    "checkKind": "state-diff",
    "rung": "L1",
    "forbidden": "Restyling the rest of the graph: reordering keys, renaming nodes, reformatting, or touching an unnamed node.",
@@ -116,7 +116,7 @@
   },
   "handoff": {
    "trigger": "A graph file and an editor-format target, or a manually edited copy to resync, are present; quiet without an editor format.",
-   "doneWhen": "After resync the diff vs the pre-edit graph shows changes only in person-edited nodes; untouched nodes that differ count 0; edited values appear; no edit gives an empty diff.",
+   "doneWhen": "jq -e . exits 0 on the editor-format file and the jq node projection (id, action, params) of graph file vs editor file diffs empty; after resync diff vs the pre-edit graph shows changes only in person-edited nodes, untouched nodes that differ 0, edited values appear; no edit gives an empty diff.",
    "checkKind": "state-diff",
    "rung": "L1",
    "forbidden": "Rewriting untouched nodes on resync: regenerating the graph, renumbering ids, or reordering nodes.",

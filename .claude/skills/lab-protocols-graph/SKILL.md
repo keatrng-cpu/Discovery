@@ -6,7 +6,7 @@ description: Use when transcribed protocol steps must become a node graph with o
 Transcribed steps (with GAPs kept) and a graph schema are present, and the ask is a graph. Quiet when no schema is supplied: report "schema: absent" and stop.
 ## Done-when
 check: schema
-The graph JSON validates against the supplied schema (validator exit 0, output quoted). One node per instrument action; every parameter is a field on its node, none live in prose. Every edge joins two nodes with a real handoff named in the source; a count of edges with no source step is 0. A GAP stays a GAP node field and is not filled. An empty step list yields an empty graph that validates.
+A jq -e filter encoding the supplied schema's required node fields (id, action, params as an object, source step locator) exits 0 over the graph file; the exit code is quoted. One node per instrument action; every parameter is a field on its node, none in prose. A GAP stays a GAP field and is not filled. An empty step list yields an empty graph and the filter exits 0. Fake-edge review is not part of this check (see Forbidden move). Full JSON Schema validation needs a validator that is not registered.
 ## Rung
 rung: L1
 One fast-model pass drafts nodes; a program validates and counts edges. Escalate only on validator failure that repair cannot clear.
