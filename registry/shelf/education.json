@@ -45,7 +45,7 @@
   },
   "check": {
    "trigger": "A learner answer exists for a restate or one-application prompt, with the key written down first, and the last answer was a miss. Quiet when no key exists, or when the ask is many questions on one skill.",
-   "doneWhen": "After a miss, the old and new example are saved to old_example.txt and new_example.txt, each starting with a 'scenario:' line, and python3 compares their lowercase word sets: Jaccard similarity must be below 0.5 (exit 0 pass, exit 1 means the paragraph or scenario was repeated or reworded and fails). A hit needs no new example, so no comparison run is a valid result.",
+   "doneWhen": "One command, python3 desk/check_example.py key.txt answer.txt old_example.txt new_example.txt, gives one exit code (0 pass, 1 fail) and does not exist yet. It asserts the answer file is a restate or one application and prints one 'mark: hit' or 'mark: miss' line from comparing it to key.txt. On a miss it asserts the new example differs: each file starts with a 'scenario:' line, the two scenario lines share under half their lowercase words (Jaccard below 0.5) and no paragraph is identical, and the new scenario introduces at least one noun absent from the old one so a rewording fails. A hit needs no new example and exit 0 with no comparison is valid; no key or no answer prints 'mark: unsupported' and is valid.",
    "checkKind": "exit-code",
    "rung": "L1",
    "forbidden": "Repeating the same paragraph or the same scenario after a miss; rewording or a one-byte edit does not count, the scenario must change.",
@@ -64,12 +64,12 @@
     "change the example"
    ],
    "absentTools": [
-    "scenario-similarity checker (a program under desk/ that exits 1 when two examples overlap too much)"
+    "semantic-similarity service (embeddings that tell whether two scenarios are the same situation reworded)"
    ]
   },
   "sequence": {
    "trigger": "A learner's current state is given (a quiz result, a stated stuck point) and the ask is what comes next. Quiet when the ask is for the whole path or an order of topics.",
-   "doneWhen": "The whole reply is exactly two non-empty lines: one starting 'gap:' and one starting 'next:' (count 1/1, total non-empty lines 2), each at most 160 characters, and the 'next:' line contains no ';', no numerals-with-period or bullet markers, and none of 'then', 'after that', 'finally', 'step 2' (so prose course dumps fail). 'gap: none found' with 'next: none' is valid when evidence shows no gap; no stated state gives 'gap: unsupported'.",
+   "doneWhen": "One command, python3 desk/check_sequence.py state.txt reply.txt, gives one exit code and does not exist yet. It asserts the reply is exactly two non-empty lines, one starting 'gap:' and one starting 'next:' (count 1/1), each at most 160 characters. It asserts the gap line names exactly one item that appears verbatim in state.txt as a miss or stuck point and has no ';' or list marker, and the 'next:' line has no ';', no numeral-with-period or bullet marker, and none of 'then', 'after that', 'finally', 'step 2'. 'gap: none found' with 'next: none' passes only when state.txt records no miss; an absent state.txt requires 'gap: unsupported'. That the gap is the smallest is not verified by the program (no prerequisite graph) and stays a model judgment.",
    "checkKind": "count",
    "rung": "L1",
    "forbidden": "Laying out the whole course: any list of steps beyond the single next one.",
@@ -93,7 +93,7 @@
   },
   "drill": {
    "trigger": "One named skill and an answer key (or a computable answer) exist. Quiet when the key is absent, or when the ask spans more than one skill.",
-   "doneWhen": "A python3 script marks every given answer against the stored key file and prints one 'marked: N/N' line with each mark citing a key item locator; exit 0 only when N equals the number of answers given and every answer has a key item. No key prints 'marked: 0/N unmarked, key absent' and is valid.",
+   "doneWhen": "One command, python3 desk/mark_drill.py key.txt answers.txt reply.txt, gives one exit code and does not exist yet. It asserts key.txt names exactly one 'skill:' and every answer cites it, marks every given answer against key.txt, and prints one 'marked: N/N' line with each mark citing a key item locator. It asserts that line is the last non-empty line of reply.txt, so no second skill, next level, or new item set follows. Exit 0 when N equals the number of answers given and every answer has a key item; with no key it prints 'marked: 0/N unmarked, key absent', which is valid and also exits 0.",
    "checkKind": "count",
    "rung": "L0",
    "forbidden": "Moving on inside the same directive: any text after the marked line that introduces a second skill, a next level, or a new item set, or marking an answer with no key.",
@@ -111,9 +111,7 @@
     "mark each answer",
     "answer key"
    ],
-   "absentTools": [
-    "key-marking script under desk/ (not yet written)"
-   ]
+   "absentTools": []
   },
   "curriculum": {
    "trigger": "A request to order topics, plan a course, or set a curriculum. Quiet for one concept, one check, or one next step.",
