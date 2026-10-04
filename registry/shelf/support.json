@@ -50,7 +50,7 @@
   },
   "draft": {
    "trigger": "A classified intent with policy id and policy line is present. Quiet when no classification exists or the ask is to grant a refund or exception.",
-   "doneWhen": "`python3` residual-text check exits 0 only if the draft contains the classified policy line verbatim and, once that line is removed, every remaining sentence carries a term of the classified intent and none carries a promise term (refund, credit, waiver, waive, exception, reimburse, compensat). It prints `quoted: <policy-id> line <n>`. A draft that cannot quote its line, answers another intent, or promises is not a pass; the result is `unsupported`. The check program is not written yet, so checkRunnable is false.",
+   "doneWhen": "`python3` quote check exits 0 only if the draft contains the classified policy line verbatim, matching the entry at the cited `<file>:<n>`; it prints `quoted: <policy-id> line <n>`. A draft that cannot quote its line is not a pass; the result is `unsupported`. This is the only check. Promise creep and intent drift are not checked by it; a person reviews them, which is why status stays assisted. The check program is not written yet, so checkRunnable is false.",
    "checkKind": "quote",
    "rung": "L1",
    "forbidden": "Promise creep: the draft says or implies a refund, credit, waiver, or exception the policy line does not grant.",
@@ -98,7 +98,7 @@
   },
   "exception": {
    "trigger": "A known path step failed or a variance was reported. Quiet when state matches the workflow.",
-   "doneWhen": "`jq -e '(.failed_step|length>0) and (.observed|length>0) and (.expected|length>0) and (.handoff_owner|length>0) and (has(\"remedy\")|not)' record.json` exits 0 only if the record names the failed step, observed vs expected state, and a handoff owner, and has no remedy field; otherwise exits non-zero. The stop is this code check, not a model judgment. Stop is the valid result.",
+   "doneWhen": "`jq -e --slurpfile f failed_state.json --slurpfile c state.json '(keys-[\"failed_step\",\"observed\",\"expected\",\"handoff_owner\",\"stopped\"]|length==0) and (.failed_step|type==\"string\" and length>0) and (.handoff_owner|type==\"string\" and length>0) and (.stopped==true) and (.expected|length>0) and (.observed==$f[0]) and (.observed!=.expected) and ($c[0]==$f[0])' record.json` exits 0 only if the record has exactly the allowed keys (a remedy or any other extra field fails), names the failed step and handoff owner, carries observed equal to the failure-time snapshot, differs from expected, and the current state still equals that snapshot, so no fix was tried outside the record. Otherwise exits non-zero. The stop is this code check, not a model judgment. Stop is the valid result.",
    "checkKind": "exit-code",
    "rung": "L0",
    "forbidden": "Guessing a remedy: proposing, trying, or applying a fix after the failure instead of stopping.",
@@ -144,7 +144,7 @@
   },
   "incident": {
    "trigger": "Log files or log lines are present and a timeline is asked for. Quiet when no logs exist.",
-   "doneWhen": "`python3` check exits 0 only if every timeline event's quoted text equals the line at its `<file>:<line>` locator; an event with no matching log line fails, so no gap is filled. An empty log yields `events: 0` and exits 0. Time ordering is a separate sort step done by program and is not part of this check.",
+   "doneWhen": "`python3` check exits 0 only if every timeline event has `<file>:<line>`, `ts`, and `quote`; the quote equals the line at that locator; the `ts` equals the timestamp parsed from that line; and the events are in non-decreasing `ts` order (ties keep `<file>:<line>` order). An event with no matching log line fails, so no gap is filled; a mis-ordered timeline fails. An empty log yields `events: 0` and exits 0.",
    "checkKind": "quote",
    "rung": "L1",
    "forbidden": "Filling a gap with a likely story: stating a cause or event no log line supports.",
