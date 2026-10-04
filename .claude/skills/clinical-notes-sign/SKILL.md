@@ -5,11 +5,11 @@ description: Use when a finished clinical note is ready for the clinician to rev
 ## Trigger
 A note has passed transcribe, gap, and cite and awaits the clinician. Quiet for any ask to sign, attest, or diagnose.
 ## Done-when
-check: signature
-The presented note carries an empty signature block and no signature, attestation, or date-signed value written by the agent. Only the clinician's own signature, added outside this session, counts as signed. A program reads the signature field and passes only when it is empty at presentation.
+check: state-diff
+A program diffs the presented note against the note that passed cite. The only difference allowed is an empty signature block. Any added assessment, impression, plan of care, agent-written signature, attestation, or signed date fails the diff. Presenting the cite-passed note unchanged plus the empty signature block is the valid result. Only the clinician signs, outside this session.
 ## Rung
 rung: L0
-A program prints the note with the unsigned block. No model pass is needed.
+A program prints the note with the unsigned block and runs the diff. No model pass is needed.
 ## Forbidden move
 Becoming a diagnosis: adding an assessment, impression, or plan of care to the presented note, or marking it signed, approved, or final on the clinician's behalf.
 ## Tool

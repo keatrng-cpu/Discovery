@@ -5,11 +5,11 @@ description: Use when a visit transcript and a note template are both present an
 ## Trigger
 A transcript and a template (SOAP or similar) are both in hand. Quiet when only one exists, or when asked what the patient has or what to do next. Documentation only.
 ## Done-when
-check: schema
-Every template field in the output holds either a value quoted verbatim from the transcript with its turn or line locator, or the literal "MISSING". The output validates against the template field list: no extra fields, no field left blank, no field without one of the two forms. A transcript that fills zero fields is a valid result: all fields read "MISSING". An unread or unsupported transcript is also valid and is reported as such.
+check: quote
+Every field value that is not the literal "MISSING" is a verbatim substring of the transcript, reported with its turn or line locator, and a program confirms the substring match. A field the transcript does not state reads "MISSING". A transcript that fills zero fields is a valid result: all fields read "MISSING". An unread or unsupported transcript is also valid and is reported as such.
 ## Rung
 rung: L1
-One fast-model pass fills the fields; a program validates field names and the MISSING-or-quote rule. Escalate only if validation fails.
+One fast-model pass fills the fields; a program checks each quoted value against the transcript. Escalate only if a quote fails to match.
 ## Forbidden move
 Smoothing a gap into a finding: writing a plausible value, a normal exam, or an inferred symptom into a field the transcript does not state. A silent field is MISSING, never "unremarkable" or "denies".
 ## Tool

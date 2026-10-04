@@ -22,8 +22,8 @@
  "directives": {
   "transcribe": {
    "trigger": "A transcript and a note template are both present; fill the template fields from what was said. Quiet for diagnosis or plan of care.",
-   "doneWhen": "Every template field holds a verbatim transcript quote with a turn or line locator, or the literal MISSING; output validates against the template field list. All-MISSING is a valid result.",
-   "checkKind": "schema",
+   "doneWhen": "Every non-MISSING field value is a verbatim substring of the transcript, reported with its turn or line locator and checked by a program; a field the transcript does not state reads the literal MISSING. All-MISSING is a valid result.",
+   "checkKind": "quote",
    "rung": "L1",
    "forbidden": "Smoothing a gap into a finding: writing a plausible value, normal exam, or inferred symptom into a field the transcript does not state.",
    "tool": "Bash:python3",
@@ -41,14 +41,14 @@
     "template fields"
    ],
    "absentTools": [
-    "note template schema validator"
+    "transcript line-trace checker"
    ]
   },
   "gap": {
    "trigger": "A drafted note has empty or MISSING template fields; ask the clinician for exactly those fields.",
-   "doneWhen": "Count of fields named in the ask equals count of MISSING or empty fields in the note, each by template field name, with no proposed value. Zero gaps is valid: output reads gaps: 0.",
+   "doneWhen": "A program lists the MISSING or empty template fields by name and counts them; count of fields named in the ask equals that count, each by template field name, with no proposed value. Zero gaps is valid: output reads gaps: 0.",
    "checkKind": "count",
-   "rung": "L1",
+   "rung": "L0",
    "forbidden": "Inventing the field: filling an empty field with a guessed value, suggesting an answer, or asking about a filled field.",
    "tool": "Bash:python3",
    "toolScope": "read",
@@ -94,8 +94,8 @@
   },
   "sign": {
    "trigger": "A note has passed transcribe, gap, and cite and awaits the clinician; present it and stop.",
-   "doneWhen": "The presented note carries an empty signature block and no agent-written signature, attestation, or signed date; a program reads the signature field and passes only when empty at presentation. Only the clinician signs, outside this session.",
-   "checkKind": "signature",
+   "doneWhen": "A program diffs the presented note against the note that passed cite: the only difference is an empty signature block. Any added assessment, impression, plan of care, agent-written signature, attestation, or signed date fails the diff. Presenting the cite-passed note unchanged with an empty signature block is the valid result. Only the clinician signs, outside this session.",
+   "checkKind": "state-diff",
    "rung": "L0",
    "forbidden": "Becoming a diagnosis: adding an assessment, impression, or plan of care, or marking the note signed, approved, or final on the clinician's behalf.",
    "tool": "none",
