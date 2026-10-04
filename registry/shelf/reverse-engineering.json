@@ -28,7 +28,7 @@
  "directives": {
   "triage": {
    "trigger": "One or more files are in hand and the ask is what is this: format, class, endianness, architecture, entry. Quiet for function lists, call graphs, naming, lifting, or decrypting or bypassing anything.",
-   "doneWhen": "`python3 fixtures/re-triage/check.py --fixture <dir> --out <out.json>` exits 0: for each file the output equals what the checker parses from `file` and `readelf -h` itself, or is {\"stop\":\"tools disagree\"} when the tools error or disagree, or {\"unsupported\":\"not ELF\"}.",
+   "doneWhen": "`python3 fixtures/re-triage/check.py --fixture <dir> --out <out.json>` exits 0: for each file the output fields format, class, endian, arch, and entry (the entry point address) equal what the checker parses from `file` and `readelf -h` itself, or is {\"stop\":\"tools disagree\"} when the tools error or disagree, or {\"unsupported\":\"not ELF\"}.",
    "checkKind": "exit-code",
    "rung": "L0",
    "forbidden": "any field the tools did not emit; continuing past a disagreement; anything beyond identification (no decryption, no bypass)",
@@ -50,7 +50,7 @@
   },
   "static": {
    "trigger": "A binary is in hand and triage already named its format and architecture; the ask is the function list, call graph, or strings. Quiet for names or purposes, runtime behavior, or decrypting or bypassing.",
-   "doneWhen": "The call-graph edge list is generated from `objdump -d` output twice, and `cmp first.edges second.edges` exits 0 (the graph regenerates byte for byte). A binary with no functions is a valid result: an empty edge list that regenerates empty, not a guess.",
+   "doneWhen": "One combined output holding the function list, the call-graph edge list, and the strings is generated from `objdump -d` and `strings` output twice, and `cmp first.out second.out` exits 0 (all three regenerate byte for byte). A binary with no functions is a valid result: empty function and edge sections that regenerate empty, not a guess.",
    "checkKind": "exit-code",
    "rung": "L0",
    "forbidden": "redrawing or editing the call graph by hand or by model; adding an edge or function the disassembler output does not show; listing any function address or string the tool output does not contain",
@@ -74,10 +74,10 @@
   },
   "lift": {
    "trigger": "A known-architecture sample with ground truth exists and a target needs a recovered spec. Quiet when no scored sample exists, or for decrypting or bypassing.",
-   "doneWhen": "A scoring program run on the known-architecture sample prints the line \"lift: M/N matched\" and exits 0, and its log shows the sample scored before the target file is opened. M=N, or an unknown architecture reported as \"unsupported\", is a valid result.",
+   "doneWhen": "A scoring program run on the known-architecture sample prints the line \"lift: M/N matched\" and exits 0, and writes remainder.json holding exactly N-M items (the unmatched ones; `jq length remainder.json` equals N-M), which is the only input a model pass receives. M=N (empty remainder), or an unknown architecture reported as \"unsupported\", is a valid result.",
    "checkKind": "count",
    "rung": "L1",
-   "forbidden": "sending the whole target to a model before the known-architecture score exists; calling an unknown-ISA lift reliable",
+   "forbidden": "sending the whole target, or any item outside remainder.json, to a model; touching the target before the known-architecture score exists; calling an unknown-ISA lift reliable",
    "tool": "Bash:python3",
    "toolScope": "read",
    "gated": false,
