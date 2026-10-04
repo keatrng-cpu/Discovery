@@ -40,13 +40,11 @@
     "draft scorecard",
     "job description criteria"
    ],
-   "absentTools": [
-    "manager accept step (human)"
-   ]
+   "absentTools": []
   },
   "extract": {
    "trigger": "An accepted scorecard and a resume are both present and the ask is to fill the scorecard fields. Quiet when the scorecard is not yet accepted.",
-   "doneWhen": "`jq` validates the output against the scorecard schema: keys equal the accepted scorecard fields exactly, and each value is null or an object with a value and a quote string and a resume line locator. An extra key or a missing key fails; a null field passes. An all-null result is valid.",
+   "doneWhen": "`jq` (with the resume loaded via --rawfile and split into lines) validates the output: keys equal the accepted scorecard fields exactly, and each value is null or an object with a value, a quote string and a resume line number where the quote is a substring of that resume line. An extra key, a missing key, or a quote that does not resolve at its line fails; a null field passes. An all-null result is valid.",
    "checkKind": "schema",
    "rung": "L1",
    "forbidden": "Inferring a trait or filling a blank from tone, school, or fluency. A field without a quoted resume line stays null.",
@@ -64,13 +62,11 @@
     "candidate fields",
     "parse resume"
    ],
-   "absentTools": [
-    "resume quote resolver with source offsets"
-   ]
+   "absentTools": []
   },
   "screen-note": {
    "trigger": "An accepted scorecard and one candidate's extracted fields or resume are present, and the ask is a note per line. Quiet when asked for an overall score.",
-   "doneWhen": "`jq` counts notes: the number of notes equals the number of scorecard lines (N/N), each note is a quote with locator or null, and no overall, vibe, or total field exists in the output. An unsupported line stays blank and passes; a missing or extra note, or any overall field, fails.",
+   "doneWhen": "`jq` (with the resume loaded via --rawfile and split into lines) counts notes: the number of notes equals the number of scorecard lines (N/N), each note is null or a quote with a locator whose quote is a substring of that resume line, and no overall, vibe, or total field exists in the output. An unsupported line stays blank and passes; a missing or extra note, an unresolved quote, or any overall field fails.",
    "checkKind": "count",
    "rung": "L1",
    "forbidden": "Adding an overall vibe score, summary rating, or recommendation field. One note per line, nothing aggregated.",
@@ -88,9 +84,7 @@
     "phone screen notes",
     "no overall score"
    ],
-   "absentTools": [
-    "resume quote resolver with source offsets"
-   ]
+   "absentTools": []
   },
   "compare": {
    "trigger": "Two or more candidates' screen notes share one accepted scorecard. Quiet for a single candidate or when lines differ between candidates.",
