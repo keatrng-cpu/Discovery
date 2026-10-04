@@ -5,13 +5,13 @@ description: Use when two sources disagree on a claim and the disagreement must 
 ## Trigger
 Two or more sources state different things about the same point. Quiet when only one source exists or the sources agree.
 ## Done-when
-check: human-only
-A person reads the side-by-side table: two verbatim quotes with locators, one line naming the exact point of disagreement, one line stating what evidence would decide it, and checks that the sentence after the quotes contains no figure absent from both quotes and no midpoint or blended conclusion. A program can confirm only that the quotes are verbatim; whether the sentence after averages them is a human judgment.
+check: quote
+A script reads the side-by-side table and exits 0 only when: two quotes each appear verbatim in their cited source at a stated locator; one line begins "Disagreement:" and one line begins "Decider:" (what evidence would decide it); and the sentence after the quotes contains no number absent from both quotes and none of the blend words "average", "mean of", "midpoint", "between the two", "roughly", "split the difference". Status stays weak: a blended conclusion worded without a number or a listed word still needs a person's read, so the program catches the figure and the wording, not every smoothing.
 ## Rung
-rung: L3
-Weak directive: a stronger model drafts the table and a person reviews it. Escalating the model does not remove the pull toward a smooth answer.
+rung: L1
+A fast model drafts the table; code checks the quotes, the two labeled lines, and the figures. Escalate to a person only when the script passes and the closing sentence still reads as a compromise.
 ## Forbidden move
 Averaging the two sources, or writing a blended figure or a midpoint conclusion in the sentence after the quotes.
 ## Tool
-tool: none
-scope: none
+tool: Bash:python3
+scope: read
