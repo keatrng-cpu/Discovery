@@ -50,7 +50,7 @@
   },
   "draft": {
    "trigger": "A classified intent with policy id and policy line is present. Quiet when no classification exists or the ask is to grant a refund or exception.",
-   "doneWhen": "`python3` quote check exits 0 only if the draft contains the classified policy line verbatim, matching the entry at the cited `<file>:<n>`; it prints `quoted: <policy-id> line <n>`. A draft that cannot quote its line is not a pass; the result is `unsupported`. This is the only check. Promise creep and intent drift are not checked by it; a person reviews them, which is why status stays assisted. The check program is not written yet, so checkRunnable is false.",
+   "doneWhen": "One command with one exit code: `python3 desk/check_draft.py --draft draft.txt --intent intent.txt --policy-list <file>`. It does not exist yet, so checkRunnable is false and the program is what the desk would run. Inputs are the draft, the classified intent, and the policy id list. Exit 0 asserts the draft contains the classified policy line verbatim, matching the entry at the cited `<file>:<n>`, and prints `quoted: <policy-id> line <n>`. Exit 0 asserts every draft sentence answers only the classified intent. Exit 0 asserts the draft states or implies no refund, credit, waiver, or exception that the policy line does not grant. A draft that cannot quote its line is not a pass; the result is `unsupported`, which is valid.",
    "checkKind": "quote",
    "rung": "L1",
    "forbidden": "Promise creep: the draft says or implies a refund, credit, waiver, or exception the policy line does not grant.",
@@ -74,7 +74,7 @@
   },
   "known-path": {
    "trigger": "A workflow definition with ordered steps and a matching ticket are present. Quiet when no workflow matches; that goes to exception.",
-   "doneWhen": "`jq -e --slurpfile e expected_state.json '. == $e[0]' state.json` exits 0 and prints `true`. Both files are supplied as input: expected_state.json lists the workflow's ordered steps with their end state, state.json is the observed snapshot, so reordering, skipping, or adding a step makes the arrays unequal. Any variance exits non-zero and routes to support-exception; the agent does not improvise. No model is in the loop, so reliable holds. Fetching a live snapshot needs an absent state reader.",
+   "doneWhen": "One command with one exit code: `jq -e --slurpfile e expected_state.json '. == $e[0]' state.json`. Inputs are expected_state.json (the workflow's ordered steps with their end state) and state.json (the observed system-state snapshot). Exit 0 asserts the output state equals the expected end state, so reordering, skipping, or adding a step fails. Any variance exits non-zero and routes to support-exception; the agent does not improvise. state.json is supplied by a person because the state reader is absent, so status is assisted until a reader produces it.",
    "checkKind": "state-diff",
    "rung": "L0",
    "forbidden": "Improvising: adding, skipping, or reordering a step, or repairing a variance instead of handing it to exception.",
@@ -82,7 +82,7 @@
    "toolScope": "read",
    "gated": false,
    "gate": "",
-   "status": "reliable",
+   "status": "assisted",
    "checkRunnable": true,
    "keywords": [
     "workflow steps",
@@ -98,7 +98,7 @@
   },
   "exception": {
    "trigger": "A known path step failed or a variance was reported. Quiet when state matches the workflow.",
-   "doneWhen": "`jq -e --slurpfile f failed_state.json --slurpfile c state.json '(keys-[\"failed_step\",\"observed\",\"expected\",\"handoff_owner\",\"stopped\"]|length==0) and (.failed_step|type==\"string\" and length>0) and (.handoff_owner|type==\"string\" and length>0) and (.stopped==true) and (.expected|length>0) and (.observed==$f[0]) and (.observed!=.expected) and ($c[0]==$f[0])' record.json` exits 0 only if the record has exactly the allowed keys (a remedy or any other extra field fails), names the failed step and handoff owner, carries observed equal to the failure-time snapshot, differs from expected, and the current state still equals that snapshot, so no fix was tried outside the record. Otherwise exits non-zero. The stop is this code check, not a model judgment. Stop is the valid result.",
+   "doneWhen": "One command with one exit code: `jq -e --slurpfile f failed_state.json --slurpfile c state.json '(keys-[\"failed_step\",\"observed\",\"expected\",\"handoff_owner\",\"stopped\"]|length==0) and (.failed_step|type==\"string\" and length>0) and (.handoff_owner|type==\"string\" and length>0) and (.stopped==true) and (.expected|length>0) and (.observed==$f[0]) and (.observed!=.expected) and ($c[0]==$f[0])' record.json`. Inputs are record.json, failed_state.json, and state.json. Exit 0 asserts the record has exactly the allowed keys, so a remedy field fails. Exit 0 asserts it names a non-empty failed step and handoff owner with stopped true. Exit 0 asserts observed equals the failure-time snapshot and differs from expected. Exit 0 asserts current state still equals that snapshot, so no fix was tried. Stop is the valid result.",
    "checkKind": "exit-code",
    "rung": "L0",
    "forbidden": "Guessing a remedy: proposing, trying, or applying a fix after the failure instead of stopping.",
@@ -144,7 +144,7 @@
   },
   "incident": {
    "trigger": "Log files or log lines are present and a timeline is asked for. Quiet when no logs exist.",
-   "doneWhen": "`python3` check exits 0 only if every timeline event has `<file>:<line>`, `ts`, and `quote`; the quote equals the line at that locator; the `ts` equals the timestamp parsed from that line; and the events are in non-decreasing `ts` order (ties keep `<file>:<line>` order). An event with no matching log line fails, so no gap is filled; a mis-ordered timeline fails. An empty log yields `events: 0` and exits 0.",
+   "doneWhen": "One command with one exit code: `python3 desk/check_incident.py --timeline timeline.json --logs <files>`. It does not exist yet, so checkRunnable is false and the program is what the desk would run. Inputs are the timeline events and the log files. Exit 0 asserts every event has `<file>:<line>`, `ts`, and `quote`, and the quote equals the line at that locator. Exit 0 asserts each `ts` equals the timestamp parsed from its log line. Exit 0 asserts events are in non-decreasing `ts` order, ties keeping `<file>:<line>` order. An event with no matching log line fails, so no gap is filled. An empty log yields `events: 0` and exits 0.",
    "checkKind": "quote",
    "rung": "L1",
    "forbidden": "Filling a gap with a likely story: stating a cause or event no log line supports.",
