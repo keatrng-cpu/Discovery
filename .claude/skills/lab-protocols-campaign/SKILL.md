@@ -6,7 +6,7 @@ description: Use when an iterative instrument campaign needs bounds, a stop cond
 A validated graph and a goal for repeated runs are present. The skill prepares the plan and stops; it never starts hardware.
 ## Done-when
 check: schema
-A jq -e filter over the campaign file exits 0, exit code quoted: every parameter has min and max set before the loop, the stop condition field is non-empty, and the iteration log schema lists its required fields with zero entries. grep -c '^STARTED-BY:$' prints 1, so the line is blank until a person writes it. Starting the hardware is the gate, not part of this check.
+One command, a jq -e filter over the campaign file, exits 0 with the exit code quoted. It asserts every parameter has min and max set before the loop, the stop condition field is non-empty, the iteration log schema lists its required fields with zero entries, and started_by is an empty string until a person writes it. Starting the hardware is the gate, not part of this check.
 ## Rung
 rung: L1
 One fast-model pass drafts the file; a program reads it. Never escalate to run hardware.
