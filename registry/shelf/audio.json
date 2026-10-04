@@ -45,7 +45,7 @@
   },
   "names": {
    "trigger": "A script or transcript and a pronunciation list file are present; no list means report no list and stop.",
-   "doneWhen": "python3 script exits 0 only if every proper noun is on the list, else non-zero printing 'missing: <name> line <n>'; empty script prints 'names: 0/0' and passes.",
+   "doneWhen": "python3 script loads the pronunciation list file itself (the list is read by the program, so the list is a tool) and exits 0 only if every proper noun is on the list, else non-zero printing 'missing: <name> line <n>'; empty script prints 'names: 0/0' and passes.",
    "checkKind": "exit-code",
    "rung": "L0",
    "forbidden": "Guessing a pronunciation or spelling for a proper noun not on the list instead of flagging it.",
@@ -62,9 +62,7 @@
     "unlisted name",
     "say the name"
    ],
-   "absentTools": [
-    "pronunciation list service"
-   ]
+   "absentTools": []
   },
   "score": {
    "trigger": "A rule file and existing music assets are present; quiet when asked to compose a new theme.",
@@ -91,14 +89,14 @@
   },
   "assemble": {
    "trigger": "An approved-takes list and take files are present; quiet when a take is unapproved or audio regeneration is asked.",
-   "doneWhen": "python3 script hashes takes and exits 0 only if exactly the approved takes appear in listed order with unchanged hashes, printing 'assembled: N/N takes'; empty list valid; a person listens as the close.",
+   "doneWhen": "python3 script hashes takes and exits 0 only if exactly the approved takes appear in listed order with unchanged hashes, printing 'assembled: N/N takes'; empty list valid; a person listens and accepts as the close.",
    "checkKind": "signature",
    "rung": "L1",
    "forbidden": "Regenerating or re-recording audio to fill a gap or substituting an unapproved take.",
-   "tool": "Bash:python3",
-   "toolScope": "read",
-   "gated": false,
-   "gate": "",
+   "tool": "none",
+   "toolScope": "none",
+   "gated": true,
+   "gate": "ABSENT accept (prepare the ordered take list and hash report, stop; a person listens and accepts the assembly)",
    "status": "assisted",
    "checkRunnable": false,
    "keywords": [
