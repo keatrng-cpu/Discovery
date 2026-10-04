@@ -27,7 +27,7 @@
  "directives": {
   "scan": {
    "trigger": "A repo or branch is present and the ask is to scan for leaked secrets; defensive only.",
-   "doneWhen": "Two result lines, one per tool run. Secret leg: mcp__github__run_secret_scanning stdout quoted verbatim with exit status; each finding a quoted tool line with file and line; zero findings valid as 'secret scan: 0 findings'; a scan that did not run is 'secret scan: unscanned'. Dependency leg: no dependency scanner is registered, so the line is 'dependency scan: unscanned (no scanner registered)' with no findings; a dependency finding without quoted scanner output is never reported and unscanned is never reported as clean.",
+   "doneWhen": "One result line from one tool run: mcp__github__run_secret_scanning stdout quoted verbatim with exit status; each finding a quoted tool line with file and line; zero findings valid as 'secret scan: 0 findings'; a scan that did not run is 'secret scan: unscanned'; a finding without a quoted scanner line is never reported and unscanned is never reported as clean.",
    "checkKind": "exit-code",
    "rung": "L0",
    "forbidden": "Reporting a model hunch as a finding: anything not a quoted line of scanner output.",
@@ -74,7 +74,7 @@
   },
   "rank": {
    "trigger": "Quoted findings and a written rubric are both present and the ask is to order them.",
-   "doneWhen": "Precondition: no written rubric gives 'rank: unsupported' and empty input gives 'rank: 0 rows', before any row. Check: for every ranked row, python3 -c exits 0 when the quoted text is a substring of line <line> of <file> (the quote against the code); a row that exits non-zero is removed as dropped; rows in equal rows out plus dropped, both stated.",
+   "doneWhen": "Precondition: no written rubric gives 'rank: unsupported' and empty input gives 'rank: 0 rows', before any row. Rubric file lines are 'clause | pattern | rank'. Check: for every ranked row, one python3 -c run exits 0 only when the quoted text is a substring of line <line> of <file> and the row's cited clause exists in the rubric with its pattern inside the quote and its rank equal to the row's rank; a row that exits non-zero (including a rank that ignores or contradicts its clause) is removed as dropped; rows in equal rows out plus dropped, both stated.",
    "checkKind": "quote",
    "rung": "L1",
    "forbidden": "Ranking unquoted code: assigning severity to anything no quoted line supports.",
@@ -95,7 +95,7 @@
   },
   "patch-review": {
    "trigger": "A quoted finding and a proposed patch are both present and the ask is whether the quoted line changed.",
-   "doneWhen": "git diff -U0 base..head -- file read against the quoted file:line gives exactly one verdict: 'changed: old -> new' with the @@ hunk locator when a hunk covers that line and its '-' line equals the quote; 'unchanged: line at file:line' when no hunk covers it (empty diff included); 'unmatched' when the base line at file:line is not the quote. Then the output ends with 'handoff: a human opens the fix task' and no issue or pull-request write is made; a result without that handoff line is a failure.",
+   "doneWhen": "git diff -U0 base..head -- file read against the quoted file:line gives exactly one verdict: 'changed: old -> new' with the @@ hunk locator when a hunk covers that line and its '-' line equals the quote; 'unchanged: line at file:line' when no hunk covers it (empty diff included); 'unmatched' when the base line at file:line is not the quote.",
    "checkKind": "state-diff",
    "rung": "L0",
    "forbidden": "Opening, filing, or drafting the fix task, issue, or pull request (the human hand-off dropping out), or declaring the vulnerability fixed from a plausible patch without a diff hunk touching the quoted line.",
@@ -112,9 +112,7 @@
     "fix diff",
     "patch touches line"
    ],
-   "absentTools": [
-    "fix-task opener (issue or pull-request write); a person opens the fix task"
-   ]
+   "absentTools": []
   }
  }
 }

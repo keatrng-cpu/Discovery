@@ -10,7 +10,6 @@ Run `git diff -U0 <base>..<head> -- <file>` and read it against the quoted file:
 - "changed: <old> -> <new>" with the @@ hunk locator, when a hunk covers the line and its "-" line equals the quote.
 - "unchanged: <quote> at <file>:<line>", when no hunk covers it. An empty diff is valid and reads unchanged.
 - "unmatched", when the base line at file:line is not the quote.
-The output then ends with "handoff: a human opens the fix task". No issue or pull-request write is made; a result missing the handoff line fails.
 ## Rung
 rung: L0
 The diff is a program. No model judgement of whether the fix is good; only whether the quoted line changed.
@@ -19,4 +18,4 @@ Opening, filing, or drafting the fix task, issue, or pull request, so the human 
 ## Tool
 tool: Bash:git
 scope: read
-The fix-task opener (issue or pull-request write) is absent from this directive; a person opens the fix task.
+No write tool is used here. A person opens the fix task; the verdict is reported and the work stops.
