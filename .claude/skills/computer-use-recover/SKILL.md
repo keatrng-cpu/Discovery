@@ -6,7 +6,7 @@ description: Use when a GUI step went wrong and must be named, reverted, and con
 A step produced an unexpected state diff and a saved pre-step snapshot exists. Quiet when no snapshot was saved: report that revert cannot be confirmed.
 ## Done-when
 check: exit-code
-Name the bad step by its step-list line. Revert it. Then `cmp pre-step-snapshot post-revert-snapshot` exits 0. After that, take no further action. Non-zero cmp means report 'revert unconfirmed' and stop.
+Revert the bad step. Then `cmp pre-step-snapshot post-revert-snapshot` exits 0. After that, take no further action. Non-zero cmp means report 'revert unconfirmed' and stop. The one check is cmp; naming the step is context, not a second check.
 ## Rung
 rung: L1
 One fast-model pass reverts; cmp checks it. Never a second attempt at the failed step in the same pass.

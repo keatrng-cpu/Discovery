@@ -52,12 +52,12 @@
    "checkKind": "quote",
    "rung": "L1",
    "forbidden": "Diverging from the step list: inventing, merging, or reordering steps, or guessing when the screen and list disagree instead of asking.",
-   "tool": "none",
-   "toolScope": "none",
+   "tool": "Bash:python3",
+   "toolScope": "read",
    "gated": false,
    "gate": "",
    "status": "weak",
-   "checkRunnable": false,
+   "checkRunnable": true,
    "keywords": [
     "next ui action",
     "step list",
@@ -65,9 +65,7 @@
     "ask if screen differs",
     "gui plan"
    ],
-   "absentTools": [
-    "step-list matcher program"
-   ]
+   "absentTools": []
   },
   "act": {
    "trigger": "One approved action and a captured pre-action state exist. Quiet when the action is not yet chosen or no pre-state was captured.",
@@ -80,7 +78,7 @@
    "gated": false,
    "gate": "",
    "status": "assisted",
-   "checkRunnable": false,
+   "checkRunnable": true,
    "keywords": [
     "state diff",
     "after state",
@@ -89,13 +87,12 @@
     "verify ui change"
    ],
    "absentTools": [
-    "state snapshot and diff program",
     "accessibility-tree reader"
    ]
   },
   "recover": {
    "trigger": "A step produced an unexpected state diff and a saved pre-step snapshot exists. Quiet when no snapshot was saved: report that revert cannot be confirmed.",
-   "doneWhen": "Name the bad step by its step-list line, revert it, then `cmp pre-step-snapshot post-revert-snapshot` exits 0; then stop with no further action. Non-zero cmp is reported as 'revert unconfirmed' and also stops.",
+   "doneWhen": "Revert the bad step, then `cmp pre-step-snapshot post-revert-snapshot` exits 0; then stop with no further action. Non-zero cmp is reported as 'revert unconfirmed' and also stops.",
    "checkKind": "exit-code",
    "rung": "L1",
    "forbidden": "Continuing or retrying the task after the revert, or claiming a revert without confirming the prior state.",
@@ -104,7 +101,7 @@
    "gated": false,
    "gate": "",
    "status": "weak",
-   "checkRunnable": false,
+   "checkRunnable": true,
    "keywords": [
     "undo bad step",
     "revert ui",
@@ -112,9 +109,7 @@
     "wrong click",
     "restore prior state"
    ],
-   "absentTools": [
-    "state snapshot program"
-   ]
+   "absentTools": []
   },
   "remember": {
    "trigger": "A fact observed at one step is needed at a later step. Quiet when the next step uses it directly.",
@@ -143,12 +138,12 @@
    "checkKind": "state-diff",
    "rung": "L1",
    "forbidden": "Submitting early, before the final state is checked field by field against the instruction.",
-   "tool": "none",
-   "toolScope": "none",
+   "tool": "Bash:python3",
+   "toolScope": "read",
    "gated": false,
    "gate": "",
    "status": "weak",
-   "checkRunnable": false,
+   "checkRunnable": true,
    "keywords": [
     "submit form",
     "final state check",
@@ -156,9 +151,7 @@
     "ready to submit",
     "confirm before submit"
    ],
-   "absentTools": [
-    "final-state field comparator"
-   ]
+   "absentTools": []
   }
  }
 }
