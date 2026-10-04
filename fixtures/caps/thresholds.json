@@ -1,0 +1,7 @@
+{
+ "_doc": "Pre-registered before the held-out set was read or scored. Do not edit to make a run pass. recall_micro = share of must-ids injected; precision_micro = share of injected ids that are must or ok on positive prompts; negative_fire = share of no-tool prompts that inject any capability; router_negative_fire = same for the desk router line.",
+ "recall_micro_min": 0.80,
+ "precision_micro_min": 0.60,
+ "negative_fire_max": 0.15,
+ "router_negative_fire_max": 0.15
+}
