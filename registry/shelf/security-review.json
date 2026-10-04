@@ -27,7 +27,7 @@
  "directives": {
   "scan": {
    "trigger": "A repo or branch is present and the ask is to scan for leaked secrets; defensive only.",
-   "doneWhen": "One result line from one tool run: mcp__github__run_secret_scanning stdout quoted verbatim with exit status; each finding a quoted tool line with file and line; zero findings valid as 'secret scan: 0 findings'; a scan that did not run is 'secret scan: unscanned'; a finding without a quoted scanner line is never reported and unscanned is never reported as clean.",
+   "doneWhen": "Two result lines. Secret scan: one tool run, mcp__github__run_secret_scanning stdout quoted verbatim with exit status; each finding a quoted tool line with file and line; zero findings valid as 'secret scan: 0 findings'; a scan that did not run is 'secret scan: unscanned'. Dependency scan: no dependency tool is registered, so the line is 'dependency scan: unsupported'. A finding without a quoted scanner line is never reported and unscanned or unsupported is never reported as clean.",
    "checkKind": "exit-code",
    "rung": "L0",
    "forbidden": "Reporting a model hunch as a finding: anything not a quoted line of scanner output.",
@@ -74,16 +74,16 @@
   },
   "rank": {
    "trigger": "Quoted findings and a written rubric are both present and the ask is to order them.",
-   "doneWhen": "Precondition: no written rubric gives 'rank: unsupported' and empty input gives 'rank: 0 rows', before any row. Rubric file lines are 'clause | pattern | rank'. Check: for every ranked row, one python3 -c run exits 0 only when the quoted text is a substring of line <line> of <file> and the row's cited clause exists in the rubric with its pattern inside the quote and its rank equal to the row's rank; a row that exits non-zero (including a rank that ignores or contradicts its clause) is removed as dropped; rows in equal rows out plus dropped, both stated.",
+   "doneWhen": "Precondition: no written rubric gives 'rank: unsupported' and empty input gives 'rank: 0 rows', before any row. One command with one exit code per row: python3 -c over <file> <line> <quote> <clause> <rank> <rubric-file>, where rubric lines are 'clause | pattern | rank'. It exits 0 only when the quote is a substring of line <line> of <file>, the cited clause exists in the rubric with its pattern inside the quote, and the rubric rank equals the row's rank. A non-zero row is removed as dropped; rows in equal rows out plus dropped, both stated.",
    "checkKind": "quote",
-   "rung": "L1",
+   "rung": "L0",
    "forbidden": "Ranking unquoted code: assigning severity to anything no quoted line supports.",
    "tool": "Bash:python3",
    "toolScope": "read",
    "gated": false,
    "gate": "",
    "status": "assisted",
-   "checkRunnable": true,
+   "checkRunnable": false,
    "keywords": [
     "rank findings",
     "severity rubric",
