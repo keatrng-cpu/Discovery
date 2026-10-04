@@ -6,7 +6,7 @@ description: Use when output must be failed for containing named banned patterns
 A named ban list exists, shorter than the design system, and output must pass it. Quiet when asked to ban taste or style opinions; those are not testable.
 ## Done-when
 check: exit-code
-`pytest` over the ban-list test file exits 0 on the output: one test per banned pattern. Any hit exits non-zero and names the pattern. A banned pattern with no test is not on the list. An empty ban list is a valid result: report "no bans", exit 0.
+One pytest command over the ban-list test file and the system's token or component list exits 0 only when every assertion holds: one test per banned pattern passes on the output (a hit names the pattern), a banned pattern with no test is not on the list, and the count of banned patterns is below the count of entries in the system. An empty ban list is a valid result: report "no bans", exit 0.
 ## Rung
 rung: L0
 A program alone: pytest runs the per-pattern tests. No model pass.
