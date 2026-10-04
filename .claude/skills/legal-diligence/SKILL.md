@@ -1,0 +1,18 @@
+---
+name: legal-diligence
+description: Use when a deal's documents need an in-scope and not-read list with one row per issue. Quiet for single-document extraction.
+---
+## Trigger
+A data room or document list and a stated scope are present. Quiet when scope is not stated.
+## Done-when
+check: count
+Two lists print: in-scope documents and not-read documents, with "in scope: N; read: R; not read: U" where N equals R plus U. One sheet, one row per issue, each row with a document name and quote locator. A document with no read record is listed not-read, never implied-read. Zero issues is valid.
+## Rung
+rung: L1
+A fast model reads and logs issues; a program reconciles the counts against the document list. Escalate only when N differs from R plus U.
+## Forbidden move
+Implying a document was read because it sits in scope.
+## Tool
+tool: none
+scope: none
+gate: ABSENT sign (prepare the coverage sheet and stop; a lawyer signs before anyone relies on it)

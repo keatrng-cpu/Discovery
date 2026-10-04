@@ -25,11 +25,139 @@
   "house paper"
  ],
  "directives": {
-  "extract": null,
-  "risk": null,
-  "compare": null,
-  "draft": null,
-  "authority": null,
-  "diligence": null
+  "extract": {
+   "trigger": "A contract file and one named clause type (for example indemnity or termination) are present. Quiet when no clause type is named, or when the ask is risk, compare, or edits.",
+   "doneWhen": "Each result row has a verbatim quote that is a substring of the source text and a section locator (section number, page, line). An empty result is valid: print \"clause: none found in <sections searched>\" and pass. One clause type per pass; a second type is a second pass.",
+   "checkKind": "quote",
+   "rung": "L1",
+   "forbidden": "Paraphrasing instead of quoting, or filling an empty result with a near clause. Write \"none found\" instead.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "extract clause",
+    "pull the clause",
+    "quote the clause",
+    "find indemnity clause",
+    "clause and section",
+    "termination clause text"
+   ],
+   "absentTools": []
+  },
+  "risk": {
+   "trigger": "A contract, one named party, and a written severity rule are present. Quiet when no party or no rule is given.",
+   "doneWhen": "Every score row carries the party, the written rule it applied, a severity from that rule, and a verbatim quote that is a substring of the source with a section locator. A row without a quote is dropped and printed as \"unscored: <text>\". Zero scored rows is valid.",
+   "checkKind": "quote",
+   "rung": "L1",
+   "forbidden": "Scoring unquoted text, or scoring from both parties' views at once.",
+   "tool": "none",
+   "toolScope": "none",
+   "gated": true,
+   "gate": "ABSENT sign (prepare the scored sheet and stop; a lawyer signs before anyone relies on it)",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "risk score",
+    "severity rule",
+    "party exposure",
+    "score the contract",
+    "liability exposure",
+    "one party's view"
+   ],
+   "absentTools": []
+  },
+  "compare": {
+   "trigger": "A counterparty draft and a house paper are both present. Quiet when either is missing.",
+   "doneWhen": "The house paper clause list is the denominator. Each house clause yields one row: matched, changed obligation, or missing. Output prints \"rows: N; missing: M; changed: C; matched: K\" with N equal to M+C+K and equal to the house clause count. Each changed row quotes both texts with section locators. A row never reads \"fine\" for silence.",
+   "checkKind": "count",
+   "rung": "L1",
+   "forbidden": "Treating a missing clause as fine, or dropping a row because the draft is silent.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "house paper",
+    "compare to house paper",
+    "missing clause",
+    "changed obligation",
+    "redline against",
+    "clause diff"
+   ],
+   "absentTools": []
+  },
+  "draft": {
+   "trigger": "A flag naming one clause (flag id, section) and the original text are present. Quiet when no flag exists.",
+   "doneWhen": "A diff of the proposal touches only the flagged section: the changed line range falls inside that section's locator, the original text appears verbatim beside it, and the edit carries the flag id. Any changed line outside the flagged section fails. Zero edits is valid when the flag needs none.",
+   "checkKind": "state-diff",
+   "rung": "L1",
+   "forbidden": "Rewriting the deal: editing any clause the flag did not name, or hiding the original.",
+   "tool": "none",
+   "toolScope": "none",
+   "gated": true,
+   "gate": "ABSENT sign (prepare the flagged-clause edit and stop; a lawyer signs)",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "flagged clause",
+    "edit the clause",
+    "propose redline",
+    "clause edit",
+    "redline the flag",
+    "original visible"
+   ],
+   "absentTools": []
+  },
+  "authority": {
+   "trigger": "A cite and the proposition it supports are present. Quiet when no cite or proposition is given.",
+   "doneWhen": "Each cite opens at a source, and a quoted holding line with a page or paragraph locator is a substring of the opened text and supports the proposition. A cite that does not open is dropped and printed \"dropped: <cite>\". An invented or mis-pinned cite fails the card. Zero surviving cites is valid. A subtle misquote can still pass this check, so a person reviews.",
+   "checkKind": "quote",
+   "rung": "L3",
+   "forbidden": "Keeping a cite that was not opened, or inventing a pin cite or holding quote.",
+   "tool": "mcp__FireCrawl__firecrawl_scrape",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "weak",
+   "checkRunnable": false,
+   "keywords": [
+    "verify citation",
+    "case law",
+    "resolve the cite",
+    "pin cite",
+    "holding quote",
+    "statute authority"
+   ],
+   "absentTools": [
+    "cite-resolution service"
+   ]
+  },
+  "diligence": {
+   "trigger": "A data room or document list and a stated scope are present. Quiet when scope is not stated.",
+   "doneWhen": "Two lists print: in-scope documents and not-read documents, with \"in scope: N; read: R; not read: U\" where N equals R plus U. One sheet, one row per issue, each row with a document name and quote locator. A document with no read record is listed not-read, never implied-read. Zero issues is valid.",
+   "checkKind": "count",
+   "rung": "L1",
+   "forbidden": "Implying a document was read because it sits in scope.",
+   "tool": "none",
+   "toolScope": "none",
+   "gated": true,
+   "gate": "ABSENT sign (prepare the coverage sheet and stop; a lawyer signs before anyone relies on it)",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "due diligence",
+    "data room",
+    "documents not read",
+    "coverage list",
+    "issue sheet",
+    "in scope documents"
+   ],
+   "absentTools": []
+  }
  }
 }
