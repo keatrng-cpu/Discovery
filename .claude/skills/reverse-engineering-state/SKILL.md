@@ -5,11 +5,12 @@ description: Use when a reverse-engineering investigation must be written to fil
 ## Trigger
 Findings from triage, static, lift, dynamic, protocol, or summarize exist, or a session must resume one. Quiet when there is nothing yet to record.
 ## Done-when
-check: schema
-`jq -e` on the state file exits 0: it has the keys target, findings, and artifacts, and each path listed under artifacts exists on disk. A fresh session reads only those files and restates the same findings. An empty findings list is a valid result.
+check: state-diff
+A fresh session reads only the state file and its listed artifacts and writes restated.json; then `jq -S .findings state.json > a.json; jq -S .findings restated.json > b.json; cmp a.json b.json` exits 0 (the resumed findings equal the saved findings). An empty findings list is a valid result.
+Status is reliable as files, but the restate program is not registered, so the check is not runnable today.
 ## Rung
 rung: L0
-Files and a schema query only. No model pass; escalate only if the state file fails the jq check.
+Files and jq only. No model pass; escalate only if the cmp of findings fails.
 ## Forbidden move
 Leaving findings in chat only, or resuming from memory instead of the files.
 ## Tool

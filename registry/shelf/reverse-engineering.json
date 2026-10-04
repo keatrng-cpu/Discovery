@@ -36,29 +36,45 @@
    "toolScope": "read",
    "gated": false,
    "gate": "",
-   "status": "reliable",
+   "status": "assisted",
    "checkRunnable": true,
-   "keywords": ["identify binary format", "elf header", "file architecture", "entry point", "what is this binary", "triage binary"],
+   "keywords": [
+    "identify binary format",
+    "elf header",
+    "file architecture",
+    "entry point",
+    "what is this binary",
+    "triage binary"
+   ],
    "absentTools": []
   },
   "static": {
    "trigger": "A binary is in hand and triage already named its format and architecture; the ask is the function list, call graph, or strings. Quiet for names or purposes, runtime behavior, or decrypting or bypassing.",
-   "doneWhen": "The call-graph edge list is generated from `objdump -d` output twice and `cmp first.edges second.edges` exits 0; each listed function address and string appears in the tool output at the cited offset. No functions or no strings is a valid empty result.",
+   "doneWhen": "The call-graph edge list is generated from `objdump -d` output twice, and `cmp first.edges second.edges` exits 0 (the graph regenerates byte for byte). A binary with no functions is a valid result: an empty edge list that regenerates empty, not a guess.",
    "checkKind": "exit-code",
    "rung": "L0",
-   "forbidden": "redrawing or editing the call graph by hand or by model; adding an edge or function the disassembler output does not show",
+   "forbidden": "redrawing or editing the call graph by hand or by model; adding an edge or function the disassembler output does not show; listing any function address or string the tool output does not contain",
    "tool": "Bash:objdump",
    "toolScope": "read",
    "gated": false,
    "gate": "",
-   "status": "reliable",
+   "status": "assisted",
    "checkRunnable": false,
-   "keywords": ["call graph", "function list", "extract strings", "disassembly listing", "regenerate graph", "list functions"],
-   "absentTools": ["headless disassembler with a call-graph export"]
+   "keywords": [
+    "call graph",
+    "function list",
+    "extract strings",
+    "disassembly listing",
+    "regenerate graph",
+    "list functions"
+   ],
+   "absentTools": [
+    "headless disassembler with a call-graph export"
+   ]
   },
   "lift": {
    "trigger": "A known-architecture sample with ground truth exists and a target needs a recovered spec. Quiet when no scored sample exists, or for decrypting or bypassing.",
-   "doneWhen": "A scoring program on the known-architecture sample prints \"lift: M/N matched\" before the target is opened, then prints the unmatched remainder with count N-M; only those items go to a model. An empty remainder or an unknown architecture reported as unsupported is a valid result.",
+   "doneWhen": "A scoring program run on the known-architecture sample prints the line \"lift: M/N matched\" and exits 0, and its log shows the sample scored before the target file is opened. M=N, or an unknown architecture reported as \"unsupported\", is a valid result.",
    "checkKind": "count",
    "rung": "L1",
    "forbidden": "sending the whole target to a model before the known-architecture score exists; calling an unknown-ISA lift reliable",
@@ -68,8 +84,18 @@
    "gate": "",
    "status": "assisted",
    "checkRunnable": false,
-   "keywords": ["lift binary", "recover spec", "known architecture", "isa recovery", "unmatched remainder", "score lift"],
-   "absentTools": ["disassembler", "ISA-specific disassembly for unknown architectures"]
+   "keywords": [
+    "lift binary",
+    "recover spec",
+    "known architecture",
+    "isa recovery",
+    "unmatched remainder",
+    "score lift"
+   ],
+   "absentTools": [
+    "disassembler",
+    "ISA-specific disassembly for unknown architectures"
+   ]
   },
   "dynamic": {
    "trigger": "A static claim list and a saved emulation trace are both in hand. Quiet when only one exists, to start hardware, or to decrypt or bypass anything.",
@@ -83,22 +109,39 @@
    "gate": "",
    "status": "assisted",
    "checkRunnable": false,
-   "keywords": ["emulation trace", "trace versus claim", "drop contradicted claim", "dynamic analysis", "emulated run", "trace line"],
-   "absentTools": ["emulator with a trace export", "emulator"]
+   "keywords": [
+    "emulation trace",
+    "trace versus claim",
+    "drop contradicted claim",
+    "dynamic analysis",
+    "emulated run",
+    "trace line"
+   ],
+   "absentTools": [
+    "emulator with a trace export",
+    "emulator"
+   ]
   },
   "protocol": {
    "trigger": "Saved captures are in hand and the ask is to parse them and show the parse reproduces them. Quiet for live interception, crafting or replaying traffic, or decrypting or bypassing.",
-   "doneWhen": "For every capture, parse then re-serialize, and `cmp capture.bin roundtrip.bin` exits 0; the parse covers only fields seen in those captures. A non-round-tripping capture is reported failed; an empty capture set is a valid result.",
+   "doneWhen": "For every capture, parse then re-serialize, and `cmp capture.bin roundtrip.bin` exits 0. A capture that does not round-trip is reported as failed, and an empty capture set is a valid result.",
    "checkKind": "exit-code",
    "rung": "L1",
-   "forbidden": "generalizing a field layout, length rule, or message type past the captures in hand; calling a spec from a few captures trustworthy",
+   "forbidden": "parsing any field not seen in the captures in hand; generalizing a field layout, length rule, or message type past the captures in hand; calling a spec from a few captures trustworthy",
    "tool": "Bash:cmp",
    "toolScope": "read",
    "gated": false,
    "gate": "",
    "status": "assisted",
    "checkRunnable": false,
-   "keywords": ["pcap round trip", "parse capture", "packet capture", "wire format", "message layout", "protocol parser"],
+   "keywords": [
+    "pcap round trip",
+    "parse capture",
+    "packet capture",
+    "wire format",
+    "message layout",
+    "protocol parser"
+   ],
    "absentTools": []
   },
   "summarize": {
@@ -113,13 +156,23 @@
    "gate": "",
    "status": "weak",
    "checkRunnable": false,
-   "keywords": ["name function", "stripped function name", "evidence cited name", "function purpose", "rename decompiled", "label function"],
-   "absentTools": ["disassembler", "emulator with a trace export"]
+   "keywords": [
+    "name function",
+    "stripped function name",
+    "evidence cited name",
+    "function purpose",
+    "rename decompiled",
+    "label function"
+   ],
+   "absentTools": [
+    "disassembler",
+    "emulator with a trace export"
+   ]
   },
   "state": {
    "trigger": "Findings from any reverse-engineering directive exist, or a session must resume one. Quiet when there is nothing yet to record.",
-   "doneWhen": "`jq -e` on the state file exits 0: it has the keys target, findings, and artifacts, and each path under artifacts exists on disk; a fresh session reading only those files restates the same findings. An empty findings list is a valid result.",
-   "checkKind": "schema",
+   "doneWhen": "A fresh session reads only the state file and its listed artifacts and writes restated.json; then `jq -S .findings state.json > a.json; jq -S .findings restated.json > b.json; cmp a.json b.json` exits 0 (the resumed findings equal the saved findings). An empty findings list is a valid result.",
+   "checkKind": "state-diff",
    "rung": "L0",
    "forbidden": "leaving findings in chat only, or resuming from memory instead of the files",
    "tool": "Bash:jq",
@@ -128,7 +181,14 @@
    "gate": "",
    "status": "reliable",
    "checkRunnable": false,
-   "keywords": ["resume investigation", "investigation state", "state file", "reverse engineering notes", "resume analysis", "artifact files"],
+   "keywords": [
+    "resume investigation",
+    "investigation state",
+    "state file",
+    "reverse engineering notes",
+    "resume analysis",
+    "artifact files"
+   ],
    "absentTools": []
   }
  }
