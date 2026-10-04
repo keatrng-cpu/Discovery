@@ -20,9 +20,97 @@
   "soundtrack"
  ],
  "directives": {
-  "cut": null,
-  "names": null,
-  "score": null,
-  "assemble": null
+  "cut": {
+   "trigger": "One take file and one region with start and end times; quiet for episode-wide restitch or reorder.",
+   "doneWhen": "python3 diff script exits 0 printing 'outside-region: N/N samples unchanged'; a no-op cut is valid; a person listens to the region as the close.",
+   "checkKind": "state-diff",
+   "rung": "L1",
+   "forbidden": "Restitching the episode: changing, moving, or re-joining anything outside the named region.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "tighten region",
+    "trim pause",
+    "cut region",
+    "remove filler",
+    "shorten breath"
+   ],
+   "absentTools": [
+    "audio editor"
+   ]
+  },
+  "names": {
+   "trigger": "A script or transcript and a pronunciation list file are present; no list means report no list and stop.",
+   "doneWhen": "python3 script exits 0 only if every proper noun is on the list, else non-zero printing 'missing: <name> line <n>'; empty script prints 'names: 0/0' and passes.",
+   "checkKind": "exit-code",
+   "rung": "L0",
+   "forbidden": "Guessing a pronunciation or spelling for a proper noun not on the list instead of flagging it.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "reliable",
+   "checkRunnable": false,
+   "keywords": [
+    "pronunciation list",
+    "proper noun",
+    "name check",
+    "unlisted name",
+    "say the name"
+   ],
+   "absentTools": [
+    "pronunciation list service"
+   ]
+  },
+  "score": {
+   "trigger": "A rule file and existing music assets are present; quiet when asked to compose a new theme.",
+   "doneWhen": "python3 script exits 0 only if the hook cue lies inside its rule window using a rule-named asset, printing 'hook: ok'; unplaced hook prints 'hook: absent' and is valid.",
+   "checkKind": "exit-code",
+   "rung": "L1",
+   "forbidden": "Composing or generating a new theme to fill the hook, or placing a cue the rule file does not name.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "temp music",
+    "music rules",
+    "hook cue",
+    "place music",
+    "cue sheet"
+   ],
+   "absentTools": [
+    "audio editor"
+   ]
+  },
+  "assemble": {
+   "trigger": "An approved-takes list and take files are present; quiet when a take is unapproved or audio regeneration is asked.",
+   "doneWhen": "python3 script hashes takes and exits 0 only if exactly the approved takes appear in listed order with unchanged hashes, printing 'assembled: N/N takes'; empty list valid; a person listens as the close.",
+   "checkKind": "signature",
+   "rung": "L1",
+   "forbidden": "Regenerating or re-recording audio to fill a gap or substituting an unapproved take.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "approved takes",
+    "episode order",
+    "sequence takes",
+    "assemble episode",
+    "take order"
+   ],
+   "absentTools": [
+    "audio editor"
+   ]
+  }
  }
 }
