@@ -51,7 +51,7 @@
   },
   "time": {
    "trigger": "A time t and a renderer that takes t as its only time input. Quiet when no t-addressable renderer exists (generic video generator) or when the ask is a full render.",
-   "doneWhen": "Render the frame at t into frame_t.png; cmp frame_t.png expected_t.png exits 0, where expected_t.png is the brief's reference frame for that t; no reference frame means unchecked, and a renderer that is not a function of t is reported unsupported, both valid results.",
+   "doneWhen": "Render the frame at t into an empty out/ directory as frame_t.png; one program exits 0 only if out/ holds exactly one file (frame_t.png, count 1, so no full render and no other frame) and cmp out/frame_t.png expected_t.png exits 0, where expected_t.png is the brief's reference frame for that t; no reference frame means unchecked, and a renderer that is not a function of t is reported unsupported, both valid results.",
    "checkKind": "exit-code",
    "rung": "L0",
    "forbidden": "Rendering the full sequence to reach frame t, or drawing any frame other than t (a second frame file in the output directory is the failure).",
@@ -149,7 +149,7 @@
   },
   "engine": {
    "trigger": "An engine project (Unity, Unreal, Godot) on disk and a request to change one system. Quiet when no project is present or the system is unnamed.",
-   "doneWhen": "A program reads systems.json (system name to its file globs) and the output of git diff --name-only, and exits 0 only if every changed path matches the named system's globs; the pre-edit quote of the system (path and line) and the path walk are not part of this check, and the walk is reported 'not run' because the connector is absent.",
+   "doneWhen": "A program reads systems.json (system name to its file globs), read.json (the pre-edit quote: system path and line, recorded before the first edit) and the output of git diff --name-only, and exits 0 only if the quoted path matches the named system's globs, the quote is non-empty, and every changed path matches the named system's globs; the path walk is reported 'not run' because the connector is absent.",
    "checkKind": "state-diff",
    "rung": "L1",
    "forbidden": "Writing before reading the project (no quoted system path and line before the first edit), or editing a system that was not named first.",
