@@ -6,12 +6,12 @@ description: Use when an inbox needs sorting by a stated rule, headers first. Qu
 A mailbox or thread list is present and a triage rule (sender, label, subject, age) is stated. Quiet when no rule exists or the ask is to reply.
 ## Done-when
 check: count
-Read headers only (sender, subject, date, labels) via search. A program reads the triage log and exits 0 only if: every opened thread id was marked by a named rule id, each has a non-empty "why opened" line, and opened N equals rule-marked N ("opened: N/N"). Zero marked and zero opened is a valid result and prints "opened: 0/0". No reply text appears in the log.
+One program reads the triage log and the header list. Exits 0 only if: a header-scan entry precedes every open entry; the set of opened thread ids equals the set of rule-marked ids (symmetric difference 0, printed "opened: N/N"); each opened id has a rule id and a non-empty why-opened line; the reply/send call count in the log is 0. 0/0 is valid.
 ## Rung
 rung: L0
-Header listing and rule match are code. No model pass is needed. Escalate only if the rule is ambiguous, then ask the owner for the rule.
+A program alone reads the log. No model pass is needed to compare id sets.
 ## Forbidden move
-Opening a thread the rule did not mark, or replying while triaging. Opening on a hunch without a recorded reason is the failure.
+Opening a thread the rule did not mark, opening before the header scan, or replying while triaging.
 ## Tool
 tool: mcp__Gmail__search_threads
 scope: read

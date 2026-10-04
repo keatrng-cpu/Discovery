@@ -27,10 +27,10 @@
  "directives": {
   "triage": {
    "trigger": "A mailbox or thread list is present and a triage rule is stated; quiet when no rule exists or the ask is to reply.",
-   "doneWhen": "Program reads the triage log: every opened thread id has a named rule id and a non-empty why-opened line, opened N equals rule-marked N (opened: N/N); 0/0 is valid.",
+   "doneWhen": "One program reads the triage log and the header list. Exits 0 only if: a header-scan entry precedes every open entry; the set of opened thread ids equals the set of rule-marked ids (symmetric difference 0, printed \"opened: N/N\"); each opened id has a rule id and a non-empty why-opened line; the reply/send call count in the log is 0. 0/0 is valid.",
    "checkKind": "count",
    "rung": "L0",
-   "forbidden": "Opening a thread the rule did not mark, or replying while triaging.",
+   "forbidden": "Opening a thread the rule did not mark, opening before the header scan, or replying while triaging.",
    "tool": "mcp__Gmail__search_threads",
    "toolScope": "read",
    "gated": false,
@@ -51,14 +51,14 @@
   },
   "draft": {
    "trigger": "Exactly one thread id is named and a reply is wanted; quiet for send or multiple threads.",
-   "doneWhen": "Draft count for the thread rises by exactly 1, sent count unchanged, draft quotes the sender's ask line with message locator; no thread or no ask yields 'no draft: unsupported'.",
-   "checkKind": "state-diff",
+   "doneWhen": "Program greps the draft's quoted ask line in the named thread's message text at the cited message locator (quote: msg N, line L); exits 0 only if the quote is verbatim there. No thread or no ask yields \"no draft: unsupported\", which is valid.",
+   "checkKind": "quote",
    "rung": "L1",
    "forbidden": "Sending, replying, or forwarding the draft, or answering a question the thread never asked.",
-   "tool": "mcp__Gmail__create_draft",
-   "toolScope": "draft",
-   "gated": false,
-   "gate": "",
+   "tool": "none",
+   "toolScope": "none",
+   "gated": true,
+   "gate": "ABSENT send, reply, forward (prepare the draft text and stop; a person sends)",
    "status": "assisted",
    "checkRunnable": false,
    "keywords": [
@@ -69,15 +69,14 @@
     "draft but do not send"
    ],
    "absentTools": [
-    "Gmail list_drafts read",
     "ask-match verifier"
    ]
   },
   "brief": {
    "trigger": "Calendar events with start and end times for a stated window are present; quiet when only prose exists.",
-   "doneWhen": "Program computes pairs with startA < endB and startB < endA; brief lists exactly those (overlaps: N/N) naming both events; back-to-back excluded; 0/0 valid; no data is unread.",
+   "doneWhen": "Program computes every pair of calendar events with startA < endB and startB < endA from the structured times and prints the list (overlaps: N/N); the brief's list equals that list and names both events of each pair. Back-to-back (endA == startB) is excluded. 0/0 is valid. No calendar times means unread.",
    "checkKind": "count",
-   "rung": "L1",
+   "rung": "L0",
    "forbidden": "Calling a back-to-back or near-miss a conflict, or naming an overlap from prose without calendar times.",
    "tool": "mcp__Google_Calendar__list_events",
    "toolScope": "read",
@@ -93,16 +92,14 @@
     "real overlaps",
     "week conflicts"
    ],
-   "absentTools": [
-    "overlap computation program"
-   ]
+   "absentTools": []
   },
   "pack": {
    "trigger": "A meeting and source threads or documents are present; quiet when no source is attached.",
-   "doneWhen": "Every agenda item has a source id and verbatim quote with locator; program greps each quote in its source (items: N/N sourced); unsourced items dropped; empty agenda is valid.",
+   "doneWhen": "One program, per item: the source id is unique across items (duplicate source ids = 0, one item per source) and the verbatim quote with locator greps in that source (items: N/N sourced). Unsourced items are dropped; an empty agenda is valid.",
    "checkKind": "quote",
    "rung": "L1",
-   "forbidden": "Adding an agenda item from memory alone, or paraphrasing a source into a quote it does not contain.",
+   "forbidden": "Adding an agenda item from memory alone, two items from one source, or paraphrasing a source into a quote it does not contain.",
    "tool": "mcp__Gmail__get_thread",
    "toolScope": "read",
    "gated": false,
@@ -116,15 +113,13 @@
     "agenda items with sources",
     "pack meeting"
    ],
-   "absentTools": [
-    "quote-resolution program"
-   ]
+   "absentTools": []
   },
   "book": {
    "trigger": "A booking is wanted (travel, appointment, reservation, event); always gated, prepare details and stop.",
-   "doneWhen": "A person confirms the prepared booking sheet and performs the booking; no program can pass this.",
-   "checkKind": "human-only",
-   "rung": "L3",
+   "doneWhen": "Bash:jq -e exits 0 on one JSON file holding the sheet and two calendar-event snapshots: sheet has non-empty what, who, when, where, price, source_link and booked false; events_before equals events_after (state unchanged, no booking made).",
+   "checkKind": "schema",
+   "rung": "L0",
    "forbidden": "Creating the event or reservation, submitting a booking form, or reporting a booking as done.",
    "tool": "none",
    "toolScope": "none",
@@ -139,16 +134,13 @@
     "book travel",
     "itinerary booking"
    ],
-   "absentTools": [
-    "booking tool",
-    "calendar create_event (act, not registered)"
-   ]
+   "absentTools": []
   },
   "pay": {
    "trigger": "A payment is wanted (bill, invoice, fee, purchase); always gated, prepare details and stop.",
-   "doneWhen": "A person confirms payee, amount, due date, and source document, then pays; no program can pass this.",
-   "checkKind": "human-only",
-   "rung": "L3",
+   "doneWhen": "Bash:jq -e exits 0 on one JSON file holding the sheet and the action log: sheet has non-empty payee, amount, due_date, source_document and paid false; action_log has no entry with a verb in pay, payment, checkout, purchase (state unchanged, no payment made).",
+   "checkKind": "schema",
+   "rung": "L0",
    "forbidden": "Submitting a payment, entering card or account numbers, checking out, or reporting a payment as made.",
    "tool": "none",
    "toolScope": "none",
@@ -163,9 +155,7 @@
     "settle bill",
     "prepare payment"
    ],
-   "absentTools": [
-    "payment tool"
-   ]
+   "absentTools": []
   }
  }
 }

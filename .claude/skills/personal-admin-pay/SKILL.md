@@ -5,11 +5,11 @@ description: Use when a bill, invoice, or purchase payment details must be prepa
 ## Trigger
 A payment is wanted (bill, invoice, fee, purchase). Always gated: prepare the details, then stop.
 ## Done-when
-check: human-only
-A person confirms payee, amount, due date, and source document, then pays. No program can pass this; the agent's output ends at the prepared payment sheet.
+check: schema
+Bash:jq -e exits 0 on one JSON file holding the sheet and the action log: sheet has non-empty payee, amount, due_date, source_document and paid false; action_log has no entry with a verb in pay, payment, checkout, purchase (state unchanged, no payment made).
 ## Rung
-rung: L3
-Human-only. Use the plan-level pass to assemble the sheet; never an act step.
+rung: L0
+A jq filter validates the sheet fields and the clean action log. A person pays afterward.
 ## Forbidden move
 Submitting a payment, entering card or account numbers, checking out, or reporting a payment as made.
 ## Tool
