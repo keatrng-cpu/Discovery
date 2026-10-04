@@ -1,0 +1,37 @@
+{
+ "candidates": [
+  {
+   "shelf": "research",
+   "directive": "conflict",
+   "tool": "mcp__FireCrawl__firecrawl_scrape",
+   "toolScope": "read",
+   "doneWhen": "python3 fixtures/research-conflict/check.py <out> exits 0 only when every number and every quoted line in the conflict output is a substring of one of the two firecrawl_scrape markdown pages saved for the cited URLs; an averaged or blended figure appears in neither page and exits 1",
+   "shadowRun": "Freeze two disagreeing source pairs as saved scrape markdown, split into fixtures/research-conflict/tune and heldout. Run the current research-conflict skill (baseline arm) and the scrape-checked variant (candidate arm) on the same heldout pair; record tokens, seconds, and check exit per arm in a promote file and run python3 desk/desk.py promote-gate on it. Promotion requires BOTH: the held-out check exits 0 on the candidate arm, AND the candidate arm uses fewer tokens or fewer seconds than the current research-conflict skill arm. A pass on the tune pair alone never promotes; the agent does not promote itself, a person merges only when both conditions hold.",
+   "reason": "Weak directive whose last failure is averaging the two sources in the next sentence. The scrape output turns 'did not smooth' into a substring test: a number the model made up by averaging cannot be found in either page, so the check is a quote, not a judgment.",
+   "kill": false,
+   "needsHumanAdd": false
+  },
+  {
+   "shelf": "markets",
+   "directive": "filing",
+   "tool": "Bash:pdftotext",
+   "toolScope": "read",
+   "doneWhen": "python3 fixtures/markets-filing/check.py <out> exits 0 only when each extracted figure's quote is a substring of `pdftotext -layout -f P -l P <filing.pdf> -` at the page P it cites; a quote from the wrong page, a slipped table row, or an exhibit misread exits 1",
+   "shadowRun": "Save two 10-K/10-Q PDFs with table and exhibit figures as fixtures/markets-filing/tune and a third as heldout. Run the current markets-filing skill (baseline arm) and the pdftotext-checked variant (candidate arm) on the same heldout filing; record tokens, seconds, and check exit per arm in a promote file and run python3 desk/desk.py promote-gate on it. Promotion requires BOTH: the held-out check exits 0 on the candidate arm, AND the candidate arm uses fewer tokens or fewer seconds than the current markets-filing skill arm. A pass on the tune filings alone never promotes; the agent does not promote itself, a person merges only when both conditions hold.",
+   "reason": "Assisted directive whose known failure is that tables and exhibits slip. pdftotext -layout at the cited page re-derives the text a program can match, so the page locator and the quote are verified by a substring test rather than by the model rereading its own extraction.",
+   "kill": false,
+   "needsHumanAdd": false
+  },
+  {
+   "shelf": "legal",
+   "directive": "authority",
+   "tool": "cite-resolution API (court-opinion citation lookup)",
+   "toolScope": "read",
+   "doneWhen": "the resolver returns a record for each cite and the quoted holding is a substring of that record; any cite with no record is dropped (would be python3 check exit 0)",
+   "shadowRun": "Not run. The resolver is only proposed and not connected in this environment (registry absent list: cite-resolution service), so no held-out arm can execute; a shadow run against the model's memory of the opinion would be a tuning-set judgment, not a check.",
+   "reason": "KILL. Attractive because it is the cleanest resolve-or-drop crossing for the weak legal authority directive, but there is no real tool: it is proposed with verified false and listed as absent. Building on it would require connecting an unverified catalog service, which is a human accept, so the crossing is rejected until a person adds and verifies the resolver.",
+   "kill": true,
+   "needsHumanAdd": true
+  }
+ ]
+}

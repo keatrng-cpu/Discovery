@@ -1,5 +1,5 @@
 # contract.md: Capability Desk build
-STATUS: RED
+STATUS: GREEN
 
 shelf: harness
 directive: evolve (one change class per run: scaffold, then shelves, then seeds, then invention)

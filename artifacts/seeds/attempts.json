@@ -1,0 +1,80 @@
+[
+ {
+  "label": "seed:research-gap:heldout",
+  "checker_runs": 2,
+  "runs": [
+   {
+    "result": "FAIL",
+    "first_line": "FAIL: C2: status is 'supported', expected 'unsupported'"
+   },
+   {
+    "result": "OK",
+    "first_line": "OK"
+   }
+  ]
+ },
+ {
+  "label": "seed:markets-print:heldout",
+  "checker_runs": 3,
+  "runs": [
+   {
+    "result": "FAIL",
+    "first_line": "FAIL: number 2.03 is not in the release"
+   },
+   {
+    "result": "FAIL",
+    "first_line": "FAIL: eps: value must appear inside the quote"
+   },
+   {
+    "result": "OK",
+    "first_line": "OK"
+   }
+  ]
+ },
+ {
+  "label": "seed:research-gap:tune",
+  "checker_runs": 3,
+  "runs": [
+   {
+    "result": "OTHER",
+    "first_line": "usage: check.py [-h] --fixture FIXTURE --out OUT --searchlog SEARCHLOG"
+   },
+   {
+    "result": "OTHER",
+    "first_line": "Traceback (most recent call last):"
+   },
+   {
+    "result": "FAIL",
+    "first_line": "FAIL: C2: searched is False, expected True"
+   }
+  ]
+ },
+ {
+  "label": "seed:reverse-engineering-triage:tune",
+  "checker_runs": 2,
+  "runs": [
+   {
+    "result": "OTHER",
+    "first_line": "Traceback (most recent call last):"
+   },
+   {
+    "result": "OK",
+    "first_line": "OK"
+   }
+  ]
+ },
+ {
+  "label": "seed:reverse-engineering-triage:heldout",
+  "checker_runs": 2,
+  "runs": [
+   {
+    "result": "OTHER",
+    "first_line": "Traceback (most recent call last):"
+   },
+   {
+    "result": "OK",
+    "first_line": "OK"
+   }
+  ]
+ }
+]

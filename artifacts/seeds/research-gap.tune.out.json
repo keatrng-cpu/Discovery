@@ -1,0 +1,6 @@
+{"claims":[
+{"id":"C1","text":"The pilot ran for 18 months.","status":"supported","evidence":{"doc":"report-a.txt","quote":"The Riverbend pilot ran for 18 months, from March 2023 to August 2024."},"searched":false,"resolution":"n/a"},
+{"id":"C2","text":"Contamination fell to 4 percent by the final quarter.","status":"supported","evidence":{"doc":"report-b.txt","quote":"Contamination in the final quarter fell to 4 percent, down from 11 percent at launch."},"searched":false,"resolution":"n/a"},
+{"id":"C3","text":"Households paid a flat fee of 12 dollars per month.","status":"unsupported","evidence":null,"searched":true,"resolution":"open"},
+{"id":"C4","text":"The program diverted 310 tons from landfill.","status":"supported","evidence":{"doc":"report-c.txt","quote":"Total diversion reached 310 tons over the pilot period."},"searched":false,"resolution":"n/a"}
+]}

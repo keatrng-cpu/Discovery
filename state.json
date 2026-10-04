@@ -1,11 +1,12 @@
 {
- "stage": "scaffold",
+ "stage": "report-written",
  "shelf": "harness",
  "directive": "evolve",
- "contract_status": "RED",
+ "contract_status": "GREEN",
  "resume_from": [
   "plan.md",
   "contract.md",
   "state.json"
- ]
+ ],
+ "failing": []
 }

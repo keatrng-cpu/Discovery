@@ -42,6 +42,9 @@ def main():
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     base = os.path.join(HERE, a.fixture)
+    if not os.path.isdir(base):
+        print(f"FAIL: unknown fixture {a.fixture!r}; use the bare name (tune or heldout)")
+        return 2
     broken, fixed = os.path.join(base, "broken"), os.path.join(base, "fixed")
     errs = []
     rc, text = gate(broken)

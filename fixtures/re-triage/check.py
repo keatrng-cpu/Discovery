@@ -61,6 +61,9 @@ def main():
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     inputs = os.path.join(HERE, a.fixture, "inputs")
+    if not os.path.isdir(inputs):
+        print(f"FAIL: unknown fixture {a.fixture!r}; use the bare name (tune or heldout)")
+        return 2
     files = sorted(os.listdir(inputs))
     try:
         out = json.load(open(a.out))

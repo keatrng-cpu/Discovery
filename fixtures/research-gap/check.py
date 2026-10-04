@@ -21,6 +21,9 @@ def main():
     ap.add_argument("--searchlog", required=True)
     a = ap.parse_args()
     base = os.path.join(HERE, a.fixture)
+    if not os.path.isdir(base):
+        print(f"FAIL: unknown fixture {a.fixture!r}; use the bare name (tune or heldout)")
+        return 2
     exp = json.load(open(os.path.join(base, "expected.json")))["expected"]
     claims = {}
     for line in open(os.path.join(base, "draft.md"), encoding="utf-8"):

@@ -24,6 +24,9 @@ def main():
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     base = os.path.join(HERE, a.fixture)
+    if not os.path.isdir(base):
+        print(f"FAIL: unknown fixture {a.fixture!r}; use the bare name (tune or heldout)")
+        return 2
     rel = open(os.path.join(base, "release.txt"), encoding="utf-8").read().splitlines()
     recap = open(os.path.join(base, "recap.txt"), encoding="utf-8").read()
     rel_nums = nums("\n".join(rel))

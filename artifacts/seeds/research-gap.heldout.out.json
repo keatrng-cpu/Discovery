@@ -1,0 +1,5 @@
+{"claims":[
+{"id":"C1","text":"The bike-share served 2,400 households.","status":"unsupported","evidence":null,"searched":true,"resolution":"open"},
+{"id":"C2","text":"Median trip length was 14 minutes.","status":"unsupported","evidence":null,"searched":false,"resolution":"not-searched"},
+{"id":"C3","text":"The system launched in May 2022.","status":"unsupported","evidence":null,"searched":false,"resolution":"not-searched"}
+]}

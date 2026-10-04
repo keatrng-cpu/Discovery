@@ -1,0 +1,6 @@
+{
+  "empty.bin": {"unsupported": "not ELF"},
+  "note.txt": {"unsupported": "not ELF"},
+  "ok.bin": {"format": "ELF", "class": "ELF64", "endian": "little", "arch": "x86-64", "entry": "0x19f0"},
+  "trunc.bin": {"stop": "tools disagree"}
+}

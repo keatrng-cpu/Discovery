@@ -14,6 +14,7 @@
   promote-gate <json>     promote only if held-out passes and cost or time drops
   verify-trace            verify the hash chain of trace/trace.jsonl
   tokens --main <jsonl> --workflow-dir <dir>   sum real usage from transcripts into artifacts/tokens.json
+  seed-attempts --workflow-dir <dir>   checker runs per seed agent, from transcripts
   tokens-check <file>     validate artifacts/tokens.json
   report                  print the deterministic part of the final report
   report-check <plan.md>  require the report headings and a written body
@@ -773,6 +774,28 @@ def _fold(by):
     return tot
 
 
+def _first_call_prompt(jsonl):
+    """Prompt tokens of the agent's first API call: the inherited static prefix every subagent pays before doing any work."""
+    with open(jsonl) as f:
+        for line in f:
+            try:
+                r = json.loads(line)
+            except Exception:
+                continue
+            u = (r.get("message") or {}).get("usage") if r.get("type") == "assistant" else None
+            if u:
+                return u.get("input_tokens", 0) + u.get("cache_creation_input_tokens", 0) + u.get("cache_read_input_tokens", 0)
+    return 0
+
+
+def _prefix_stats(rows):
+    vals = sorted(r["first_call_prompt_tokens"] for r in rows if r.get("first_call_prompt_tokens"))
+    if not vals:
+        return None
+    return {"agents": len(vals), "min": vals[0], "median": vals[len(vals) // 2], "max": vals[-1],
+            "meaning": "prompt tokens of each agent's first API call, before any work: the harness's inherited system prompt, tool list and skill listing"}
+
+
 def cmd_tokens(a):
     rows = []
     for wd in a.workflow_dir:
@@ -783,7 +806,7 @@ def cmd_tokens(a):
             m = read_json(meta)
             by, ts = _usage_by_model(jl)
             row = {"label": m.get("description", ""), "phase": m.get("workflowPhase", ""), "model": m.get("model", ""),
-                   "source": jl, "last_ts": ts, "by_model": by}
+                   "source": jl, "last_ts": ts, "by_model": by, "first_call_prompt_tokens": _first_call_prompt(jl)}
             row.update(_fold(by))
             rows.append(row)
     main_by, main_ts = _usage_by_model(a.main)
@@ -794,8 +817,8 @@ def cmd_tokens(a):
     out = {"unit": "tokens as reported in each transcript's message.usage; input_tokens = uncached + cache_creation + cache_read",
            "lead_pass": lead,
            "worker_pass": dict(rep, note="the median author agent by output tokens; every agent starts with the harness's inherited prefix, so input is dominated by cache reads") if rep else None,
-           "worker_pass_range": ({"authors": len(authors), "output_min": authors[0]["output_tokens"], "output_max": authors[-1]["output_tokens"],
-                                   "first_message_prefix_tokens_example": None} if authors else None),
+           "worker_pass_range": ({"authors": len(authors), "output_min": authors[0]["output_tokens"], "output_max": authors[-1]["output_tokens"]} if authors else None),
+           "inherited_prefix": _prefix_stats(rows),
            "totals_by_label_prefix": {}, "per_agent": [{k: v for k, v in r.items() if k != "by_model"} for r in rows]}
     for r in rows:
         pre = r["label"].split(":")[0] or "unlabelled"
@@ -803,12 +826,64 @@ def cmd_tokens(a):
         t["agents"] += 1
         t["input_tokens"] += r["input_tokens"]
         t["output_tokens"] += r["output_tokens"]
+    meters = {}
+    for kv in a.meter:
+        k, _, v = kv.partition("=")
+        meters[k] = int(v)
+    out["harness_meter"] = {"unit": "output tokens as metered by the harness (budget.spent deltas), per workflow, reasoning included", **meters}
+    out["measurement_notes"] = [
+        "input_tokens is exact as reported at each API call (uncached + cache write + cache read). It sums over repeated calls, so cache reads re-count the same prefix on every call; it is processed input, not distinct text.",
+        "output_tokens in subagent transcripts is a streaming snapshot taken near the start of each message, so it is a LOWER BOUND (an author's recorded 93 against roughly 950 tokens of visible content). Do not read it as a total.",
+        "harness_meter is the better output measure but exists only per workflow, never per agent. A per-agent output figure is not available; the mean per agent for a workflow is meter / agents.",
+        "The lead's recorded output exceeds its visible characters / 4 because reasoning tokens count as output and are not visible text; they are not separately measurable here.",
+        "The harness's own subagent_tokens totals use a definition that does not reconcile with the transcript sums, so they are quoted from the workflow results, not derived.",
+    ]
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
     Path(a.out).write_text(json.dumps(out, indent=1) + "\n")
     print(f"wrote {a.out}: lead output {lead['output_tokens']}, {len(rows)} agents, "
           f"worker pass {rep['label'] if rep else 'none'} output {rep['output_tokens'] if rep else 'n/a'}")
     for k, v in out["totals_by_label_prefix"].items():
         print(f"  {k}: {v['agents']} agents, input {v['input_tokens']}, output {v['output_tokens']}")
+    return 0
+
+
+def _result_text(block):
+    cont = block.get("content")
+    return cont if isinstance(cont, str) else " ".join(x.get("text", "") for x in cont if isinstance(x, dict))
+
+
+def cmd_seed_attempts(a):
+    """How many times each seed agent ran its checker and what each run said, read from the agent transcripts.
+    OK = the checker printed OK; FAIL = it printed 'assertion(s) failed'; OTHER = anything else (usage error, missing file)."""
+    out = []
+    for wd in a.workflow_dir:
+        for meta in sorted(glob.glob(os.path.join(wd, "agent-*.meta.json"))):
+            label = read_json(meta).get("description", "")
+            if not label.startswith("seed:"):
+                continue
+            pend, runs = {}, []
+            with open(meta.replace(".meta.json", ".jsonl")) as f:
+                for line in f:
+                    try:
+                        r = json.loads(line)
+                    except Exception:
+                        continue
+                    c = (r.get("message") or {}).get("content")
+                    if not isinstance(c, list):
+                        continue
+                    for b in c:
+                        if b.get("type") == "tool_use" and b.get("name") == "Bash" and "check.py" in json.dumps(b.get("input", {})):
+                            pend[b["id"]] = b["input"].get("command", "")
+                        if b.get("type") == "tool_result" and b.get("tool_use_id") in pend:
+                            t = _result_text(b).strip()
+                            verdict = ("FAIL" if "assertion(s) failed" in t else "OK" if re.search(r"(^|\n)OK(\n|$)", t) else "OTHER")
+                            runs.append({"result": verdict, "first_line": (t.splitlines() or [""])[0][:160]})
+            out.append({"label": label, "checker_runs": len(runs), "runs": runs})
+    out = [o for o in out if o["checker_runs"]]
+    Path(a.out).parent.mkdir(parents=True, exist_ok=True)
+    Path(a.out).write_text(json.dumps(out, indent=1) + "\n")
+    for o in out:
+        print(f"{o['label']:44} checker runs={o['checker_runs']}  {[r['result'] for r in o['runs']]}")
     return 0
 
 
@@ -892,7 +967,8 @@ def main(argv=None):
     s = sp.add_parser("invent-check"); s.add_argument("file"); s.set_defaults(f=cmd_invent_check)
     s = sp.add_parser("promote-gate"); s.add_argument("file"); s.set_defaults(f=cmd_promote_gate)
     s = sp.add_parser("verify-trace"); s.set_defaults(f=cmd_verify_trace)
-    s = sp.add_parser("tokens"); s.add_argument("--workflow-dir", action="append", default=[]); s.add_argument("--main", required=True); s.add_argument("--out", default="artifacts/tokens.json"); s.set_defaults(f=cmd_tokens)
+    s = sp.add_parser("tokens"); s.add_argument("--workflow-dir", action="append", default=[]); s.add_argument("--main", required=True); s.add_argument("--meter", action="append", default=[]); s.add_argument("--out", default="artifacts/tokens.json"); s.set_defaults(f=cmd_tokens)
+    s = sp.add_parser("seed-attempts"); s.add_argument("--workflow-dir", action="append", default=[]); s.add_argument("--out", default="artifacts/seeds/attempts.json"); s.set_defaults(f=cmd_seed_attempts)
     s = sp.add_parser("tokens-check"); s.add_argument("file"); s.set_defaults(f=cmd_tokens_check)
     s = sp.add_parser("report"); s.set_defaults(f=cmd_report)
     s = sp.add_parser("report-check"); s.add_argument("file"); s.set_defaults(f=cmd_report_check)
