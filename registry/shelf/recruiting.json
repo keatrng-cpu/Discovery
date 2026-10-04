@@ -26,10 +26,10 @@
    "checkKind": "quote",
    "rung": "L1",
    "forbidden": "Adding a trait the req does not state (culture fit, energy, leadership presence). The req wins; drop the line.",
-   "tool": "Bash:python3",
-   "toolScope": "read",
-   "gated": false,
-   "gate": "",
+   "tool": "none",
+   "toolScope": "none",
+   "gated": true,
+   "gate": "ABSENT accept (the hiring manager accepts each scorecard line; the draft is prepared with req quotes and stops at status \"awaiting manager accept\")",
    "status": "assisted",
    "checkRunnable": false,
    "keywords": [
@@ -41,12 +41,12 @@
     "job description criteria"
    ],
    "absentTools": [
-    "req-line quote resolver program"
+    "manager accept step (human)"
    ]
   },
   "extract": {
    "trigger": "An accepted scorecard and a resume are both present and the ask is to fill the scorecard fields. Quiet when the scorecard is not yet accepted.",
-   "doneWhen": "`jq` validates the output against the scorecard schema: keys equal the accepted scorecard fields exactly, and each value is null or an object with a value and a quote. A program confirms each quote is a verbatim substring of the resume at the cited line. An extra key fails; a null field passes. An all-null result is valid.",
+   "doneWhen": "`jq` validates the output against the scorecard schema: keys equal the accepted scorecard fields exactly, and each value is null or an object with a value and a quote string and a resume line locator. An extra key or a missing key fails; a null field passes. An all-null result is valid.",
    "checkKind": "schema",
    "rung": "L1",
    "forbidden": "Inferring a trait or filling a blank from tone, school, or fluency. A field without a quoted resume line stays null.",
@@ -65,7 +65,7 @@
     "parse resume"
    ],
    "absentTools": [
-    "resume parser with source offsets"
+    "resume quote resolver with source offsets"
    ]
   },
   "screen-note": {
@@ -89,14 +89,14 @@
     "no overall score"
    ],
    "absentTools": [
-    "structured screen-form schema registry"
+    "resume quote resolver with source offsets"
    ]
   },
   "compare": {
    "trigger": "Two or more candidates' screen notes share one accepted scorecard. Quiet for a single candidate or when lines differ between candidates.",
-   "doneWhen": "`jq` counts cells: each candidate has exactly N cells for N scorecard lines (candidates x N matched), every cell is a quote or null, and no rank, total, or fluency-based field exists. A null cell stays null and passes; a filled-in blank, dropped line, or rank field fails.",
+   "doneWhen": "`jq` joins the grid to each candidate's screen notes by scorecard line and compares: for every candidate and every line, the grid cell equals that candidate's screen-note value for that line (a null note gives a null cell; a cell filled where the note is null, or a value taken from another line, fails). Each candidate has exactly N cells for N lines, and no rank, total, or fluency field exists. A null cell stays null and passes; exit code 0 on all-match.",
    "checkKind": "count",
-   "rung": "L1",
+   "rung": "L0",
    "forbidden": "Ranking or scoring candidates on writing polish or fluency, or filling a missing cell from another line. Missing stays missing.",
    "tool": "Bash:jq",
    "toolScope": "read",

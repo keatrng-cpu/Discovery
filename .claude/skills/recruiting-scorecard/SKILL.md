@@ -13,5 +13,6 @@ One fast-model pass drafts lines from the req; code checks the quotes. Escalate 
 ## Forbidden move
 Adding a trait the req does not state (culture fit, energy, leadership presence). The req wins; drop the line.
 ## Tool
-tool: Bash:python3
-scope: read
+tool: none
+scope: none
+gate: ABSENT accept (the hiring manager accepts each scorecard line; the draft is prepared with req quotes and stops at status "awaiting manager accept")
