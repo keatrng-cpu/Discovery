@@ -6,13 +6,13 @@ description: Use when an agent action log must be append-only and a tamper attem
 A log of agent actions is kept as a record of what happened. Quiet when the ask is memory or a summary: a trace is not a note.
 ## Done-when
 check: exit-code
-`python3 desk/desk.py verify-trace` exits 0 and prints "chain intact". After a tamper of a record with a successor it exits 1 and names the line. No trace file is a valid result ("0 records"). Tail edit and truncation are not caught by the chain; they are denied by the absent write and delete path below, not checked.
+`python3 .claude/hooks/test_hooks.py deny` exits 0. It runs desk/gate.py through the PreToolUse hook: a Write to the trace file, a Bash rm, a truncating redirect and a sed -i on it each exit 2, while cat, tail and `python3 desk/desk.py verify-trace` exit 0. The agent's tamper and delete attempts fail. Separate detector: verify-trace exits 1 naming the line after a mid-file edit. Not covered: tail edit, truncation, and a write by a route the patterns miss; those need chattr +a or a remote write-once sink, both absent.
 ## Rung
 rung: L0
-A program alone verifies the hash chain. The model never writes the file.
+A program alone: hook exit codes, then the hash chain. The model never writes the file.
 ## Forbidden move
 Giving the agent a write or delete path to its own trace, or trusting the agent's report that the log is intact.
 ## Tool
 tool: none
 scope: none
-gate: ABSENT write, delete (the agent holds no write or delete path to its own trace; a person or an external sink owns the file)
+gate: ABSENT write, delete (the agent holds no write or delete path to its own trace: the PreToolUse hook denies them; a person or an external sink owns the file)
