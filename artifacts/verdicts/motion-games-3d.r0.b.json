@@ -1,0 +1,8 @@
+{"shelf":"motion-games-3d","lens":"b","round":0,"verdicts":[
+{"directive":"still","pass":true,"reason":"All rules hold: Bash:jq read is registered, one jq schema check over one artifact at L1, forbidden matches the brief's 'do not animate yet', keywords are distinct, and the automatic frame scorer is honestly unregistered."},
+{"directive":"time","pass":false,"reason":"B3 fails: the done-when bundles two independent checks with 'and' (cmp determinism of the frame at t, and a count of exactly one frame file in the output directory)."},
+{"directive":"score","pass":false,"reason":"B3 fails: the done-when bundles two independent checks with 'and' (changed-frames count equals 1, and the rescored worst frame is higher), plus a separate no-full-render condition."},
+{"directive":"asset","pass":true,"reason":"All rules hold: one jq schema program over one manifest at L1 with registered read tool, forbidden names the brief's bundled-prompt and place-in-level failures, and the engine/3D editor connector is listed in the registry only as absent."},
+{"directive":"level","pass":false,"reason":"B3 fails: the done-when bundles a git diff scope check with a quoted editor path check using 'and', which are two independent checks and two artifacts."},
+{"directive":"engine","pass":false,"reason":"B3 fails: the done-when bundles a pre-edit quote of the named system (file path and line) with a post-edit git diff scope check, two independent checks."}
+]}

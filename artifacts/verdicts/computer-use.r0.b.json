@@ -1,0 +1,8 @@
+{"shelf":"computer-use","lens":"b","round":0,"verdicts":[
+{"directive":"perceive","pass":true,"reason":"All rules hold: Bash:playwright is registered with read scope, the locator-plus-occlusion verdict is one target-state report, L1 fits a vision pass plus a program, forbidden matches the brief's remembered-location and modal failures, and the absent tools are unregistered."},
+{"directive":"plan","pass":false,"reason":"B7 fails: a 'step-list matcher program' that checks a verbatim quoted line and line number is buildable with the registered Bash:python3, so listing it as absent is not honest, and with tool none the L1 claim has no program behind it."},
+{"directive":"act","pass":false,"reason":"B7 fails: absentTools lists a 'state snapshot and diff program' although Bash:playwright (check state-diff), Bash:cmp and Bash:python3 are registered and already provide snapshot and diff."},
+{"directive":"recover","pass":false,"reason":"B3 fails: the done-when bundles two independent checks, naming the bad step by a step-list line quote and confirming the revert by cmp exit code, so it should be split into two directives."},
+{"directive":"remember","pass":true,"reason":"All rules hold: Bash:jq is registered read, the jq -e equality is one exit-code check a program clears at L0, forbidden matches the brief's do-not-rely-on-transcript failure, keywords are distinct, and absentTools is honestly empty."},
+{"directive":"finish","pass":false,"reason":"B7 fails: a 'final-state field comparator' is a field-by-field equality that registered Bash:python3 or Bash:jq already perform, so listing it as absent is not honest, and tool none leaves the L1 rung and state-diff check with no program."}
+]}

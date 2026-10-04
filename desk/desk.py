@@ -6,6 +6,8 @@
   contract-lint <file>    validate a per-task contract
   contract-check [file]   run every Done-when check command; exit 0 only if all exit 0
   lint [--shelf S]        validate registry, skills, tools, gates (errors fail; warnings print)
+  claims [--shelf S]      write artifacts/claims/<shelf>.json from the registry (what verifiers read)
+  verdicts                per-shelf verified counts from the verdict files
   merge-registry          rebuild registry/shelves.json from registry/shelf/*.json
   merge-shelves           merge desk/<shelf>-rN worker branches after a path-scope check
   invent-check <file>     validate an invention result: 3 candidates, exactly 1 kill, real tools
@@ -81,8 +83,36 @@ def skill_path(shelf, directive):
     return ROOT / ".claude" / "skills" / f"{shelf}-{directive}" / "SKILL.md"
 
 
+def _final_vote_files(shelf):
+    out = {"a": [], "b": []}
+    for f in glob.glob(str(ROOT / "artifacts" / "verdicts" / f"{shelf}.final.*.json")):
+        m = re.search(r"\.final\.([ab])\.(\d+)\.json$", f)
+        if m:
+            try:
+                out[m.group(1)].append({v["directive"]: bool(v.get("pass")) for v in read_json(f)["verdicts"]})
+            except Exception:
+                pass
+    return out
+
+
 def final_verdicts(shelf):
-    """directive -> bool, from the latest round that has BOTH verifier lenses on disk."""
+    """directive -> bool. Preferred: <shelf>.final.<lens>.<k>.json, a majority of the votes per lens, both lenses must pass
+    (at least 2 votes per lens). Fallback: the latest single-vote round that has BOTH lenses on disk."""
+    votes = _final_vote_files(shelf)
+    if votes["a"] or votes["b"]:
+        dirs = set()
+        for lens in votes.values():
+            for v in lens:
+                dirs |= set(v)
+        res = {}
+        for d in dirs:
+            ok = True
+            for lens in ("a", "b"):
+                vs = [v[d] for v in votes[lens] if d in v]
+                if len(vs) < 2 or sum(vs) * 2 <= len(vs):
+                    ok = False
+            res[d] = ok
+        return res
     rounds = {}
     for f in glob.glob(str(ROOT / "artifacts" / "verdicts" / f"{shelf}.r*.*.json")):
         m = re.search(r"\.r(\d+)\.([ab])\.json$", f)
@@ -490,6 +520,8 @@ def cmd_lint(a):
             errs.append(f"tools.json: {t.get('name')} bad scope")
         if t.get("scope") == "act" and "human_added" not in t:
             errs.append(f"tools.json: act tool {t['name']} needs an explicit human_added")
+        if t.get("path") and not (ROOT / t["path"]).exists():
+            errs.append(f"tools.json: {t['name']} points at {t['path']} which does not exist")
         if t.get("kind") == "local" and not shutil.which(t["cmd"].split()[0]):
             errs.append(f"tools.json: local tool {t['name']} is registered but {t['cmd'].split()[0]} is absent")
         if gate.verb_hit(t["name"]) and t.get("scope") != "act":
@@ -541,6 +573,42 @@ def cmd_lint(a):
         print("ERROR", e)
     print(f"lint: {len(errs)} error(s), {len(warns)} warning(s)")
     return 1 if errs else 0
+
+
+CLAIM_FIELDS = ("trigger", "doneWhen", "checkKind", "rung", "forbidden", "tool", "toolScope", "gated", "gate", "status",
+                "checkRunnable", "keywords", "absentTools")
+
+
+def cmd_claims(a):
+    """Deterministic claims table per shelf: exactly the registry entries, no SKILL.md text. Verifiers read these."""
+    n = 0
+    for sname, sh in load_shelves().items():
+        if a.shelf and sname != a.shelf:
+            continue
+        rows = []
+        for d, e in sh["directives"].items():
+            if e:
+                rows.append(dict({"directive": d}, **{k: e.get(k) for k in CLAIM_FIELDS}))
+        p = ROOT / "artifacts" / "claims" / f"{sname}.json"
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(json.dumps({"shelf": sname, "directives": rows}, indent=1) + "\n")
+        n += len(rows)
+    print(f"wrote claims for {n} directives")
+    return 0
+
+
+def cmd_verdicts(a):
+    tot = ok = 0
+    for sname, sh in load_shelves().items():
+        fv = final_verdicts(sname)
+        names = [d for d, e in sh["directives"].items() if e]
+        v = [d for d in names if fv.get(d)]
+        tot += len(names)
+        ok += len(v)
+        un = [d for d in names if not fv.get(d)]
+        print(f"{sname:20} {len(v):>2}/{len(names):<2} verified" + (f"   voted down: {', '.join(un)}" if un else ""))
+    print(f"TOTAL {ok}/{tot} verified")
+    return 0
 
 
 def cmd_merge_registry(a):
@@ -806,6 +874,8 @@ def main(argv=None):
     s = sp.add_parser("contract-lint"); s.add_argument("file"); s.set_defaults(f=cmd_contract_lint)
     s = sp.add_parser("contract-check"); s.add_argument("file", nargs="?", default="contract.md"); s.add_argument("--write", action="store_true"); s.add_argument("--timeout", type=int, default=180); s.set_defaults(f=cmd_contract_check)
     s = sp.add_parser("lint"); s.add_argument("--shelf"); s.set_defaults(f=cmd_lint)
+    s = sp.add_parser("claims"); s.add_argument("--shelf"); s.set_defaults(f=cmd_claims)
+    s = sp.add_parser("verdicts"); s.set_defaults(f=cmd_verdicts)
     s = sp.add_parser("merge-registry"); s.set_defaults(f=cmd_merge_registry)
     s = sp.add_parser("merge-shelves"); s.set_defaults(f=cmd_merge_shelves)
     s = sp.add_parser("invent-check"); s.add_argument("file"); s.set_defaults(f=cmd_invent_check)

@@ -1,0 +1,149 @@
+{
+ "shelf": "computer-use",
+ "directives": [
+  {
+   "directive": "perceive",
+   "trigger": "A screenshot file and a named target (button, field, tab, dialog) are present and the question is whether the target is visible and unobstructed. Quiet when no screenshot exists or when the ask is to click.",
+   "doneWhen": "Output names the target, quotes the screenshot path with a pixel bounding box (path:x,y,w,h), and prints occluded: yes|no naming any covering modal. 'target absent' and 'occluded: yes' are valid passing results; a remembered coordinate with no screenshot locator fails.",
+   "checkKind": "quote",
+   "rung": "L1",
+   "forbidden": "Clicking or reporting a remembered location instead of the one in this screenshot, or calling a target visible when a modal covers it.",
+   "tool": "Bash:playwright",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "target in screenshot",
+    "modal covers",
+    "is it visible",
+    "locate button",
+    "occluded element",
+    "screenshot target"
+   ],
+   "absentTools": [
+    "accessibility-tree reader",
+    "OCR service"
+   ]
+  },
+  {
+   "directive": "plan",
+   "trigger": "An external step list file (steps.md), an executed-steps log (done.txt, one executed line number per line, empty if none), and a current screenshot or screen description are all present. Quiet when no list exists; ask for one instead of inventing steps.",
+   "doneWhen": "Output is exactly one action quoted verbatim from one line of steps.md with its line number (steps.md:L7), and L7 must be the next unexecuted step: the lowest non-blank line number of steps.md that is absent from done.txt. A python3 one-liner computes that line number and string-compares the quote; exit 0 only on exact match, so a skipped or reordered step fails. If the screen disagrees with that next step, output ASK with a one-line disagreement and no action. Two actions or an action not in the list fails.",
+   "checkKind": "quote",
+   "rung": "L1",
+   "forbidden": "Diverging from the step list: inventing, merging, skipping, or reordering steps (picking any line other than the next unexecuted one), or guessing when the screen and list disagree instead of asking.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "weak",
+   "checkRunnable": true,
+   "keywords": [
+    "next ui action",
+    "step list",
+    "one action at a time",
+    "ask if screen differs",
+    "gui plan"
+   ],
+   "absentTools": []
+  },
+  {
+   "directive": "act",
+   "trigger": "One approved action has been performed by the host's approved GUI driver (not by this skill), and pre-state.json and post-state.json both exist. Quiet when the action is not yet chosen or no pre-state was captured.",
+   "doneWhen": "python3 loads pre-state.json and post-state.json and prints each changed field as field: before -> after. Pass only if the printed diff is exactly the one expected change (field plus before and after values). An empty diff or any extra changed field fails; a click returning success is not a result. If post-state.json is missing the result is 'unread', not pass.",
+   "checkKind": "state-diff",
+   "rung": "L1",
+   "forbidden": "Reporting success because the click or keystroke ran, with no after-state diff; or performing the click or keystroke from this skill, which holds no act tool.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "state diff",
+    "after state",
+    "click result",
+    "did the click work",
+    "verify ui change"
+   ],
+   "absentTools": [
+    "accessibility-tree reader",
+    "act-scope GUI driver (human_added)"
+   ]
+  },
+  {
+   "directive": "recover",
+   "trigger": "A step produced an unexpected state diff, a saved pre-step snapshot exists, and a revert has been carried out by a person or the host's approved GUI driver. Quiet when no snapshot was saved: report that revert cannot be confirmed.",
+   "doneWhen": "Output first prints 'bad step: <step id or steps.md:L<n>>' naming the step that caused the unexpected diff; without that line the result fails. After the revert is made by a person or host driver (this skill holds no act tool), `cmp pre-step-snapshot post-revert-snapshot` exits 0; then stop with no further action. Non-zero cmp is reported as 'revert unconfirmed' and also stops. The check is the cmp exit code.",
+   "checkKind": "exit-code",
+   "rung": "L1",
+   "forbidden": "Continuing or retrying the task after the revert, claiming a revert without confirming the prior state, or reverting from this skill instead of naming the step and stopping.",
+   "tool": "Bash:cmp",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "weak",
+   "checkRunnable": true,
+   "keywords": [
+    "undo bad step",
+    "revert ui",
+    "roll back click",
+    "wrong click",
+    "restore prior state"
+   ],
+   "absentTools": [
+    "act-scope GUI revert tool (human_added)"
+   ]
+  },
+  {
+   "directive": "remember",
+   "trigger": "A fact observed at one step is needed at a later step. Quiet when the next step uses it directly.",
+   "doneWhen": "Write the fact to state.json; at the later step `jq -e '.<key> == \"<value>\"' state.json` exits 0 and the value matches the quoted source. A missing key exits non-zero and is reported 'unread', a valid result.",
+   "checkKind": "exit-code",
+   "rung": "L0",
+   "forbidden": "Relying on the transcript to recall the fact at the later step instead of reading state.json.",
+   "tool": "Bash:jq",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": true,
+   "keywords": [
+    "state.json",
+    "save value for later step",
+    "carry fact forward",
+    "read back from file",
+    "gui memory"
+   ],
+   "absentTools": []
+  },
+  {
+   "directive": "finish",
+   "trigger": "The last step list item is done and a submit control is the only remaining action. Quiet before then.",
+   "doneWhen": "Prepare only: list each instruction-required field with its final-state value from final-state.json and print 'unmet: 0' or 'unmet: <field>' per mismatched or unread field, then stop. Submit is performed by a person; it is never performed here. Early submit fails the card. Ceiling not awarded.",
+   "checkKind": "state-diff",
+   "rung": "L1",
+   "forbidden": "Submitting early, before the final state is checked field by field against the instruction; or submitting at all.",
+   "tool": "none",
+   "toolScope": "none",
+   "gated": true,
+   "gate": "ABSENT submit (prepare the field-by-field unmet list, stop; a person presses submit)",
+   "status": "gated",
+   "checkRunnable": false,
+   "keywords": [
+    "submit form",
+    "final state check",
+    "early submit",
+    "ready to submit",
+    "confirm before submit"
+   ],
+   "absentTools": [
+    "submit control driver (act-scope GUI tool)",
+    "accessibility-tree reader"
+   ]
+  }
+ ]
+}

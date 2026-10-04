@@ -1,0 +1,9 @@
+{"shelf":"data","lens":"b","round":2,"verdicts":[
+{"directive":"profile","pass":true,"reason":"All rules hold: Bash:python3 read matches the registry, ungated with no deny verb, one recount-vs-profile.json comparison at L0, forbidden names the brief's tool-output and id-as-measure failures, and the proposed read-only database role is unregistered."},
+{"directive":"clean","pass":true,"reason":"All rules hold: registered Bash:python3 read, one N = M + K count check at L0, forbidden names the brief's second-field and dropped-rows-queryable failures, distinct keywords, and the absent tool is unregistered."},
+{"directive":"hypothesis","pass":false,"reason":"B3 splitRule fails: the done-when bundles two independent checks with 'and', a python3 run of the saved query exiting 0 and a separate before/after directory-listing diff for no chart files."},
+{"directive":"chart","pass":false,"reason":"B3 splitRule fails: the done-when bundles independent checks against different artifacts, the title against the hypothesis.md comparison line, the series count against the ask, and a labeled value against the query result."},
+{"directive":"anomaly","pass":true,"reason":"All rules hold: registered Bash:python3 read, ungated, one count check on a single printed output (or 'anomaly: none'), L1 is fitting for choosing the slice, and forbidden names the brief's cause-before-rerun failure."},
+{"directive":"reconcile","pass":true,"reason":"All rules hold: registered Bash:python3 read, ungated, one stdout count check (totals, unmatched-key count, no average), L1, and forbidden names the brief's averaging and missing-definition failures."},
+{"directive":"define","pass":true,"reason":"All rules hold: the brief says a human signs, so gated is true with tool none and the gate names the absent sign verb, L3 fits a human-only signature, and 'signature tool' is in the registry's absent list, not a registered tool."}
+]}

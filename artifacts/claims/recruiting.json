@@ -1,0 +1,125 @@
+{
+ "shelf": "recruiting",
+ "directives": [
+  {
+   "directive": "scorecard",
+   "trigger": "A job requisition text is present and the ask is to turn it into scorecard lines. Quiet when no req exists, or when the ask concerns a candidate.",
+   "doneWhen": "Every scorecard line carries a verbatim quote from the req with its line number, and a program confirms each quote is a substring of the req at that line (python3 exits 0, prints \"lines: N/N quoted\"). A line with no req quote fails. The status stays \"awaiting manager accept\" until a person marks each line accepted; a req with zero usable lines is a valid result and prints \"lines: 0/0\".",
+   "checkKind": "quote",
+   "rung": "L1",
+   "forbidden": "Adding a trait the req does not state (culture fit, energy, leadership presence). The req wins; drop the line.",
+   "tool": "none",
+   "toolScope": "none",
+   "gated": true,
+   "gate": "ABSENT accept (the hiring manager accepts each scorecard line; the draft is prepared with req quotes and stops at status \"awaiting manager accept\")",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "scorecard lines",
+    "req lines",
+    "job requisition",
+    "hiring manager accepts",
+    "draft scorecard",
+    "job description criteria"
+   ],
+   "absentTools": []
+  },
+  {
+   "directive": "extract",
+   "trigger": "An accepted scorecard and a resume are both present and the ask is to fill the scorecard fields. Quiet when the scorecard is not yet accepted.",
+   "doneWhen": "`jq` (with the resume loaded via --rawfile and split into lines) validates the output: keys equal the accepted scorecard fields exactly, and each value is null or an object with a value, a quote string and a resume line number where the quote is a substring of that resume line. An extra key, a missing key, or a quote that does not resolve at its line fails; a null field passes. An all-null result is valid.",
+   "checkKind": "schema",
+   "rung": "L1",
+   "forbidden": "Inferring a trait or filling a blank from tone, school, or fluency. A field without a quoted resume line stays null.",
+   "tool": "Bash:jq",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "extract resume fields",
+    "resume quote",
+    "fill scorecard fields",
+    "blank stays blank",
+    "candidate fields",
+    "parse resume"
+   ],
+   "absentTools": []
+  },
+  {
+   "directive": "screen-note",
+   "trigger": "An accepted scorecard and one candidate's extracted fields or resume are present, and the ask is a note per line. Quiet when asked for an overall score.",
+   "doneWhen": "`jq` (with the resume loaded via --rawfile and split into lines) counts notes: the number of notes equals the number of scorecard lines (N/N), each note is null or a quote with a locator whose quote is a substring of that resume line, and no overall, vibe, or total field exists in the output. An unsupported line stays blank and passes; a missing or extra note, an unresolved quote, or any overall field fails.",
+   "checkKind": "count",
+   "rung": "L1",
+   "forbidden": "Adding an overall vibe score, summary rating, or recommendation field. One note per line, nothing aggregated.",
+   "tool": "Bash:jq",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "screen note",
+    "per line note",
+    "screening notes",
+    "evidence or blank",
+    "phone screen notes",
+    "no overall score"
+   ],
+   "absentTools": []
+  },
+  {
+   "directive": "compare",
+   "trigger": "Two or more candidates' screen notes share one accepted scorecard. Quiet for a single candidate or when lines differ between candidates.",
+   "doneWhen": "`jq` joins the grid to each candidate's screen notes by scorecard line and compares: for every candidate and every line, the grid cell equals that candidate's screen-note value for that line (a null note gives a null cell; a cell filled where the note is null, or a value taken from another line, fails). Each candidate has exactly N cells for N lines, and no rank, total, or fluency field exists. A null cell stays null and passes; exit code 0 on all-match.",
+   "checkKind": "count",
+   "rung": "L0",
+   "forbidden": "Ranking or scoring candidates on writing polish or fluency, or filling a missing cell from another line. Missing stays missing.",
+   "tool": "Bash:jq",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "compare candidates",
+    "side by side",
+    "same lines",
+    "candidate grid",
+    "missing evidence",
+    "candidate comparison sheet"
+   ],
+   "absentTools": [
+    "blind-review redaction tool for style normalization"
+   ]
+  },
+  {
+   "directive": "decide",
+   "trigger": "A compare grid exists and the ask is to decide, pick, or hire. Prepare the sheet and stop; a person hires.",
+   "doneWhen": "A person reads the sheet and decides. No program can pass a hire. The sheet lists the compare grid cells as quoted evidence, nulls as missing, and ends with the line \"STOP: a human decides.\"",
+   "checkKind": "human-only",
+   "rung": "L3",
+   "forbidden": "Naming a winner, drafting an offer, or sending anything. The hire tool is absent; a reminder is not a gate.",
+   "tool": "none",
+   "toolScope": "none",
+   "gated": true,
+   "gate": "ABSENT hire, offer, send (prepare the decision sheet from the compare grid, stop; a human decides and hires)",
+   "status": "gated",
+   "checkRunnable": false,
+   "keywords": [
+    "decide",
+    "hire decision",
+    "decision sheet",
+    "pick candidate",
+    "make offer",
+    "who to hire"
+   ],
+   "absentTools": [
+    "hiring tool",
+    "offer or send tool"
+   ]
+  }
+ ]
+}

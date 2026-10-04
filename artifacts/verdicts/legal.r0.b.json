@@ -1,0 +1,8 @@
+{"shelf":"legal","lens":"b","round":0,"verdicts":[
+{"directive":"extract","pass":true,"reason":"All rules hold: Bash:python3 is registered with scope read, quote plus locator is one check, L1 fits a model locate plus a substring program, and the forbidden move matches the brief's quote and empty-is-a-result rules."},
+{"directive":"risk","pass":true,"reason":"All rules hold: the brief says the gate stays, gated=true names the absent sign tool with tool none, the quote-tied score row is one check at L1, and the forbidden move matches the brief's unquoted-scoring and one-party rules."},
+{"directive":"compare","pass":false,"reason":"B3 splitRule fails: the done-when bundles two independent checks, a row-count identity (N = M+C+K) and a separate two-sided quote-with-locator check on changed rows, so it is two directives."},
+{"directive":"draft","pass":false,"reason":"B3 splitRule fails: the done-when bundles independent checks, a diff-scope state check (only the flagged section changed) and a verbatim original-visible quote check, plus a flag-id tag, so it is more than one directive."},
+{"directive":"authority","pass":true,"reason":"All rules hold: mcp__FireCrawl__firecrawl_scrape is registered with scope read, resolve-and-quote-substring is one check, L3 is allowed because the brief marks authority weak, and cite-resolution service is honestly absent from the registered tools."},
+{"directive":"diligence","pass":false,"reason":"B3 splitRule fails: the done-when bundles two artifacts, a coverage count (in scope = read + not read) and a per-issue sheet with document and locator, which are independent checks and so two directives."}
+]}

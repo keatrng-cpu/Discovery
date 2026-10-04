@@ -356,6 +356,42 @@
    "kind": "mcp",
    "scope": "act",
    "human_added": false
+  },
+  {
+   "name": "Bash:check-software-verify",
+   "kind": "local",
+   "scope": "read",
+   "cmd": "python3",
+   "path": "fixtures/sw-verify/check.py",
+   "check": "exit-code",
+   "note": "held-out checker for software verify: re-runs the gate, compares the report, runs the Stop hook on a broken and a fixed project"
+  },
+  {
+   "name": "Bash:check-research-gap",
+   "kind": "local",
+   "scope": "read",
+   "cmd": "python3",
+   "path": "fixtures/research-gap/check.py",
+   "check": "exit-code",
+   "note": "held-out checker for research gap: claims table, verbatim quotes, search log must show one search at the first unsupported claim"
+  },
+  {
+   "name": "Bash:check-markets-print",
+   "kind": "local",
+   "scope": "read",
+   "cmd": "python3",
+   "path": "fixtures/markets-print/check.py",
+   "check": "exit-code",
+   "note": "held-out checker for markets print: every number verbatim in the release, none from the recap only"
+  },
+  {
+   "name": "Bash:check-re-triage",
+   "kind": "local",
+   "scope": "read",
+   "cmd": "python3",
+   "path": "fixtures/re-triage/check.py",
+   "check": "exit-code",
+   "note": "held-out checker for reverse-engineering triage: re-derives the answer from file and readelf -h"
   }
  ],
  "proposed": [

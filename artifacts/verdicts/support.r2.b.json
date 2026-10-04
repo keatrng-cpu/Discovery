@@ -1,0 +1,8 @@
+{"shelf":"support","lens":"b","round":2,"verdicts":[
+{"directive":"classify","pass":true,"reason":"All rules hold: ungated read lookup via registered Bash:python3, one id-plus-quoted-line check at L1, forbidden matches the brief's invented-policy failure, distinct keywords, and unregistered absent tools."},
+{"directive":"draft","pass":true,"reason":"All rules hold: draft-only with no send, registered Bash:python3 read, a single verbatim-quote check at L1, forbidden names the brief's promise-creep failure, and the absent tools are unregistered."},
+{"directive":"known-path","pass":true,"reason":"All rules hold: ungated registered Bash:jq read, one L0 state-diff equality program, forbidden names improvising and repairing variance per the brief, and the absent connectors are unregistered."},
+{"directive":"exception","pass":false,"reason":"B3 fails: the done-when bundles two independent checks with 'and' over different artifacts, record.json well-formedness and state.json-equals-failed_state.json (state untouched), so record and stop should be two directives."},
+{"directive":"resolve","pass":true,"reason":"All rules hold: gated true with tool none and the gate naming the absent refund, cancel, delete and typed resolution tool, prepare-and-stop, one schema check, and forbidden matching the brief's typed-tool, idempotency and refund rules."},
+{"directive":"incident","pass":false,"reason":"B3 fails: the done-when bundles an independent ordering check (non-decreasing ts) with the quote-matches-locator check using 'and', and the brief states these as separate requirements, so it is two directives."}
+]}

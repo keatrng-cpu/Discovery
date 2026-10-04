@@ -1,0 +1,9 @@
+{"shelf":"data","lens":"b","round":0,"verdicts":[
+{"directive":"profile","pass":true,"reason":"All rules hold: Bash:python3 is registered with read scope, one profile.json check at L0, forbidden matches the brief's tool-output and id-as-measure rule, and the absent read-only database role is proposed but not registered."},
+{"directive":"clean","pass":true,"reason":"All rules hold: ungated read-scope python3 at L0, one row-conservation check (N = M + K with K dropped rows kept and other columns unchanged), and forbidden names the brief's second-field and queryable-dropped-rows failures."},
+{"directive":"hypothesis","pass":false,"reason":"B3 splitRule fails: the check bundles two independent checks with 'and', a python3 exit code on the saved query and a working-tree diff showing no chart artifact, which are two programs."},
+{"directive":"chart","pass":false,"reason":"B3 splitRule fails: the check bundles three independent checks, a quoted value matching the query result, a title stating the comparison, and an exactly-one-series count."},
+{"directive":"anomaly","pass":true,"reason":"All rules hold: one python3 slice-recompute output check (row count above 0 with both values, or anomaly: none), L1 is the cheapest fit because a model picks the slice, and forbidden matches the brief's cause-before-rerun failure."},
+{"directive":"reconcile","pass":true,"reason":"All rules hold: one python3 output check (both totals, n equal to the listed keys, no averaged figure) at L1, and forbidden names the brief's averaging and no-written-definition failures."},
+{"directive":"define","pass":true,"reason":"All rules hold: the brief says a human signs, so gated is true with tool none and the gate names the absent sign verb, the check is a single signature at L3, and the signature tool is in the absent list, not the registered tools."}
+]}

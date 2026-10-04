@@ -1,0 +1,158 @@
+{
+ "shelf": "motion-games-3d",
+ "directives": [
+  {
+   "directive": "still",
+   "trigger": "A request for a single frame with one named subject, to be scored. Quiet when the ask is to animate, render a sequence, or touch a level or engine project.",
+   "doneWhen": "jq -e '(.frames|length)==1 and (.subject|type==\"string\") and (.score|type==\"number\")' still.json exits 0; score null with no scorer is reported unscored, a valid result; a human score is assisted, never a pass.",
+   "checkKind": "schema",
+   "rung": "L1",
+   "forbidden": "Animating, or adding a second subject or second frame, before the still is scored; writing a score the scorer did not return.",
+   "tool": "Bash:jq",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "single frame",
+    "one subject",
+    "still frame",
+    "score the frame",
+    "first frame",
+    "hero frame"
+   ],
+   "absentTools": [
+    "automatic frame scorer"
+   ]
+  },
+  {
+   "directive": "time",
+   "trigger": "A time t and a renderer that takes t as its only time input. Quiet when no t-addressable renderer exists (generic video generator) or when the ask is a full render.",
+   "doneWhen": "Render the frame at t into an empty out/ directory as frame_t.png; one program exits 0 only if out/ holds exactly one file (frame_t.png, count 1, so no full render and no other frame) and cmp out/frame_t.png expected_t.png exits 0, where expected_t.png is the brief's reference frame for that t; no reference frame means unchecked, and a renderer that is not a function of t is reported unsupported, both valid results.",
+   "checkKind": "exit-code",
+   "rung": "L0",
+   "forbidden": "Rendering the full sequence to reach frame t, or drawing any frame other than t (a second frame file in the output directory is the failure).",
+   "tool": "Bash:cmp",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "seek frame",
+    "frame at t",
+    "timestamp frame",
+    "seek time",
+    "render at second",
+    "deterministic render"
+   ],
+   "absentTools": [
+    "t-addressable renderer harness"
+   ]
+  },
+  {
+   "directive": "score",
+   "trigger": "A contact sheet with a per-frame score file from an external scorer. Quiet when no external score exists, or when the ask is the full render.",
+   "doneWhen": "A program over before.json and after.json prints 'changed frames: 1' (only the worst-scoring frame's entry differs); below threshold is a valid result and no full render starts.",
+   "checkKind": "count",
+   "rung": "L1",
+   "forbidden": "Fixing more than the worst frame, or starting the full render before the threshold is met (a rescore that does not rise is reported, not hidden).",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "contact sheet",
+    "worst frame",
+    "rescore",
+    "frame score",
+    "render threshold",
+    "fix weakest frame"
+   ],
+   "absentTools": [
+    "external frame scorer"
+   ]
+  },
+  {
+   "directive": "asset",
+   "trigger": "A request to make or fix a mesh, UV, or rig asset. Quiet when the ask is to place the asset in a level or to bundle all stages in one prompt.",
+   "doneWhen": "jq -e '([\"mesh\",\"uv\",\"rig\",\"animation\"] as $o | .stages==$o[:(.stages|length)]) and (.imported==false) and (.placed_in_level==false) and (if (.stages|index(\"animation\")) then (.rig.kind==\"default\") and (.animation.count==1) and (.animation.played_on==\"default\") else true end)' asset.json exits 0; a manifest of only completed earlier stages is valid; editor playback stays assisted.",
+   "checkKind": "schema",
+   "rung": "L1",
+   "forbidden": "Bundling mesh, UV, rig and animation in one prompt, or importing or placing the asset in the level before one animation played on the default rig.",
+   "tool": "Bash:jq",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "mesh",
+    "uv unwrap",
+    "rig",
+    "default rig",
+    "one animation",
+    "asset import",
+    "skeleton"
+   ],
+   "absentTools": [
+    "game engine or 3D editor connector"
+   ]
+  },
+  {
+   "directive": "level",
+   "trigger": "A level edit in exactly one change class: terrain, light, character, or interaction. Quiet when the ask spans classes or wants unattended level building.",
+   "doneWhen": "A program reads level_classes.json (change class to its file globs) and the output of git diff --name-only, and exits 0 only if every changed path matches the named class's globs and none match another class's; a path in two classes or none is reported 'class not separable', and an empty diff after a revert is valid; the editor check is quoted separately and no editor check means unvalidated.",
+   "checkKind": "state-diff",
+   "rung": "L1",
+   "forbidden": "Treating tool success as scene success: calling the level done because the edit command exited 0, or changing a second class in the same pass.",
+   "tool": "Bash:git",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "terrain",
+    "lighting",
+    "level edit",
+    "revert level",
+    "editor check",
+    "interaction change",
+    "level design"
+   ],
+   "absentTools": [
+    "engine connector (named system, editor check)"
+   ]
+  },
+  {
+   "directive": "engine",
+   "trigger": "An engine project (Unity, Unreal, Godot) on disk and a request to change one system. Quiet when no project is present or the system is unnamed.",
+   "doneWhen": "A program reads systems.json (system name to its file globs), read.json (the pre-edit quote: system path and line, recorded before the first edit) and the output of git diff --name-only, and exits 0 only if the quoted path matches the named system's globs, the quote is non-empty, and every changed path matches the named system's globs; the path walk is reported 'not run' because the connector is absent.",
+   "checkKind": "state-diff",
+   "rung": "L1",
+   "forbidden": "Writing before reading the project (no quoted system path and line before the first edit), or editing a system that was not named first.",
+   "tool": "Bash:git",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "unity project",
+    "unreal project",
+    "godot project",
+    "name the system",
+    "engine system",
+    "walk the path",
+    "game engine edit"
+   ],
+   "absentTools": [
+    "game engine or 3D editor connector"
+   ]
+  }
+ ]
+}

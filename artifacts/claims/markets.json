@@ -1,0 +1,151 @@
+{
+ "shelf": "markets",
+ "directives": [
+  {
+   "directive": "print",
+   "trigger": "An earnings release file is present (tune example: fixtures/markets-print/tune/release.txt). Quiet when only a news recap exists, or when the ask is to trade or size.",
+   "doneWhen": "`python3 fixtures/markets-print/check.py --fixture <dir> --out <out.json>` exits 0: eps, guidance, and surprise each carry a verbatim quote and the line number of the release; every number in the output appears in the release and none comes from the recap only. A field the release does not hold is reported as absent (null, no quote, no line) and that counts as a pass: unsupported is a valid result. The check program fixtures/markets-print/check.py already exists in the repo and runs under the registered Bash:python3 with no new program.",
+   "checkKind": "exit-code",
+   "rung": "L1",
+   "forbidden": "any number taken from a recap; averaging two figures; filling a field the release does not hold",
+   "tool": "none",
+   "toolScope": "none",
+   "gated": false,
+   "gate": "",
+   "status": "reliable",
+   "checkRunnable": true,
+   "keywords": [
+    "eps",
+    "guidance",
+    "surprise",
+    "earnings release",
+    "press release",
+    "beat or miss",
+    "release numbers"
+   ],
+   "absentTools": [
+    "EDGAR 8-K exhibit 99 fetch connector"
+   ]
+  },
+  {
+   "directive": "filing",
+   "trigger": "A filing document (text or PDF) is present and the ask is a quoted line with its location. Quiet when only a news recap exists, or the ask is a summary or a trade.",
+   "doneWhen": "Each claim is one verbatim line from the filing text plus its page or item locator (for example \"Item 7, p. 31\"). A program extracts the text per page (pdftotext, pages split on form feed) or per item (text between an \"Item N\" heading and the next one), then greps the quote inside the stated page or item only. The run passes only if every quote is found at its own stated locator; a quote found elsewhere, or a locator that does not exist, fails. A figure that cannot be placed is listed as \"skipped\" and is a valid result. Zero claims placed is a valid result.",
+   "checkKind": "quote",
+   "rung": "L1",
+   "forbidden": "Using the news recap as the filing, or stating a figure it could not place (tables and exhibits slip: skip them, do not paraphrase).",
+   "tool": "Bash:pdftotext",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "10-k",
+    "10-q",
+    "8-k",
+    "quote the filing",
+    "page or item",
+    "sec filing",
+    "risk factors item"
+   ],
+   "absentTools": [
+    "EDGAR full-text and XBRL table connector"
+   ]
+  },
+  {
+   "directive": "cross",
+   "trigger": "Both a filing and a news source are present for one claim. Quiet when only one source exists, or the ask is a merged narrative.",
+   "doneWhen": "Output has two verbatim quotes per claim, one labelled filing with page or item, one labelled news with its source, and a verdict of agree, disagree, or unplaced. A program confirms each quote appears in its own source; the run passes only if all do. A claim with no filing line is marked \"unplaced\", which is a valid result.",
+   "checkKind": "quote",
+   "rung": "L1",
+   "forbidden": "Merging the filing and the news into one voice, or smoothing a disagreement into a single number.",
+   "tool": "mcp__FireCrawl__firecrawl_scrape",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "filing versus news",
+    "cross-check news",
+    "both lines",
+    "agree or disagree",
+    "recap versus filing"
+   ],
+   "absentTools": [
+    "EDGAR full-text and XBRL table connector"
+   ]
+  },
+  {
+   "directive": "memo",
+   "trigger": "Sourced facts exist and the ask is a thesis memo. Quiet when the ask is to buy, sell, or size a position.",
+   "doneWhen": "A person reads the kill condition line and confirms it is an observable: it names a metric, a threshold, and a date. That is the one check; no program can judge observability. Not part of the check, but required of the draft: one stated thesis, every line tagged fact or inference, and no order and no size.",
+   "checkKind": "human-only",
+   "rung": "L3",
+   "forbidden": "Writing a kill condition that cannot be observed (for example \"if sentiment turns\"), or adding an order or a size.",
+   "tool": "none",
+   "toolScope": "none",
+   "gated": true,
+   "gate": "ABSENT broker, order (prepare the thesis and kill condition, stop; a person places any order or size)",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "investment memo",
+    "thesis",
+    "kill condition",
+    "fact versus inference",
+    "one-page memo"
+   ],
+   "absentTools": [
+    "kill-condition observability checker"
+   ]
+  },
+  {
+   "directive": "monitor",
+   "trigger": "A previous card file and new material both exist. Quiet when there is no prior card.",
+   "doneWhen": "`git diff --no-index --unified=0 <old card> <new card>` is parsed by a program against the card format: claim lines read \"claim | expires YYYY-MM-DD | text\", the kill condition is one line starting \"KILL:\", added lines start \"DELTA \". Pass only if every added line starts \"DELTA \", every removed line carries an expires date earlier than the clock date, and no \"KILL:\" line is removed or changed (new card still holds the old KILL: line byte-equal). A removed line that is not expired, or a rewritten card, fails. An empty diff is a valid result: the card is unchanged.",
+   "checkKind": "state-diff",
+   "rung": "L1",
+   "forbidden": "Rewriting the whole card, keeping a stale claim, or dropping the kill condition.",
+   "tool": "Bash:git",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "ticker card",
+    "refresh card",
+    "delta since last",
+    "expire stale",
+    "watchlist update"
+   ],
+   "absentTools": [
+    "market data clock feed"
+   ]
+  },
+  {
+   "directive": "scenario",
+   "trigger": "A baseline input set and a named variable to move. Quiet when two variables are named, or when the ask is to place risk.",
+   "doneWhen": "A diff of baseline inputs versus scenario inputs shows exactly one changed key, the named variable; all other keys are byte-equal. Two or more changed keys fails. Not part of the check, but required of the output: the thesis shown under that move, then stop. A move that leaves the thesis unchanged is a valid result.",
+   "checkKind": "state-diff",
+   "rung": "L1",
+   "forbidden": "Moving two variables, or continuing past the one requested variable. No order, no size.",
+   "tool": "none",
+   "toolScope": "none",
+   "gated": true,
+   "gate": "ABSENT broker, order (show the thesis under one move, stop; a person places any order or size)",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "scenario",
+    "what if",
+    "one variable",
+    "sensitivity",
+    "hold others fixed"
+   ],
+   "absentTools": []
+  }
+ ]
+}

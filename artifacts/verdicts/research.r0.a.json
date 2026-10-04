@@ -1,0 +1,8 @@
+{"shelf":"research","lens":"a","round":0,"verdicts":[
+{"directive":"retrieve","pass":false,"reason":"A3 fails: the brief's 'prefer the primary source over the recap' appears only in forbidden, and the done-when never checks that a kept source is primary rather than a recap."},
+{"directive":"extract","pass":true,"reason":"All rules hold: a verbatim sentence with a page/line locator, unit and sample on numbers, and a paraphrase tag cover every element of the brief; status assisted matches; absent/zero are valid; checkRunnable false is honest."},
+{"directive":"gap","pass":false,"reason":"A4 fails (and A3 with it): 'exactly one search was logged' fails the valid outcome where every claim is supported (zero searches) and does not admit 'declared open' as a stop result; A5 is also unconfirmed because fixtures/research-gap/check.py is not a registered tool."},
+{"directive":"conflict","pass":false,"reason":"A3 fails: the brief's 'do not average them' is only in forbidden, and the human-only done-when checks quotes, disagreement and decider but has no item that checks for a blended figure or midpoint."},
+{"directive":"synthesize","pass":false,"reason":"A3 fails: the done-when counts source-or-unsupported per sentence but does not enforce 'one claim per sentence' or 'lead with the answer, then the conflicts' from the brief."},
+{"directive":"monitor","pass":true,"reason":"All rules hold: the git state-diff covers diffing the last memo, expiry by a code clock against the half-life, adding only new sources, and keeping the old conclusion visible; status assisted holds because the trigger requires a memo file; an empty diff is valid; checkRunnable false is honest."}
+]}

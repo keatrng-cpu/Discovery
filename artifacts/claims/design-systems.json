@@ -1,0 +1,115 @@
+{
+ "shelf": "design-systems",
+ "directives": [
+  {
+   "directive": "tokens",
+   "trigger": "A token source file or design-file link is present and the ask is to style output with the system's values. Quiet when no source file exists: report \"unsupported\", do not guess values.",
+   "doneWhen": "A program reads the source file and, for each token name used in the output, prints the name, its source locator (file path and line, or Figma variable name from get_variable_defs) and the value the source states. It exits non-zero and lists by name any token absent from the source, any token whose value in the output differs from the source value, and any raw hex or literal spacing value in the output where a token name belongs. An empty token set is a valid result: report \"absent\", never invent.",
+   "checkKind": "quote",
+   "rung": "L0",
+   "forbidden": "Sampling a hex or spacing value from a screenshot instead of reading the source file, or writing the hex where the token name belongs.",
+   "tool": "mcp__Figma__get_variable_defs",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "reliable",
+   "checkRunnable": false,
+   "keywords": [
+    "token name",
+    "source file",
+    "figma variables",
+    "not hex",
+    "design tokens"
+   ],
+   "absentTools": []
+  },
+  {
+   "directive": "ban-list",
+   "trigger": "A named ban list exists, shorter than the design system, and output must pass it. Quiet when asked to ban taste or style opinions; those are not testable.",
+   "doneWhen": "`pytest` over the ban-list test file exits 0 on the output: one test per banned pattern. Any hit exits non-zero and names the pattern. A banned pattern with no test is not on the list. An empty ban list is a valid result: report \"no bans\", exit 0.",
+   "checkKind": "exit-code",
+   "rung": "L0",
+   "forbidden": "Enforcing the ban list by instruction in the prompt, or banning taste, so the fail is a plea rather than a test.",
+   "tool": "Bash:pytest",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "reliable",
+   "checkRunnable": false,
+   "keywords": [
+    "ban list",
+    "banned pattern",
+    "fail the output",
+    "forbidden pattern"
+   ],
+   "absentTools": []
+  },
+  {
+   "directive": "components",
+   "trigger": "A component list exists and output is built from components. Quiet when no list is supplied: report \"unsupported\".",
+   "doneWhen": "`python3` over the output prints \"unlisted: N\" and a record line \"component: <name>\" for each use; exit 0 only when N is 0. Any raw substitute (an element or markup standing in for a listed component) counts as unlisted and fails. An output using no components is a valid result: \"unlisted: 0, used: 0\".",
+   "checkKind": "count",
+   "rung": "L1",
+   "forbidden": "Keeping the component list only in the prompt, so a raw substitute leaks through; the list must be what the tool exposes.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "listed components",
+    "raw substitute",
+    "component list",
+    "which component"
+   ],
+   "absentTools": [
+    "component-exposing design-system tool"
+   ]
+  },
+  {
+   "directive": "flows",
+   "trigger": "One page type and its one template screenshot exist. A request naming two page types is two directives: pick one and diff against that template only. Quiet when no template exists.",
+   "doneWhen": "A real screenshot of the output (npx playwright screenshot) is diffed against the one named template screenshot; the diff reports \"off-template regions: 0\". Spacing and type are held to the template: the template renders token spacing and type, so any deviation in either appears as an off-template region. Any off-template region fails, listed by locator. No rendered page is a valid result: \"unread\", not a pass.",
+   "checkKind": "state-diff",
+   "rung": "L0",
+   "forbidden": "Judging a region on-template by looking at it instead of the diff, or waving through an off-template region.",
+   "tool": "Bash:playwright",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "page type",
+    "visual diff",
+    "off-template",
+    "template diff"
+   ],
+   "absentTools": []
+  },
+  {
+   "directive": "cli",
+   "trigger": "A brand rejecting CLI is named or present. A markdown guide is not this directive. Quiet when no CLI exists: report \"tool absent\", do not substitute a model.",
+   "doneWhen": "The brand CLI exits 0 on on-system output; on off-system output it exits non-zero and prints the failed rule id. Never \"almost\" pass. The CLI is absent in this environment: report \"tool absent\", the check is not runnable, and no script or model stands in for the reject. With the CLI absent, no pass is possible; the result is \"tool absent\".",
+   "checkKind": "exit-code",
+   "rung": "L0",
+   "forbidden": "Rejecting off-system output in a plea or review comment instead of the tool, or treating a near-pass as a pass.",
+   "tool": "none",
+   "toolScope": "none",
+   "gated": false,
+   "gate": "",
+   "status": "weak",
+   "checkRunnable": false,
+   "keywords": [
+    "brand cli",
+    "reject off-system",
+    "failed rule",
+    "design cli"
+   ],
+   "absentTools": [
+    "brand design-system rejecting CLI"
+   ]
+  }
+ ]
+}

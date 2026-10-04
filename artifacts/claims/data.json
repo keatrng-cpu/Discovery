@@ -1,0 +1,187 @@
+{
+ "shelf": "data",
+ "directives": [
+  {
+   "directive": "profile",
+   "trigger": "A csv, table or extract is present and the ask is to know its shape. Quiet when the ask is to fix values, chart, or answer a business question.",
+   "doneWhen": "`python3` over the file prints rows, per-column null count, per-column type, the grain (the column set unique per row, or \"none\"), and one line \"id-as-measure: <col>\" for each id column used as a measure, then writes profile.json with keys rows, columns (null count and type each), grain, id_as_measure. Check: a second python3 recount of the file must equal profile.json on rows, on every per-column null count, on grain (distinct tuples of the grain columns equal rows, or grain is \"none\"), and the number of \"id-as-measure:\" lines equals the length of id_as_measure; any mismatch is a nonzero count of differences. An empty file is a valid result: rows 0, grain \"none\".",
+   "checkKind": "count",
+   "rung": "L0",
+   "forbidden": "Stating a count, null total or grain from reading a sample instead of tool output, or summing a numeric id column as if it were a measure.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "reliable",
+   "checkRunnable": false,
+   "keywords": [
+    "profile the dataset",
+    "row count",
+    "null counts",
+    "column types",
+    "data grain",
+    "id used as measure",
+    "save profile"
+   ],
+   "absentTools": [
+    "read-only database role (profile and print)"
+   ]
+  },
+  {
+   "directive": "clean",
+   "trigger": "One named column and one named rule (trim, cast, dedupe, null-fill, drop). Quiet when the ask names several fields or says clean the data with no field; ask for one field.",
+   "doneWhen": "`python3` applies the one rule and prints \"rows before: N\", \"rows after: M\", \"dropped: K\", and writes dropped.csv holding all K dropped rows. Check: N = M + K, where K equals the data-row count of dropped.csv. K = 0 with an empty dropped.csv is a valid result.",
+   "checkKind": "count",
+   "rung": "L0",
+   "forbidden": "Cleaning a second field in the same directive (the loose-directive failure), or deleting dropped rows instead of keeping them queryable.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "reliable",
+   "checkRunnable": false,
+   "keywords": [
+    "clean one column",
+    "dedupe rows",
+    "trim whitespace",
+    "cast column type",
+    "rows before and after",
+    "dropped rows",
+    "null fill one field"
+   ],
+   "absentTools": [
+    "read-only database role (profile and print)"
+   ]
+  },
+  {
+   "directive": "hypothesis",
+   "trigger": "A question of the form compare A to B over a slice. Quiet when a chart is requested before the query exists; write the query first.",
+   "doneWhen": "A file hypothesis.md holds a line \"comparison: ...\", a line \"slice: ...\" and a fenced saved query. Check: one `python3` run of that saved query exits 0, and the directory listing before and after the directive differs only by hypothesis.md (no png, svg or chart html added). An empty result set is valid: report \"rows: 0\".",
+   "checkKind": "exit-code",
+   "rung": "L1",
+   "forbidden": "Jumping to a chart (adding a png, svg or chart html) before the query is saved, or writing a comparison with no slice.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "hypothesis",
+    "compare groups",
+    "saved query",
+    "slice the data",
+    "a versus b",
+    "test a difference",
+    "write the query"
+   ],
+   "absentTools": [
+    "read-only database role (profile and print)"
+   ]
+  },
+  {
+   "directive": "chart",
+   "trigger": "A saved query and its result are present and a chart is asked for. Quiet when the query is missing or the ask adds extra series.",
+   "doneWhen": "The chart spec (json or svg source) names the query file as its data source. Check: one `python3` run over the spec quotes, each with file and line, the title (which must contain the hypothesis.md \"comparison:\" text), the series count (must be 1 unless the ask said otherwise), and one labeled value that equals the same value quoted from the query result; any inequality exits nonzero.",
+   "checkKind": "quote",
+   "rung": "L1",
+   "forbidden": "Adding a decorative second series (the spec must keep exactly one series unless the ask said otherwise), a title that does not name the saved comparison line, or plotting values not taken from the saved query result.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "chart the query",
+    "bind chart to query",
+    "chart title comparison",
+    "label a value",
+    "plot result",
+    "bar chart of query",
+    "one series"
+   ],
+   "absentTools": [
+    "chart-spec validator (only Bash:playwright screenshot is registered)"
+   ]
+  },
+  {
+   "directive": "anomaly",
+   "trigger": "A metric spike, dip or odd value with a data file or query. Quiet when the ask is why it happened; isolate first.",
+   "doneWhen": "`python3` filters the slice, recomputes the metric on it, and prints \"anomaly: <row id or date>\" with the recomputed value and the original value. Check: slice row count is above 0 and both values are printed, or the output says \"anomaly: none\" and exits 0.",
+   "checkKind": "count",
+   "rung": "L1",
+   "forbidden": "Offering a cause story before the slice has rerun (a rule for the writer; the count check does not read it).",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "anomaly",
+    "outlier day",
+    "spike in metric",
+    "isolate the slice",
+    "recompute the slice",
+    "odd row",
+    "name the day"
+   ],
+   "absentTools": [
+    "read-only database role (profile and print)"
+   ]
+  },
+  {
+   "directive": "reconcile",
+   "trigger": "Two extracts and one written metric definition are present. Quiet when only one extract exists (report unsupported) or when the ask is for the number.",
+   "doneWhen": "`python3` applies the written definition to both extracts and prints \"total A: x\", \"total B: y\", \"unmatched keys: n\" followed by each key with its source. Check: both totals printed, n equals the listed keys, and no averaged figure appears. Zero unmatched keys is valid; a missing extract is reported \"unsupported\" and exits 0.",
+   "checkKind": "count",
+   "rung": "L1",
+   "forbidden": "Averaging the two totals into one number, or reconciling with no written metric definition.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "reconcile",
+    "two systems",
+    "totals differ",
+    "unmatched keys",
+    "metric definition",
+    "compare extracts",
+    "match keys"
+   ],
+   "absentTools": [
+    "read-only database role (profile and print)"
+   ]
+  },
+  {
+   "directive": "define",
+   "trigger": "A new or disputed metric. Quiet when a signed definition exists; use it. Draft only, then stop.",
+   "doneWhen": "A file definition.md holds \"formula:\", \"grain:\" and \"exclusion:\" lines and a \"signed-by:\" line left empty by the model. Check: a person's name on the signed-by line must exist before any query on the metric runs; absent that, queries are refused. The model never fills the signature.",
+   "checkKind": "signature",
+   "rung": "L3",
+   "forbidden": "Filling the signed-by line, or running queries on the metric before a person signs.",
+   "tool": "none",
+   "toolScope": "none",
+   "gated": true,
+   "gate": "ABSENT sign (draft formula, grain and exclusion, then stop; a person signs before anyone queries)",
+   "status": "gated",
+   "checkRunnable": false,
+   "keywords": [
+    "define metric",
+    "metric definition",
+    "formula and grain",
+    "exclusion rule",
+    "sign off metric",
+    "kpi definition",
+    "metric owner signs"
+   ],
+   "absentTools": [
+    "signature tool"
+   ]
+  }
+ ]
+}

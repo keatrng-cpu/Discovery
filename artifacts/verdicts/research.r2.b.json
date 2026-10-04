@@ -1,0 +1,8 @@
+{"shelf":"research","lens":"b","round":2,"verdicts":[
+{"directive":"retrieve","pass":true,"reason":"All rules hold: read-scope mcp__FireCrawl__firecrawl_scrape is registered, no deny verb appears, the done-when is one ledger check over one artifact, L1 fits, and the forbidden move names the brief's resolve-or-discard and primary-over-recap failures."},
+{"directive":"extract","pass":true,"reason":"All rules hold: Bash:pdftotext is registered at read scope, the done-when is one substring-at-locator check per item (unit and scope are fields of that item), L1 fits, and the forbidden move names the brief's paraphrase-under-compression and number-without-unit failures."},
+{"directive":"gap","pass":true,"reason":"All rules hold: Bash:localsearch is registered at read scope, the done-when is a single check.py exit code, L1 fits, and the forbidden move (searching a second claim) names the brief's keeps-searching-after-filled failure."},
+{"directive":"conflict","pass":true,"reason":"All rules hold: Bash:python3 is registered at read scope, one script exit is the single check, L1 is cheaper than L3 and status is honestly weak, and the forbidden move names the brief's averaging-in-the-sentence-after failure."},
+{"directive":"synthesize","pass":true,"reason":"All rules hold: Bash:python3 is registered at read scope, one script exit counts sourced-or-labeled sentences, L1 fits, and the forbidden move names the brief's unsupported-sentence-sneaks-in failure."},
+{"directive":"monitor","pass":false,"reason":"B3 splitRule fails: the done-when bundles two independent programs and checks, a python3 clock expiry check and a git diff --numstat/git show delta check, so it is two directives (and the declared tool Bash:git does not cover the python3 clock half)."}
+]}

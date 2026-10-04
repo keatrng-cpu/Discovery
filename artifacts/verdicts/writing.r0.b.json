@@ -1,0 +1,8 @@
+{"shelf":"writing","lens":"b","round":0,"verdicts":[
+{"directive":"outline","pass":false,"reason":"B4 fails: L0 means a program alone clears the directive, but turning a topic or source notes into slotted claims needs a model pass, so the rung should be L1 (B1, B2, B3, B5, B6 and B7 hold)."},
+{"directive":"draft","pass":true,"reason":"All rules hold: ungated read-scope Bash:python3 is registered, the done-when is one claim-mapping check with banned-default scanning split out, L1 fits, the forbidden move matches the brief's 'no new claims', and the absent tools are unregistered."},
+{"directive":"cut","pass":true,"reason":"All rules hold: registered read tool, one claim-count comparison, L1, the forbidden move matches the brief's 'without adding a claim' and 'do not restyle', and the keywords include distinguishing phrases."},
+{"directive":"variant","pass":true,"reason":"All rules hold: registered read tool, one verbatim frozen-fact check, L1, the forbidden move matches the brief's 'keep the offer, keep the numbers', and the fact-list extractor is unregistered."},
+{"directive":"series","pass":false,"reason":"B3 fails: the done-when bundles independent checks: a cmp of the new piece's ban list against the brand file, a second cmp of the previous piece's ban list, and a separate no-restated-rules check on the draft."},
+{"directive":"fact","pass":true,"reason":"All rules hold: Bash:localsearch is registered at read scope, the done-when is one source-or-unsupported label count (a quote and its locator count as one check), L1, the forbidden move matches 'do not upgrade a label by tone' and 'no third option', and cite-resolution is listed only as absent."}
+]}

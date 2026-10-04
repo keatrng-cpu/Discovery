@@ -55,6 +55,17 @@ class GateTests(unittest.TestCase):
 
 
 class RouterTests(unittest.TestCase):
+    def setUp(self):
+        p = mock.patch.object(desk, "skill_state", return_value="none")
+        p.start()
+        self.addCleanup(p.stop)
+
+    def test_verified_skill_is_novelty_low_and_keeps_its_registered_rung(self):
+        with mock.patch.object(desk, "skill_state", return_value="verified"):
+            c = self.r("please measure the widget with calipers to check tolerance")["contracts"][0]
+        self.assertEqual((c["novelty"], c["rung"], c["token cap"]), ("low", "L1", "20000"))
+        self.assertIn("count == 3", c["check"])
+
     def r(self, task):
         return desk.route(task, shelves=SYN)
 
@@ -273,6 +284,41 @@ class InventionAndPromotionTests(unittest.TestCase):
 
     def test_no_cost_drop_does_not_promote(self):
         self.assertEqual(self.promo({"tokens": 1000, "seconds": 60}, {"tune_pass": True, "heldout_pass": True, "tokens": 1200, "seconds": 90})[0], 1)
+
+
+class MajorityVerdictTests(unittest.TestCase):
+    def verdicts(self, files):
+        d = tempfile.mkdtemp()
+        os.makedirs(os.path.join(d, "artifacts", "verdicts"))
+        for name, rows in files.items():
+            with open(os.path.join(d, "artifacts", "verdicts", name), "w") as f:
+                json.dump({"verdicts": [{"directive": k, "pass": v} for k, v in rows.items()]}, f)
+        with mock.patch.object(desk, "ROOT", desk.Path(d)):
+            return desk.final_verdicts("x")
+
+    def test_two_of_three_per_lens_passes(self):
+        got = self.verdicts({
+            "x.final.a.1.json": {"d": True}, "x.final.a.2.json": {"d": True}, "x.final.a.3.json": {"d": False},
+            "x.final.b.1.json": {"d": False}, "x.final.b.2.json": {"d": True}, "x.final.b.3.json": {"d": True}})
+        self.assertTrue(got["d"])
+
+    def test_one_lens_failing_the_majority_fails_the_directive(self):
+        got = self.verdicts({
+            "x.final.a.1.json": {"d": True}, "x.final.a.2.json": {"d": True}, "x.final.a.3.json": {"d": True},
+            "x.final.b.1.json": {"d": False}, "x.final.b.2.json": {"d": False}, "x.final.b.3.json": {"d": True}})
+        self.assertFalse(got["d"])
+
+    def test_a_single_vote_per_lens_is_not_enough(self):
+        got = self.verdicts({"x.final.a.1.json": {"d": True}, "x.final.b.1.json": {"d": True}})
+        self.assertFalse(got["d"])
+
+    def test_a_missing_lens_is_unverified_not_smoothed(self):
+        got = self.verdicts({"x.final.a.1.json": {"d": True}, "x.final.a.2.json": {"d": True}, "x.final.a.3.json": {"d": True}})
+        self.assertFalse(got["d"])
+
+    def test_single_vote_round_files_still_work_as_the_fallback(self):
+        got = self.verdicts({"x.r0.a.json": {"d": True}, "x.r0.b.json": {"d": True}})
+        self.assertTrue(got["d"])
 
 
 class RegistryTests(unittest.TestCase):

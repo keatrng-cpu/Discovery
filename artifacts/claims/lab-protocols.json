@@ -1,0 +1,125 @@
+{
+ "shelf": "lab-protocols",
+ "directives": [
+  {
+   "directive": "transcribe",
+   "trigger": "A named method and its source text are present and the ask is to copy the steps; quiet without the source or for graph, repair, campaign, run.",
+   "doneWhen": "Every step carries a verbatim source quote with page/line or step locator, matched by program; quantities and units appear in the quote; each skipped step is written as GAP; zero-step or unread source is a valid result.",
+   "checkKind": "quote",
+   "rung": "L1",
+   "forbidden": "Inventing a step the source skips instead of marking a GAP; rewriting units or quantities.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "reliable",
+   "checkRunnable": false,
+   "keywords": [
+    "transcribe method",
+    "copy protocol steps",
+    "keep units",
+    "mark gaps",
+    "named method",
+    "source steps"
+   ],
+   "absentTools": []
+  },
+  {
+   "directive": "graph",
+   "trigger": "Transcribed steps and a graph schema are present and the ask is a graph; quiet when no schema is supplied.",
+   "doneWhen": "jq -e filter encoding the supplied schema's required node fields (id, action, params object, source step locator) and edge fields (from and to each equal an existing node id, handoff names the material or output passed) exits 0 over the graph file, exit code quoted; every edge without a handoff field or with a dangling id fails; one node per instrument action with parameters as node fields; GAP stays a GAP field; empty step list gives an empty graph and empty edge list that exits 0.",
+   "checkKind": "schema",
+   "rung": "L1",
+   "forbidden": "Fake edges: linking adjacent nodes without a real handoff, or putting parameters in prose.",
+   "tool": "Bash:jq",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "protocol graph",
+    "graph node",
+    "one node per action",
+    "node parameters",
+    "instrument action",
+    "edges handoff"
+   ],
+   "absentTools": [
+    "schema validator for protocol graphs"
+   ]
+  },
+  {
+   "directive": "repair",
+   "trigger": "A graph and validator output naming a failing node are present; quiet when no node is named.",
+   "doneWhen": "Validator re-run on the repaired graph: diff of validator output before vs after (git diff --no-index, output quoted) shows the named node's error line removed and zero added error lines, and the re-run exit code is quoted; clean graph with empty diff is valid.",
+   "checkKind": "state-diff",
+   "rung": "L1",
+   "forbidden": "Restyling the rest of the graph: reordering keys, renaming nodes, reformatting, or touching an unnamed node.",
+   "tool": "Bash:git",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "reliable",
+   "checkRunnable": false,
+   "keywords": [
+    "repair node",
+    "failing node",
+    "validator output",
+    "fix one node",
+    "revalidate graph"
+   ],
+   "absentTools": [
+    "schema validator for protocol graphs"
+   ]
+  },
+  {
+   "directive": "campaign",
+   "trigger": "A validated graph and a goal for repeated runs are present; the skill prepares the plan and stops.",
+   "doneWhen": "jq -e filter over the campaign file exits 0, exit code quoted: every parameter has min and max set before the loop, a stop condition field is non-empty, the iteration log schema has the required fields and zero entries; grep -c '^STARTED-BY:$' prints 1 (line blank until a person writes it); a person starting the hardware is the gate, not part of this check.",
+   "checkKind": "schema",
+   "rung": "L1",
+   "forbidden": "Starting or simulating-as-real a hardware run, or writing a loop with no bound or stop condition.",
+   "tool": "none",
+   "toolScope": "none",
+   "gated": true,
+   "gate": "ABSENT hardware-start, instrument control (prepare bounds, stop, and log; a person starts the hardware)",
+   "status": "gated",
+   "checkRunnable": false,
+   "keywords": [
+    "campaign bounds",
+    "stop condition",
+    "iteration log",
+    "optimization loop",
+    "start hardware"
+   ],
+   "absentTools": [
+    "instrument or hardware control"
+   ]
+  },
+  {
+   "directive": "handoff",
+   "trigger": "A graph file and an editor-format target, or a manually edited copy to resync, are present; quiet without an editor format.",
+   "doneWhen": "Diff of the jq node projection (id, action, params) of the resynced graph file and of the editor-format file against the expected projection (pre-edit graph with only the person's edits applied) is empty for both views, differing nodes: 0, count quoted; edited values appear; no manual edit gives an empty diff.",
+   "checkKind": "state-diff",
+   "rung": "L1",
+   "forbidden": "Rewriting untouched nodes on resync: regenerating the graph, renumbering ids, or reordering nodes.",
+   "tool": "Bash:git",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "graph editor",
+    "open in editor",
+    "manual edit resync",
+    "untouched nodes",
+    "editor handoff"
+   ],
+   "absentTools": [
+    "graph editor connector"
+   ]
+  }
+ ]
+}

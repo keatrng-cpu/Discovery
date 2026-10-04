@@ -28,13 +28,173 @@
     "bug"
    ],
    "directives": {
-    "analyze": null,
-    "reproduce": null,
-    "edit": null,
-    "verify": null,
-    "migrate": null,
-    "review": null,
-    "onboard": null
+    "analyze": {
+     "trigger": "A failing path, stack trace, or error log is present and the owning file is unknown. Quiet when the ask is to edit, run tests, or explain the whole repo.",
+     "doneWhen": "Output one record, and a program reads each field: (1) a log line quoted verbatim with its line number in the log file, read back with python3 (line N of the log equals the quote); (2) that line names the entry file, given as file:line from the trace, and the file:line exists in the tree; (3) the broken invariant quoted verbatim from a source line at a stated file:line; (4) a do-not-touch list of paths, each present in `git ls-files`. A log with no matching line is a valid result: write \"unmatched\" and stop; do not guess a file.",
+     "checkKind": "quote",
+     "rung": "L1",
+     "forbidden": "Guessing a file from a noisy log that the grep did not return; naming a file with no quoted line.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "reliable",
+     "checkRunnable": false,
+     "keywords": [
+      "stack trace",
+      "traceback",
+      "failing path",
+      "entry file",
+      "which file",
+      "invariant",
+      "root cause location"
+     ],
+     "absentTools": []
+    },
+    "reproduce": {
+     "trigger": "A bug report and an existing test harness are present. Quiet when asked to fix it, or when no harness exists.",
+     "doneWhen": "The named smallest command (pytest or python3 -m unittest, one test id, pinned input file) exits non-zero on the unedited tree, and its output is recorded as two quoted lines: the expected value and the actual value, the actual copied verbatim from that run's output (the assertion line) so a program finds it in the output. Red is the pass here. Exit 0 means the bug did not reproduce and the check fails. No harness in the repo is a valid result: report \"harness: absent\" and stop; status holds as reliable only when a harness exists.",
+     "checkKind": "exit-code",
+     "rung": "L1",
+     "forbidden": "Editing source to make the failure appear, or reporting a failure that was not run red.",
+     "tool": "Bash:pytest",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "reliable",
+     "checkRunnable": true,
+     "keywords": [
+      "reproduce",
+      "repro",
+      "smallest failing command",
+      "pinned input",
+      "red before fix",
+      "actual vs expected",
+      "failing test case"
+     ],
+     "absentTools": []
+    },
+    "edit": {
+     "trigger": "A frozen plan lists the files to change and any signature change. Quiet when no plan exists or the plan is still open.",
+     "doneWhen": "`git diff --name-only` lists exactly the files named in the plan and no others (a sorted set comparison of the two lists); `git diff -U0` shows no added or removed `def` or `class` line unless the plan lists that signature change; and each hunk the plan marks non-obvious has an added one-line comment inside that hunk. An empty diff is a valid result when the plan needs no change: report \"diff: empty\".",
+     "checkKind": "state-diff",
+     "rung": "L1",
+     "forbidden": "Drift: editing an unnamed file, renaming a public signature, or tidying beyond the plan.",
+     "tool": "Bash:git",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "apply the plan",
+      "frozen plan",
+      "named files only",
+      "signature stable",
+      "constrained diff",
+      "diff matches plan"
+     ],
+     "absentTools": [
+      "plan-to-diff matcher"
+     ]
+    },
+    "verify": {
+     "trigger": "A project directory holds verify_gate.sh and a change claims to be finished. Quiet when no gate script exists: report gate absent and stop.",
+     "doneWhen": "`bash verify_gate.sh` in the project directory exits 0 (unit test, then build, then render-compare against the fixture; the first failure stops it). The Stop hook blocks 'done' until it does. The script runs `python3 -m unittest discover -s tests` (tune fixture tests test_simple and test_zero_numerator in tests/test_mod.py), then py_compile, then cmp against fixture.txt, under one exit code. A non-zero exit is a valid result: report RED with the exit code and the first failing line quoted verbatim, declared_done false. No verify_gate.sh in the directory is also a valid result: report \"gate: absent\" and stop. Never report GREEN without exit 0.",
+     "checkKind": "exit-code",
+     "rung": "L0",
+     "forbidden": "declaring done, or editing any file, on a model read of the output; verify never fixes",
+     "tool": "Bash:unittest",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "reliable",
+     "checkRunnable": true,
+     "keywords": [
+      "verify",
+      "is it done",
+      "run the gate",
+      "stop hook",
+      "build passes",
+      "screenshot compare",
+      "verify_gate"
+     ],
+     "absentTools": []
+    },
+    "migrate": {
+     "trigger": "One transform of one file shape applies to many files. Quiet for a single file, or when two different shapes are mixed.",
+     "doneWhen": "`git ls-files` filtered by the one file shape prints N target paths, and the worker manifest lists exactly those N paths (sorted set comparison). N of 0 is a valid result: report \"targets: 0\".",
+     "checkKind": "count",
+     "rung": "L2",
+     "forbidden": "Guessing the file list instead of enumerating it, or accepting a file whose result was not rechecked.",
+     "tool": "Bash:git",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "migrate",
+      "port",
+      "codemod",
+      "bulk rename",
+      "upgrade across files",
+      "isolated copies",
+      "one file shape"
+     ],
+     "absentTools": [
+      "codemod runner with per-file recheck"
+     ]
+    },
+    "review": {
+     "trigger": "A diff or pull request is present. Quiet when asked to fix the code or to run tests.",
+     "doneWhen": "Every comment carries file:line and the quoted line text, and the quote appears verbatim at that line in `git diff` output. Any comment with no matching quote is dropped; zero surviving comments is a valid result: report \"findings: 0\".",
+     "checkKind": "quote",
+     "rung": "L1",
+     "forbidden": "Posting a comment that cannot point at a line, or over-commenting style; cross-file logic no single line shows is reported unsupported, not smoothed.",
+     "tool": "Bash:git",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "code review",
+      "review the diff",
+      "review this pull request",
+      "logic miss",
+      "security reach",
+      "performance path",
+      "quote the line"
+     ],
+     "absentTools": [
+      "cross-file static analyzer"
+     ]
+    },
+    "onboard": {
+     "trigger": "A named request or endpoint and a runtime log are present. Quiet for explain-the-repo or architecture overview asks.",
+     "doneWhen": "One record, read by a program: the hops of one request from entry to store, each as file:line of the hop function (the line exists in the file and contains the function name) plus the owning module; the first hop is the route entry and the last hop is the store call. Exactly one hop is also matched to a runtime log line quoted verbatim with its log line number; python3 reading that log line number returns the quote, and the line names the hop's function or file. No log line matching any hop is a valid result: report \"log: unmatched\" and stop.",
+     "checkKind": "quote",
+     "rung": "L1",
+     "forbidden": "Touring the repo: describing modules that are not on the traced request path.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "onboard",
+      "trace one request",
+      "entry to store",
+      "who owns this hop",
+      "new to this codebase",
+      "request flow"
+     ],
+     "absentTools": [
+      "runtime tracing connector"
+     ]
+    }
    }
   },
   "research": {
@@ -60,12 +220,138 @@
     "unsupported"
    ],
    "directives": {
-    "retrieve": null,
-    "extract": null,
-    "gap": null,
-    "conflict": null,
-    "synthesize": null,
-    "monitor": null
+    "retrieve": {
+     "trigger": "A question or topic needs outside sources: papers, DOIs, preprints, pages. Quiet when the source text is already in context, or when the ask is to extract or synthesize.",
+     "doneWhen": "Every opened identifier (DOI, arXiv id, or URL the scrape tool returned and opened) is listed under \"opened\" and ends in exactly one place: \"kept\" or \"dropped-recap\". Every kept source has its identifier, a quoted title line with its locator (page or line), an access date (YYYY-MM-DD), and a tag \"primary\" (the publisher, DOI landing, arXiv, or original-document page) or \"recap\". A \"recap\" is kept only when the line \"no-primary-opened\" names the primary identifier that failed to open. A recap that opened while a primary of the same work also opened is not kept: it is listed under \"dropped-recap\" with the primary identifier that replaced it. Every hit that did not open is listed under \"discarded\" with the failing identifier. Zero kept sources is a valid result: print \"retrieved: 0\" and list the discards. Counts must satisfy: kept + dropped-recap = opened.",
+     "checkKind": "quote",
+     "rung": "L1",
+     "forbidden": "Writing an identifier or URL the tool did not return, or keeping a recap when the primary source opened. A hit that does not open is discarded, never repaired by guessing.",
+     "tool": "mcp__FireCrawl__firecrawl_scrape",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "resolve doi",
+      "primary source",
+      "find papers",
+      "access date",
+      "discard dead link",
+      "retrieve sources"
+     ],
+     "absentTools": []
+    },
+    "extract": {
+     "trigger": "A source page or PDF text is in context and the ask is its stated facts. Quiet when the source is not yet fetched, or when two sources are being compared.",
+     "doneWhen": "Each extracted item is a verbatim sentence found in the source text at a stated page or line, confirmed by substring match against the pdftotext or page text. Each item that is not verbatim is tagged \"paraphrase\". An item whose sentence states a number also carries a \"unit\" field and a \"scope\" field (the sample or scope the number applies to): each must be a substring of the source text at the stated locator, or the literal \"absent\" when the source gives none. A number with no unit field or no scope field fails. A source with no matching sentence yields \"absent\"; zero items is a valid result.",
+     "checkKind": "quote",
+     "rung": "L1",
+     "forbidden": "Paraphrasing under compression without the paraphrase tag, or giving a number without its unit and sample or scope.",
+     "tool": "Bash:pdftotext",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "verbatim quote",
+      "pull the sentence",
+      "number with unit",
+      "sample size",
+      "exact wording",
+      "extract from paper"
+     ],
+     "absentTools": []
+    },
+    "gap": {
+     "trigger": "A draft with claims and a searchable corpus are both present. Quiet when there is no draft, or when the ask is a broad survey.",
+     "doneWhen": "`python3 fixtures/research-gap/check.py --fixture <dir> --out <out.json> --searchlog <log>` exits 0: the claims table validates, every quote is verbatim in the cited document, and the search log holds at most one search. One search is logged when an unsupported claim exists, and it targets the first unsupported claim only, ending resolution \"filled\" or \"open\" (declared open is a valid stop). Zero searches is valid when every claim is supported. Runnable today: fixtures/research-gap/check.py is an existing repo program and the search runs through the registered harness desk/tools/localsearch.py; no new program is needed.",
+     "checkKind": "exit-code",
+     "rung": "L1",
+     "forbidden": "searching a second claim; a quote that is not verbatim; marking a cited-but-mismatching claim supported",
+     "tool": "Bash:localsearch",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": true,
+     "keywords": [
+      "unsupported claim",
+      "claim list",
+      "fill the gap",
+      "which claims lack support",
+      "first unsupported",
+      "draft claims"
+     ],
+     "absentTools": []
+    },
+    "conflict": {
+     "trigger": "Two or more sources state different things about the same point. Quiet when only one source exists or the sources agree.",
+     "doneWhen": "A script reads the side-by-side table and exits 0 only when: two quotes each appear verbatim in their cited source at a stated locator; one line begins \"Disagreement:\" and one line begins \"Decider:\" (what evidence would decide it); and the sentence after the quotes contains no number absent from both quotes and none of the blend words \"average\", \"mean of\", \"midpoint\", \"between the two\", \"roughly\", \"split the difference\". Status stays weak: a blended conclusion worded without a number or a listed word still needs a person's read, so the program catches the figure and the wording, not every smoothing.",
+     "checkKind": "quote",
+     "rung": "L1",
+     "forbidden": "Averaging the two sources, or writing a blended figure or a midpoint conclusion in the sentence after the quotes.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "weak",
+     "checkRunnable": false,
+     "keywords": [
+      "sources disagree",
+      "contradicting studies",
+      "side by side",
+      "conflicting evidence",
+      "what would decide it",
+      "two sources"
+     ],
+     "absentTools": []
+    },
+    "synthesize": {
+     "trigger": "Extracted, sourced findings exist and a written answer is wanted. Quiet when no sources have been gathered yet.",
+     "doneWhen": "A script splits the answer into sentences and exits 0 only when every sentence carries exactly one source id or the literal label \"unsupported\" (a sentence with two source ids or two labels is two claims and fails), the first sentence begins \"Answer:\", every sentence beginning \"Conflict:\" comes after all non-conflict sentences, and the printed count \"claims: N/N sourced-or-labeled\" has N equal to the sentence count. An empty answer is valid: \"claims: 0/0\".",
+     "checkKind": "count",
+     "rung": "L1",
+     "forbidden": "Keeping a sentence that has neither a source nor the unsupported label, or putting two claims in one sentence.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "one claim per sentence",
+      "write up findings",
+      "literature summary",
+      "sourced answer",
+      "label unsupported",
+      "evidence summary"
+     ],
+     "absentTools": []
+    },
+    "monitor": {
+     "trigger": "A prior memo exists as a file with a date and a half-life in days on each claim. Quiet when there is no memo file, because there is nothing to diff.",
+     "doneWhen": "Two readings must agree. Clock: a python3 date computation (claim date plus half-life days against today, never a model's judgment) prints the expired claim ids; every printed id has an added line marked \"expired\" and no unprinted id has one. Diff: `git diff --numstat` of the memo file reports 0 deleted lines, so the old conclusion stays visible and a changed conclusion appears as an added line marked \"changed\" beneath it; every source id on an added line is absent from the memo at HEAD (`git show HEAD:<memo>`), so only new sources were added. No new sources and no expiries is a valid result: an empty diff.",
+     "checkKind": "state-diff",
+     "rung": "L1",
+     "forbidden": "Deciding by model judgment that a claim has expired or is still fresh, or rewriting the memo whole so the old conclusion disappears.",
+     "tool": "Bash:git",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "update the memo",
+      "what changed since",
+      "expire stale claims",
+      "half-life",
+      "delta only",
+      "refresh research"
+     ],
+     "absentTools": []
+    }
    }
   },
   "scientific": {
@@ -93,12 +379,143 @@
     "lab notebook"
    ],
    "directives": {
-    "triage": null,
-    "hypothesis": null,
-    "design": null,
-    "analyze": null,
-    "update": null,
-    "manuscript": null
+    "triage": {
+     "trigger": "A candidate list (papers, records, datasets) and a written inclusion rule file are both present. Quiet when the rule is only in someone's head, or for deep reading.",
+     "doneWhen": "A program reads the rule file and triage table: every row is included, excluded, or unread; each included row cites the rule id that admits it and each excluded row cites the rule id that excludes it, a row with no rule id fails; included count is at most the cap; included + excluded + unread equals the candidate total; unread ids are listed. Empty included set with unread rows is a valid result.",
+     "checkKind": "count",
+     "rung": "L1",
+     "forbidden": "Including a paper because it is interesting when no rule id admits it; excluding by vibe with no rule id; silently dropping what was not read instead of recording it as unread.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "inclusion rule",
+      "screen papers",
+      "paper cap",
+      "exclusion criteria",
+      "literature screen",
+      "unread list"
+     ],
+     "absentTools": []
+    },
+    "hypothesis": {
+     "trigger": "A research question or literature gap is stated and a hypothesis is wanted. Quiet for protocol steps (design) or when a result file is the input (update).",
+     "doneWhen": "jq -e over the hypothesis record passes: non-empty measurement, direction (increase, decrease, no-change), and control; or the record carries status rejected-not-runnable with a reason, which is a valid result. A missing field with no rejection status fails.",
+     "checkKind": "schema",
+     "rung": "L1",
+     "forbidden": "Keeping a hypothesis that cannot be run (vague measurement, no direction, or no control) as runnable instead of rejecting it.",
+     "tool": "Bash:jq",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "testable hypothesis",
+      "direction of change",
+      "control group",
+      "name the measurement",
+      "runnable hypothesis",
+      "reject hypothesis"
+     ],
+     "absentTools": []
+    },
+    "design": {
+     "trigger": "An accepted hypothesis record and a list of materials the lab already has are present. Quiet when asked to run the protocol or start an instrument.",
+     "doneWhen": "Only a scientist can accept the plan: the draft lists materials on hand, ordered steps, and the single failure that would kill the idea, then stops at awaiting scientist acceptance. No program passes it.",
+     "checkKind": "human-only",
+     "rung": "L3",
+     "forbidden": "Treating the draft as accepted, starting hardware, or listing a material the lab does not have as if it were on hand.",
+     "tool": "none",
+     "toolScope": "none",
+     "gated": true,
+     "gate": "ABSENT hardware-start, accept (prepare the plan, stop; a scientist accepts and a person starts any instrument)",
+     "status": "gated",
+     "checkRunnable": false,
+     "keywords": [
+      "experiment plan",
+      "protocol draft",
+      "materials on hand",
+      "kill criterion",
+      "ordered steps",
+      "reagent list"
+     ],
+     "absentTools": [
+      "schema validator for protocol graphs"
+     ]
+    },
+    "analyze": {
+     "trigger": "Raw tabular or sequencing data files are present and a result is wanted. Quiet for proprietary instrument dumps no script can read: report unsupported.",
+     "doneWhen": "The verifier, not the script's author, reruns the analysis script in a clean directory with only the raw files; exit code 0 passes. Non-zero, missing script, or skipped rerun means nothing is claimed; unsupported input is a valid result.",
+     "checkKind": "exit-code",
+     "rung": "L0",
+     "forbidden": "Reporting a number or figure the script did not produce, or hiding single-outlier dependence: if dropping one point flips the result, say so.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "reliable",
+     "checkRunnable": true,
+     "keywords": [
+      "raw data",
+      "rerun script",
+      "regenerate figure",
+      "outlier",
+      "replicate",
+      "count table",
+      "sequencing results"
+     ],
+     "absentTools": [
+      "instrument file parser"
+     ]
+    },
+    "update": {
+     "trigger": "An old hypothesis record and a result file are both present. Quiet when no result file exists or a new hypothesis from scratch is wanted.",
+     "doneWhen": "One program over the update record, old hypothesis record, and result file passes only if every cited quote equals the text at its file:line locator, every old branch id is in exactly one of dropped or kept, every dropped branch points at a cited quote, and proposed next measurements number at most 1. No change forced (nothing dropped, zero measurements) is a valid result.",
+     "checkKind": "quote",
+     "rung": "L1",
+     "forbidden": "Keeping a dead branch because it was the old one, citing a result not in the file, or proposing more than the next measurement.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "revise hypothesis",
+      "drop failed branch",
+      "next measurement",
+      "result forces change",
+      "assay result",
+      "update hypothesis"
+     ],
+     "absentTools": []
+    },
+    "manuscript": {
+     "trigger": "Result files and a figure exist and a draft is wanted. Quiet when no result files exist or when the ask is a verdict on the claim.",
+     "doneWhen": "One program scans the single draft file, body and self-review alike, and flags each line holding a number with no file:line locator in a result file or a verdict or settled-claim word, and flags a self-review section whose heading lacks the word DRAFT; it passes when it flags zero lines. A draft with no self-review or an empty draft for empty results is valid.",
+     "checkKind": "quote",
+     "rung": "L1",
+     "forbidden": "Upgrading the draft self-review into a verdict, or stating a claim as settled; the human owns the claim.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "draft paper",
+      "methods section",
+      "results section",
+      "self-review draft",
+      "write up results",
+      "manuscript draft"
+     ],
+     "absentTools": []
+    }
    }
   },
   "lab-protocols": {
@@ -125,11 +542,121 @@
     "instrument action"
    ],
    "directives": {
-    "transcribe": null,
-    "graph": null,
-    "repair": null,
-    "campaign": null,
-    "handoff": null
+    "transcribe": {
+     "trigger": "A named method and its source text are present and the ask is to copy the steps; quiet without the source or for graph, repair, campaign, run.",
+     "doneWhen": "Every step carries a verbatim source quote with page/line or step locator, matched by program; quantities and units appear in the quote; each skipped step is written as GAP; zero-step or unread source is a valid result.",
+     "checkKind": "quote",
+     "rung": "L1",
+     "forbidden": "Inventing a step the source skips instead of marking a GAP; rewriting units or quantities.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "reliable",
+     "checkRunnable": false,
+     "keywords": [
+      "transcribe method",
+      "copy protocol steps",
+      "keep units",
+      "mark gaps",
+      "named method",
+      "source steps"
+     ],
+     "absentTools": []
+    },
+    "graph": {
+     "trigger": "Transcribed steps and a graph schema are present and the ask is a graph; quiet when no schema is supplied.",
+     "doneWhen": "jq -e filter encoding the supplied schema's required node fields (id, action, params object, source step locator) and edge fields (from and to each equal an existing node id, handoff names the material or output passed) exits 0 over the graph file, exit code quoted; every edge without a handoff field or with a dangling id fails; one node per instrument action with parameters as node fields; GAP stays a GAP field; empty step list gives an empty graph and empty edge list that exits 0.",
+     "checkKind": "schema",
+     "rung": "L1",
+     "forbidden": "Fake edges: linking adjacent nodes without a real handoff, or putting parameters in prose.",
+     "tool": "Bash:jq",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "protocol graph",
+      "graph node",
+      "one node per action",
+      "node parameters",
+      "instrument action",
+      "edges handoff"
+     ],
+     "absentTools": [
+      "schema validator for protocol graphs"
+     ]
+    },
+    "repair": {
+     "trigger": "A graph and validator output naming a failing node are present; quiet when no node is named.",
+     "doneWhen": "Validator re-run on the repaired graph: diff of validator output before vs after (git diff --no-index, output quoted) shows the named node's error line removed and zero added error lines, and the re-run exit code is quoted; clean graph with empty diff is valid.",
+     "checkKind": "state-diff",
+     "rung": "L1",
+     "forbidden": "Restyling the rest of the graph: reordering keys, renaming nodes, reformatting, or touching an unnamed node.",
+     "tool": "Bash:git",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "reliable",
+     "checkRunnable": false,
+     "keywords": [
+      "repair node",
+      "failing node",
+      "validator output",
+      "fix one node",
+      "revalidate graph"
+     ],
+     "absentTools": [
+      "schema validator for protocol graphs"
+     ]
+    },
+    "campaign": {
+     "trigger": "A validated graph and a goal for repeated runs are present; the skill prepares the plan and stops.",
+     "doneWhen": "jq -e filter over the campaign file exits 0, exit code quoted: every parameter has min and max set before the loop, a stop condition field is non-empty, the iteration log schema has the required fields and zero entries; grep -c '^STARTED-BY:$' prints 1 (line blank until a person writes it); a person starting the hardware is the gate, not part of this check.",
+     "checkKind": "schema",
+     "rung": "L1",
+     "forbidden": "Starting or simulating-as-real a hardware run, or writing a loop with no bound or stop condition.",
+     "tool": "none",
+     "toolScope": "none",
+     "gated": true,
+     "gate": "ABSENT hardware-start, instrument control (prepare bounds, stop, and log; a person starts the hardware)",
+     "status": "gated",
+     "checkRunnable": false,
+     "keywords": [
+      "campaign bounds",
+      "stop condition",
+      "iteration log",
+      "optimization loop",
+      "start hardware"
+     ],
+     "absentTools": [
+      "instrument or hardware control"
+     ]
+    },
+    "handoff": {
+     "trigger": "A graph file and an editor-format target, or a manually edited copy to resync, are present; quiet without an editor format.",
+     "doneWhen": "Diff of the jq node projection (id, action, params) of the resynced graph file and of the editor-format file against the expected projection (pre-edit graph with only the person's edits applied) is empty for both views, differing nodes: 0, count quoted; edited values appear; no manual edit gives an empty diff.",
+     "checkKind": "state-diff",
+     "rung": "L1",
+     "forbidden": "Rewriting untouched nodes on resync: regenerating the graph, renumbering ids, or reordering nodes.",
+     "tool": "Bash:git",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "graph editor",
+      "open in editor",
+      "manual edit resync",
+      "untouched nodes",
+      "editor handoff"
+     ],
+     "absentTools": [
+      "graph editor connector"
+     ]
+    }
    }
   },
   "data": {
@@ -161,13 +688,181 @@
     "extract"
    ],
    "directives": {
-    "profile": null,
-    "clean": null,
-    "hypothesis": null,
-    "chart": null,
-    "anomaly": null,
-    "reconcile": null,
-    "define": null
+    "profile": {
+     "trigger": "A csv, table or extract is present and the ask is to know its shape. Quiet when the ask is to fix values, chart, or answer a business question.",
+     "doneWhen": "`python3` over the file prints rows, per-column null count, per-column type, the grain (the column set unique per row, or \"none\"), and one line \"id-as-measure: <col>\" for each id column used as a measure, then writes profile.json with keys rows, columns (null count and type each), grain, id_as_measure. Check: a second python3 recount of the file must equal profile.json on rows, on every per-column null count, on grain (distinct tuples of the grain columns equal rows, or grain is \"none\"), and the number of \"id-as-measure:\" lines equals the length of id_as_measure; any mismatch is a nonzero count of differences. An empty file is a valid result: rows 0, grain \"none\".",
+     "checkKind": "count",
+     "rung": "L0",
+     "forbidden": "Stating a count, null total or grain from reading a sample instead of tool output, or summing a numeric id column as if it were a measure.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "reliable",
+     "checkRunnable": false,
+     "keywords": [
+      "profile the dataset",
+      "row count",
+      "null counts",
+      "column types",
+      "data grain",
+      "id used as measure",
+      "save profile"
+     ],
+     "absentTools": [
+      "read-only database role (profile and print)"
+     ]
+    },
+    "clean": {
+     "trigger": "One named column and one named rule (trim, cast, dedupe, null-fill, drop). Quiet when the ask names several fields or says clean the data with no field; ask for one field.",
+     "doneWhen": "`python3` applies the one rule and prints \"rows before: N\", \"rows after: M\", \"dropped: K\", and writes dropped.csv holding all K dropped rows. Check: N = M + K, where K equals the data-row count of dropped.csv. K = 0 with an empty dropped.csv is a valid result.",
+     "checkKind": "count",
+     "rung": "L0",
+     "forbidden": "Cleaning a second field in the same directive (the loose-directive failure), or deleting dropped rows instead of keeping them queryable.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "reliable",
+     "checkRunnable": false,
+     "keywords": [
+      "clean one column",
+      "dedupe rows",
+      "trim whitespace",
+      "cast column type",
+      "rows before and after",
+      "dropped rows",
+      "null fill one field"
+     ],
+     "absentTools": [
+      "read-only database role (profile and print)"
+     ]
+    },
+    "hypothesis": {
+     "trigger": "A question of the form compare A to B over a slice. Quiet when a chart is requested before the query exists; write the query first.",
+     "doneWhen": "A file hypothesis.md holds a line \"comparison: ...\", a line \"slice: ...\" and a fenced saved query. Check: one `python3` run of that saved query exits 0, and the directory listing before and after the directive differs only by hypothesis.md (no png, svg or chart html added). An empty result set is valid: report \"rows: 0\".",
+     "checkKind": "exit-code",
+     "rung": "L1",
+     "forbidden": "Jumping to a chart (adding a png, svg or chart html) before the query is saved, or writing a comparison with no slice.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "hypothesis",
+      "compare groups",
+      "saved query",
+      "slice the data",
+      "a versus b",
+      "test a difference",
+      "write the query"
+     ],
+     "absentTools": [
+      "read-only database role (profile and print)"
+     ]
+    },
+    "chart": {
+     "trigger": "A saved query and its result are present and a chart is asked for. Quiet when the query is missing or the ask adds extra series.",
+     "doneWhen": "The chart spec (json or svg source) names the query file as its data source. Check: one `python3` run over the spec quotes, each with file and line, the title (which must contain the hypothesis.md \"comparison:\" text), the series count (must be 1 unless the ask said otherwise), and one labeled value that equals the same value quoted from the query result; any inequality exits nonzero.",
+     "checkKind": "quote",
+     "rung": "L1",
+     "forbidden": "Adding a decorative second series (the spec must keep exactly one series unless the ask said otherwise), a title that does not name the saved comparison line, or plotting values not taken from the saved query result.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "chart the query",
+      "bind chart to query",
+      "chart title comparison",
+      "label a value",
+      "plot result",
+      "bar chart of query",
+      "one series"
+     ],
+     "absentTools": [
+      "chart-spec validator (only Bash:playwright screenshot is registered)"
+     ]
+    },
+    "anomaly": {
+     "trigger": "A metric spike, dip or odd value with a data file or query. Quiet when the ask is why it happened; isolate first.",
+     "doneWhen": "`python3` filters the slice, recomputes the metric on it, and prints \"anomaly: <row id or date>\" with the recomputed value and the original value. Check: slice row count is above 0 and both values are printed, or the output says \"anomaly: none\" and exits 0.",
+     "checkKind": "count",
+     "rung": "L1",
+     "forbidden": "Offering a cause story before the slice has rerun (a rule for the writer; the count check does not read it).",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "anomaly",
+      "outlier day",
+      "spike in metric",
+      "isolate the slice",
+      "recompute the slice",
+      "odd row",
+      "name the day"
+     ],
+     "absentTools": [
+      "read-only database role (profile and print)"
+     ]
+    },
+    "reconcile": {
+     "trigger": "Two extracts and one written metric definition are present. Quiet when only one extract exists (report unsupported) or when the ask is for the number.",
+     "doneWhen": "`python3` applies the written definition to both extracts and prints \"total A: x\", \"total B: y\", \"unmatched keys: n\" followed by each key with its source. Check: both totals printed, n equals the listed keys, and no averaged figure appears. Zero unmatched keys is valid; a missing extract is reported \"unsupported\" and exits 0.",
+     "checkKind": "count",
+     "rung": "L1",
+     "forbidden": "Averaging the two totals into one number, or reconciling with no written metric definition.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "reconcile",
+      "two systems",
+      "totals differ",
+      "unmatched keys",
+      "metric definition",
+      "compare extracts",
+      "match keys"
+     ],
+     "absentTools": [
+      "read-only database role (profile and print)"
+     ]
+    },
+    "define": {
+     "trigger": "A new or disputed metric. Quiet when a signed definition exists; use it. Draft only, then stop.",
+     "doneWhen": "A file definition.md holds \"formula:\", \"grain:\" and \"exclusion:\" lines and a \"signed-by:\" line left empty by the model. Check: a person's name on the signed-by line must exist before any query on the metric runs; absent that, queries are refused. The model never fills the signature.",
+     "checkKind": "signature",
+     "rung": "L3",
+     "forbidden": "Filling the signed-by line, or running queries on the metric before a person signs.",
+     "tool": "none",
+     "toolScope": "none",
+     "gated": true,
+     "gate": "ABSENT sign (draft formula, grain and exclusion, then stop; a person signs before anyone queries)",
+     "status": "gated",
+     "checkRunnable": false,
+     "keywords": [
+      "define metric",
+      "metric definition",
+      "formula and grain",
+      "exclusion rule",
+      "sign off metric",
+      "kpi definition",
+      "metric owner signs"
+     ],
+     "absentTools": [
+      "signature tool"
+     ]
+    }
    }
   },
   "markets": {
@@ -199,12 +894,146 @@
     "press release"
    ],
    "directives": {
-    "print": null,
-    "filing": null,
-    "cross": null,
-    "memo": null,
-    "monitor": null,
-    "scenario": null
+    "print": {
+     "trigger": "An earnings release file is present (tune example: fixtures/markets-print/tune/release.txt). Quiet when only a news recap exists, or when the ask is to trade or size.",
+     "doneWhen": "`python3 fixtures/markets-print/check.py --fixture <dir> --out <out.json>` exits 0: eps, guidance, and surprise each carry a verbatim quote and the line number of the release; every number in the output appears in the release and none comes from the recap only. A field the release does not hold is reported as absent (null, no quote, no line) and that counts as a pass: unsupported is a valid result. The check program fixtures/markets-print/check.py already exists in the repo and runs under the registered Bash:python3 with no new program.",
+     "checkKind": "exit-code",
+     "rung": "L1",
+     "forbidden": "any number taken from a recap; averaging two figures; filling a field the release does not hold",
+     "tool": "none",
+     "toolScope": "none",
+     "gated": false,
+     "gate": "",
+     "status": "reliable",
+     "checkRunnable": true,
+     "keywords": [
+      "eps",
+      "guidance",
+      "surprise",
+      "earnings release",
+      "press release",
+      "beat or miss",
+      "release numbers"
+     ],
+     "absentTools": [
+      "EDGAR 8-K exhibit 99 fetch connector"
+     ]
+    },
+    "filing": {
+     "trigger": "A filing document (text or PDF) is present and the ask is a quoted line with its location. Quiet when only a news recap exists, or the ask is a summary or a trade.",
+     "doneWhen": "Each claim is one verbatim line from the filing text plus its page or item locator (for example \"Item 7, p. 31\"). A program extracts the text per page (pdftotext, pages split on form feed) or per item (text between an \"Item N\" heading and the next one), then greps the quote inside the stated page or item only. The run passes only if every quote is found at its own stated locator; a quote found elsewhere, or a locator that does not exist, fails. A figure that cannot be placed is listed as \"skipped\" and is a valid result. Zero claims placed is a valid result.",
+     "checkKind": "quote",
+     "rung": "L1",
+     "forbidden": "Using the news recap as the filing, or stating a figure it could not place (tables and exhibits slip: skip them, do not paraphrase).",
+     "tool": "Bash:pdftotext",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "10-k",
+      "10-q",
+      "8-k",
+      "quote the filing",
+      "page or item",
+      "sec filing",
+      "risk factors item"
+     ],
+     "absentTools": [
+      "EDGAR full-text and XBRL table connector"
+     ]
+    },
+    "cross": {
+     "trigger": "Both a filing and a news source are present for one claim. Quiet when only one source exists, or the ask is a merged narrative.",
+     "doneWhen": "Output has two verbatim quotes per claim, one labelled filing with page or item, one labelled news with its source, and a verdict of agree, disagree, or unplaced. A program confirms each quote appears in its own source; the run passes only if all do. A claim with no filing line is marked \"unplaced\", which is a valid result.",
+     "checkKind": "quote",
+     "rung": "L1",
+     "forbidden": "Merging the filing and the news into one voice, or smoothing a disagreement into a single number.",
+     "tool": "mcp__FireCrawl__firecrawl_scrape",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "filing versus news",
+      "cross-check news",
+      "both lines",
+      "agree or disagree",
+      "recap versus filing"
+     ],
+     "absentTools": [
+      "EDGAR full-text and XBRL table connector"
+     ]
+    },
+    "memo": {
+     "trigger": "Sourced facts exist and the ask is a thesis memo. Quiet when the ask is to buy, sell, or size a position.",
+     "doneWhen": "A person reads the kill condition line and confirms it is an observable: it names a metric, a threshold, and a date. That is the one check; no program can judge observability. Not part of the check, but required of the draft: one stated thesis, every line tagged fact or inference, and no order and no size.",
+     "checkKind": "human-only",
+     "rung": "L3",
+     "forbidden": "Writing a kill condition that cannot be observed (for example \"if sentiment turns\"), or adding an order or a size.",
+     "tool": "none",
+     "toolScope": "none",
+     "gated": true,
+     "gate": "ABSENT broker, order (prepare the thesis and kill condition, stop; a person places any order or size)",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "investment memo",
+      "thesis",
+      "kill condition",
+      "fact versus inference",
+      "one-page memo"
+     ],
+     "absentTools": [
+      "kill-condition observability checker"
+     ]
+    },
+    "monitor": {
+     "trigger": "A previous card file and new material both exist. Quiet when there is no prior card.",
+     "doneWhen": "`git diff --no-index --unified=0 <old card> <new card>` is parsed by a program against the card format: claim lines read \"claim | expires YYYY-MM-DD | text\", the kill condition is one line starting \"KILL:\", added lines start \"DELTA \". Pass only if every added line starts \"DELTA \", every removed line carries an expires date earlier than the clock date, and no \"KILL:\" line is removed or changed (new card still holds the old KILL: line byte-equal). A removed line that is not expired, or a rewritten card, fails. An empty diff is a valid result: the card is unchanged.",
+     "checkKind": "state-diff",
+     "rung": "L1",
+     "forbidden": "Rewriting the whole card, keeping a stale claim, or dropping the kill condition.",
+     "tool": "Bash:git",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "ticker card",
+      "refresh card",
+      "delta since last",
+      "expire stale",
+      "watchlist update"
+     ],
+     "absentTools": [
+      "market data clock feed"
+     ]
+    },
+    "scenario": {
+     "trigger": "A baseline input set and a named variable to move. Quiet when two variables are named, or when the ask is to place risk.",
+     "doneWhen": "A diff of baseline inputs versus scenario inputs shows exactly one changed key, the named variable; all other keys are byte-equal. Two or more changed keys fails. Not part of the check, but required of the output: the thesis shown under that move, then stop. A move that leaves the thesis unchanged is a valid result.",
+     "checkKind": "state-diff",
+     "rung": "L1",
+     "forbidden": "Moving two variables, or continuing past the one requested variable. No order, no size.",
+     "tool": "none",
+     "toolScope": "none",
+     "gated": true,
+     "gate": "ABSENT broker, order (show the thesis under one move, stop; a person places any order or size)",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "scenario",
+      "what if",
+      "one variable",
+      "sensitivity",
+      "hold others fixed"
+     ],
+     "absentTools": []
+    }
    }
   },
   "legal": {
@@ -234,12 +1063,140 @@
     "house paper"
    ],
    "directives": {
-    "extract": null,
-    "risk": null,
-    "compare": null,
-    "draft": null,
-    "authority": null,
-    "diligence": null
+    "extract": {
+     "trigger": "A contract file and one named clause type (for example indemnity or termination) are present. Quiet when no clause type is named, or when the ask is risk, compare, or edits.",
+     "doneWhen": "Each result row has a verbatim quote that is a substring of the source text and a section locator (section number, page, line). An empty result is valid: print \"clause: none found in <sections searched>\" and pass. One clause type per pass; a second type is a second pass.",
+     "checkKind": "quote",
+     "rung": "L1",
+     "forbidden": "Paraphrasing instead of quoting, or filling an empty result with a near clause. Write \"none found\" instead.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "extract clause",
+      "pull the clause",
+      "quote the clause",
+      "find indemnity clause",
+      "clause and section",
+      "termination clause text"
+     ],
+     "absentTools": []
+    },
+    "risk": {
+     "trigger": "A contract, one named party, and a written severity rule are present. The scoring party is the one the ask named, fixed for the whole pass (a second party is a second pass). Quiet when no party or no rule is given.",
+     "doneWhen": "Each score row carries the written rule it applied, a severity from that rule, and a verbatim quote that is a substring of the source with a section locator. A row without a quote is dropped and printed as \"unscored: <text>\". Zero scored rows is valid.",
+     "checkKind": "quote",
+     "rung": "L1",
+     "forbidden": "Scoring unquoted text, or scoring from both parties' views at once.",
+     "tool": "none",
+     "toolScope": "none",
+     "gated": true,
+     "gate": "ABSENT sign (prepare the scored sheet and stop; a lawyer signs before anyone relies on it)",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "risk score",
+      "severity rule",
+      "party exposure",
+      "score the contract",
+      "liability exposure",
+      "one party's view"
+     ],
+     "absentTools": []
+    },
+    "compare": {
+     "trigger": "A counterparty draft and a house paper are both present. Quiet when either is missing.",
+     "doneWhen": "The house paper clause list is the denominator. Each house clause yields exactly one row with status matched, changed, or missing; no row reads \"fine\" for silence. Output prints \"rows: N; missing: M; changed: C; matched: K\" with N equal to M+C+K and equal to the house clause count.",
+     "checkKind": "count",
+     "rung": "L1",
+     "forbidden": "Treating a missing clause as fine, or dropping a row because the draft is silent.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "house paper",
+      "compare to house paper",
+      "missing clause",
+      "changed obligation",
+      "redline against",
+      "clause diff"
+     ],
+     "absentTools": []
+    },
+    "draft": {
+     "trigger": "A flag naming one clause (flag id, section) and the original text are present. Quiet when no flag exists.",
+     "doneWhen": "The proposal is a tracked edit of the source. Reverting every tracked edit reproduces the source text byte for byte (original stays visible). Every edit hunk carries the flag id from the ask, and every changed line falls inside the flagged section's line range. A changed line outside the range, an untagged hunk, a hunk tagged with another flag id, or a revert that differs from the source fails. Zero edits is valid when the flag needs none.",
+     "checkKind": "state-diff",
+     "rung": "L1",
+     "forbidden": "Rewriting the deal: editing any clause the flag did not name.",
+     "tool": "none",
+     "toolScope": "none",
+     "gated": true,
+     "gate": "ABSENT sign (prepare the flagged-clause edit and stop; a lawyer signs)",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "flagged clause",
+      "edit the clause",
+      "propose redline",
+      "clause edit",
+      "redline the flag",
+      "original visible"
+     ],
+     "absentTools": []
+    },
+    "authority": {
+     "trigger": "A cite and the proposition it supports are present. Quiet when no cite or proposition is given.",
+     "doneWhen": "Each cite is resolved: it opens at a source, and the cite string (reporter cite, docket, or statute number) is a substring of the opened text, so the opened page is the cited authority. A quoted holding line with a page or paragraph locator must be a substring of that opened text. A candidate cite that does not open is dropped and printed \"dropped: <cite>\". Any cite kept or asserted in the output that did not open or resolve (invented), any quoted line not a substring of the opened text, or any pin locator that does not exist fails the card. Zero surviving cites is valid.",
+     "checkKind": "quote",
+     "rung": "L3",
+     "forbidden": "Keeping a cite that was not opened, or inventing a pin cite or holding quote.",
+     "tool": "mcp__FireCrawl__firecrawl_scrape",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "weak",
+     "checkRunnable": false,
+     "keywords": [
+      "verify citation",
+      "case law",
+      "resolve the cite",
+      "pin cite",
+      "holding quote",
+      "statute authority"
+     ],
+     "absentTools": [
+      "cite-resolution service"
+     ]
+    },
+    "diligence": {
+     "trigger": "A data room or document list and a stated scope are present. Quiet when scope is not stated.",
+     "doneWhen": "Two lists print by document name, one per line: in-scope documents and not-read documents. A summary line \"in scope: N; read: R; not read: U\" prints with N equal to the number of in-scope names listed and equal to R plus U. A document with no read record is listed not-read, never implied-read. One sheet holds the issues: each row has a unique issue id and exactly one issue; every row's document name is in the read set (a not-read document has no row), and the printed row count equals the number of distinct issue ids.",
+     "checkKind": "count",
+     "rung": "L1",
+     "forbidden": "Implying a document was read because it sits in scope.",
+     "tool": "none",
+     "toolScope": "none",
+     "gated": true,
+     "gate": "ABSENT sign (prepare the coverage sheet and stop; a lawyer signs before anyone relies on it)",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "due diligence",
+      "data room",
+      "documents not read",
+      "coverage list",
+      "issue sheet",
+      "in scope documents"
+     ],
+     "absentTools": []
+    }
    }
   },
   "design-systems": {
@@ -265,11 +1222,111 @@
     "ui kit"
    ],
    "directives": {
-    "tokens": null,
-    "ban-list": null,
-    "components": null,
-    "flows": null,
-    "cli": null
+    "tokens": {
+     "trigger": "A token source file or design-file link is present and the ask is to style output with the system's values. Quiet when no source file exists: report \"unsupported\", do not guess values.",
+     "doneWhen": "A program reads the source file and, for each token name used in the output, prints the name, its source locator (file path and line, or Figma variable name from get_variable_defs) and the value the source states. It exits non-zero and lists by name any token absent from the source, any token whose value in the output differs from the source value, and any raw hex or literal spacing value in the output where a token name belongs. An empty token set is a valid result: report \"absent\", never invent.",
+     "checkKind": "quote",
+     "rung": "L0",
+     "forbidden": "Sampling a hex or spacing value from a screenshot instead of reading the source file, or writing the hex where the token name belongs.",
+     "tool": "mcp__Figma__get_variable_defs",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "reliable",
+     "checkRunnable": false,
+     "keywords": [
+      "token name",
+      "source file",
+      "figma variables",
+      "not hex",
+      "design tokens"
+     ],
+     "absentTools": []
+    },
+    "ban-list": {
+     "trigger": "A named ban list exists, shorter than the design system, and output must pass it. Quiet when asked to ban taste or style opinions; those are not testable.",
+     "doneWhen": "`pytest` over the ban-list test file exits 0 on the output: one test per banned pattern. Any hit exits non-zero and names the pattern. A banned pattern with no test is not on the list. An empty ban list is a valid result: report \"no bans\", exit 0.",
+     "checkKind": "exit-code",
+     "rung": "L0",
+     "forbidden": "Enforcing the ban list by instruction in the prompt, or banning taste, so the fail is a plea rather than a test.",
+     "tool": "Bash:pytest",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "reliable",
+     "checkRunnable": false,
+     "keywords": [
+      "ban list",
+      "banned pattern",
+      "fail the output",
+      "forbidden pattern"
+     ],
+     "absentTools": []
+    },
+    "components": {
+     "trigger": "A component list exists and output is built from components. Quiet when no list is supplied: report \"unsupported\".",
+     "doneWhen": "`python3` over the output prints \"unlisted: N\" and a record line \"component: <name>\" for each use; exit 0 only when N is 0. Any raw substitute (an element or markup standing in for a listed component) counts as unlisted and fails. An output using no components is a valid result: \"unlisted: 0, used: 0\".",
+     "checkKind": "count",
+     "rung": "L1",
+     "forbidden": "Keeping the component list only in the prompt, so a raw substitute leaks through; the list must be what the tool exposes.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "listed components",
+      "raw substitute",
+      "component list",
+      "which component"
+     ],
+     "absentTools": [
+      "component-exposing design-system tool"
+     ]
+    },
+    "flows": {
+     "trigger": "One page type and its one template screenshot exist. A request naming two page types is two directives: pick one and diff against that template only. Quiet when no template exists.",
+     "doneWhen": "A real screenshot of the output (npx playwright screenshot) is diffed against the one named template screenshot; the diff reports \"off-template regions: 0\". Spacing and type are held to the template: the template renders token spacing and type, so any deviation in either appears as an off-template region. Any off-template region fails, listed by locator. No rendered page is a valid result: \"unread\", not a pass.",
+     "checkKind": "state-diff",
+     "rung": "L0",
+     "forbidden": "Judging a region on-template by looking at it instead of the diff, or waving through an off-template region.",
+     "tool": "Bash:playwright",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "page type",
+      "visual diff",
+      "off-template",
+      "template diff"
+     ],
+     "absentTools": []
+    },
+    "cli": {
+     "trigger": "A brand rejecting CLI is named or present. A markdown guide is not this directive. Quiet when no CLI exists: report \"tool absent\", do not substitute a model.",
+     "doneWhen": "The brand CLI exits 0 on on-system output; on off-system output it exits non-zero and prints the failed rule id. Never \"almost\" pass. The CLI is absent in this environment: report \"tool absent\", the check is not runnable, and no script or model stands in for the reject. With the CLI absent, no pass is possible; the result is \"tool absent\".",
+     "checkKind": "exit-code",
+     "rung": "L0",
+     "forbidden": "Rejecting off-system output in a plea or review comment instead of the tool, or treating a near-pass as a pass.",
+     "tool": "none",
+     "toolScope": "none",
+     "gated": false,
+     "gate": "",
+     "status": "weak",
+     "checkRunnable": false,
+     "keywords": [
+      "brand cli",
+      "reject off-system",
+      "failed rule",
+      "design cli"
+     ],
+     "absentTools": [
+      "brand design-system rejecting CLI"
+     ]
+    }
    }
   },
   "motion-games-3d": {
@@ -299,12 +1356,153 @@
     "game engine"
    ],
    "directives": {
-    "still": null,
-    "time": null,
-    "score": null,
-    "asset": null,
-    "level": null,
-    "engine": null
+    "still": {
+     "trigger": "A request for a single frame with one named subject, to be scored. Quiet when the ask is to animate, render a sequence, or touch a level or engine project.",
+     "doneWhen": "jq -e '(.frames|length)==1 and (.subject|type==\"string\") and (.score|type==\"number\")' still.json exits 0; score null with no scorer is reported unscored, a valid result; a human score is assisted, never a pass.",
+     "checkKind": "schema",
+     "rung": "L1",
+     "forbidden": "Animating, or adding a second subject or second frame, before the still is scored; writing a score the scorer did not return.",
+     "tool": "Bash:jq",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "single frame",
+      "one subject",
+      "still frame",
+      "score the frame",
+      "first frame",
+      "hero frame"
+     ],
+     "absentTools": [
+      "automatic frame scorer"
+     ]
+    },
+    "time": {
+     "trigger": "A time t and a renderer that takes t as its only time input. Quiet when no t-addressable renderer exists (generic video generator) or when the ask is a full render.",
+     "doneWhen": "Render the frame at t into an empty out/ directory as frame_t.png; one program exits 0 only if out/ holds exactly one file (frame_t.png, count 1, so no full render and no other frame) and cmp out/frame_t.png expected_t.png exits 0, where expected_t.png is the brief's reference frame for that t; no reference frame means unchecked, and a renderer that is not a function of t is reported unsupported, both valid results.",
+     "checkKind": "exit-code",
+     "rung": "L0",
+     "forbidden": "Rendering the full sequence to reach frame t, or drawing any frame other than t (a second frame file in the output directory is the failure).",
+     "tool": "Bash:cmp",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "seek frame",
+      "frame at t",
+      "timestamp frame",
+      "seek time",
+      "render at second",
+      "deterministic render"
+     ],
+     "absentTools": [
+      "t-addressable renderer harness"
+     ]
+    },
+    "score": {
+     "trigger": "A contact sheet with a per-frame score file from an external scorer. Quiet when no external score exists, or when the ask is the full render.",
+     "doneWhen": "A program over before.json and after.json prints 'changed frames: 1' (only the worst-scoring frame's entry differs); below threshold is a valid result and no full render starts.",
+     "checkKind": "count",
+     "rung": "L1",
+     "forbidden": "Fixing more than the worst frame, or starting the full render before the threshold is met (a rescore that does not rise is reported, not hidden).",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "contact sheet",
+      "worst frame",
+      "rescore",
+      "frame score",
+      "render threshold",
+      "fix weakest frame"
+     ],
+     "absentTools": [
+      "external frame scorer"
+     ]
+    },
+    "asset": {
+     "trigger": "A request to make or fix a mesh, UV, or rig asset. Quiet when the ask is to place the asset in a level or to bundle all stages in one prompt.",
+     "doneWhen": "jq -e '([\"mesh\",\"uv\",\"rig\",\"animation\"] as $o | .stages==$o[:(.stages|length)]) and (.imported==false) and (.placed_in_level==false) and (if (.stages|index(\"animation\")) then (.rig.kind==\"default\") and (.animation.count==1) and (.animation.played_on==\"default\") else true end)' asset.json exits 0; a manifest of only completed earlier stages is valid; editor playback stays assisted.",
+     "checkKind": "schema",
+     "rung": "L1",
+     "forbidden": "Bundling mesh, UV, rig and animation in one prompt, or importing or placing the asset in the level before one animation played on the default rig.",
+     "tool": "Bash:jq",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "mesh",
+      "uv unwrap",
+      "rig",
+      "default rig",
+      "one animation",
+      "asset import",
+      "skeleton"
+     ],
+     "absentTools": [
+      "game engine or 3D editor connector"
+     ]
+    },
+    "level": {
+     "trigger": "A level edit in exactly one change class: terrain, light, character, or interaction. Quiet when the ask spans classes or wants unattended level building.",
+     "doneWhen": "A program reads level_classes.json (change class to its file globs) and the output of git diff --name-only, and exits 0 only if every changed path matches the named class's globs and none match another class's; a path in two classes or none is reported 'class not separable', and an empty diff after a revert is valid; the editor check is quoted separately and no editor check means unvalidated.",
+     "checkKind": "state-diff",
+     "rung": "L1",
+     "forbidden": "Treating tool success as scene success: calling the level done because the edit command exited 0, or changing a second class in the same pass.",
+     "tool": "Bash:git",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "terrain",
+      "lighting",
+      "level edit",
+      "revert level",
+      "editor check",
+      "interaction change",
+      "level design"
+     ],
+     "absentTools": [
+      "engine connector (named system, editor check)"
+     ]
+    },
+    "engine": {
+     "trigger": "An engine project (Unity, Unreal, Godot) on disk and a request to change one system. Quiet when no project is present or the system is unnamed.",
+     "doneWhen": "A program reads systems.json (system name to its file globs), read.json (the pre-edit quote: system path and line, recorded before the first edit) and the output of git diff --name-only, and exits 0 only if the quoted path matches the named system's globs, the quote is non-empty, and every changed path matches the named system's globs; the path walk is reported 'not run' because the connector is absent.",
+     "checkKind": "state-diff",
+     "rung": "L1",
+     "forbidden": "Writing before reading the project (no quoted system path and line before the first edit), or editing a system that was not named first.",
+     "tool": "Bash:git",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "unity project",
+      "unreal project",
+      "godot project",
+      "name the system",
+      "engine system",
+      "walk the path",
+      "game engine edit"
+     ],
+     "absentTools": [
+      "game engine or 3D editor connector"
+     ]
+    }
    }
   },
   "audio": {
@@ -329,10 +1527,98 @@
     "soundtrack"
    ],
    "directives": {
-    "cut": null,
-    "names": null,
-    "score": null,
-    "assemble": null
+    "cut": {
+     "trigger": "One take file and one region with start and end times; quiet for episode-wide restitch or reorder.",
+     "doneWhen": "python3 diff script exits 0 printing 'outside-region: N/N samples unchanged'; a no-op cut is valid.",
+     "checkKind": "state-diff",
+     "rung": "L1",
+     "forbidden": "Restitching the episode: changing, moving, or re-joining anything outside the named region.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "tighten region",
+      "trim pause",
+      "cut region",
+      "remove filler",
+      "shorten breath"
+     ],
+     "absentTools": [
+      "audio editor"
+     ]
+    },
+    "names": {
+     "trigger": "A script or transcript and a pronunciation list file are present; no list means report no list and stop.",
+     "doneWhen": "python3 script loads the pronunciation list file itself and exits 0 whenever the list was read, printing 'missing: <name> line <n>' for each proper noun not on the list (a flag is a valid result, not a failure) and 'names: K/N listed'; empty script prints 'names: 0/0'; exits non-zero only if the list file is unreadable.",
+     "checkKind": "exit-code",
+     "rung": "L1",
+     "forbidden": "Guessing a pronunciation or spelling for a proper noun not on the list instead of flagging it.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "pronunciation list",
+      "proper noun",
+      "name check",
+      "unlisted name",
+      "say the name"
+     ],
+     "absentTools": [
+      "pronunciation list service"
+     ]
+    },
+    "score": {
+     "trigger": "A rule file and existing music assets are present; quiet when asked to compose a new theme.",
+     "doneWhen": "python3 script exits 0 only if the hook cue lies inside its rule window using a rule-named asset, printing 'hook: ok'; unplaced hook prints 'hook: absent' and is valid.",
+     "checkKind": "exit-code",
+     "rung": "L1",
+     "forbidden": "Composing or generating a new theme to fill the hook, or placing a cue the rule file does not name.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "temp music",
+      "music rules",
+      "hook cue",
+      "place music",
+      "cue sheet"
+     ],
+     "absentTools": [
+      "audio editor"
+     ]
+    },
+    "assemble": {
+     "trigger": "An approved-takes list and take files are present; quiet when a take is unapproved or audio regeneration is asked.",
+     "doneWhen": "python3 script hashes takes and exits 0 only if exactly the approved takes appear in listed order with unchanged hashes, printing 'assembled: N/N takes'; empty list valid.",
+     "checkKind": "signature",
+     "rung": "L0",
+     "forbidden": "Regenerating or re-recording audio to fill a gap or substituting an unapproved take.",
+     "tool": "none",
+     "toolScope": "none",
+     "gated": true,
+     "gate": "ABSENT accept (prepare the ordered take list and hash report, stop; a person listens and accepts the assembly)",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "approved takes",
+      "episode order",
+      "sequence takes",
+      "assemble episode",
+      "take order"
+     ],
+     "absentTools": [
+      "audio editor"
+     ]
+    }
    }
   },
   "writing": {
@@ -358,12 +1644,149 @@
     "banned defaults"
    ],
    "directives": {
-    "outline": null,
-    "draft": null,
-    "cut": null,
-    "variant": null,
-    "series": null,
-    "fact": null
+    "outline": {
+     "trigger": "A topic or source notes are present and no outline exists. Quiet when an outline file is given and the ask is prose, or when the ask is to shorten or fact-check.",
+     "doneWhen": "`python3` over the outline file exits 0 and prints \"claims: N/N slotted\": N claim lines, each with a unique order slot, and zero prose lines (a line that is neither a numbered claim nor blank). A claim with no slot is cut, not kept. An empty outline (\"claims: 0/0\") is a valid result when the source holds no claim.",
+     "checkKind": "count",
+     "rung": "L1",
+     "forbidden": "Writing prose or a transition sentence in the outline, or keeping a claim that has no slot.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "reliable",
+     "checkRunnable": false,
+     "keywords": [
+      "outline",
+      "list the claims",
+      "claim order",
+      "no prose outline",
+      "structure the piece"
+     ],
+     "absentTools": []
+    },
+    "draft": {
+     "trigger": "An outline file with claim ids and a voice file are both present. Quiet when only one exists, or when the ask is cutting, channel change, or fact-checking.",
+     "doneWhen": "`python3` over the draft and the outline exits 0 and prints \"violations: 0\": one check, claim-to-paragraph mapping against the outline file. violations = paragraphs carrying zero or more than one outline id tag (a paragraph with two claims or an untagged paragraph) + tags that are not outline ids (an unmapped paragraph is a new claim) + outline ids used more than once + outline ids missing from the draft. A new claim hidden inside a correctly tagged paragraph is not detectable by program, and the voice file (bans, style) is not measured here: both stay a human read. A missing voice file is a valid result: stop and report \"voice file absent\".",
+     "checkKind": "count",
+     "rung": "L1",
+     "forbidden": "Adding a claim that is not in the outline, to fill a paragraph or smooth a transition.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "draft from outline",
+      "write in voice file",
+      "one claim per paragraph",
+      "write the paragraphs",
+      "no new claims"
+     ],
+     "absentTools": [
+      "claim extractor",
+      "voice-style checker"
+     ]
+    },
+    "cut": {
+     "trigger": "A finished piece is present with a length target. Quiet when the ask is new material, a restyle, or a channel change.",
+     "doneWhen": "`python3` over the original and the cut exits 0 only when words fell and nothing was inserted: cut words < original words, and the cut's tokens are an ordered subsequence of the original's (a diff shows only deletions), so no new claim can be swapped in at equal count and no restyle passes. It prints \"claims: A -> B; words: X -> Y; inserted: 0\" with B <= A. Equal claim counts are a valid result. A cut that rewords to shorten fails and goes to a person.",
+     "checkKind": "count",
+     "rung": "L1",
+     "forbidden": "Adding a claim while shortening, or restyling the piece into a new one.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "cut",
+      "shorten",
+      "trim",
+      "tighten",
+      "claim count flat or down",
+      "reduce word count"
+     ],
+     "absentTools": [
+      "claim extractor"
+     ]
+    },
+    "variant": {
+     "trigger": "A source piece, a frozen fact list with an \"offer:\" line, and a target channel are present. Quiet when no fact list exists or when the ask is to change the offer or numbers.",
+     "doneWhen": "`python3` over the fact list (one item per line, the offer on a line starting \"offer:\", then numbers and names), the source piece, and the variant exits 0 and prints \"violations: 0\": one check, frozen facts. violations = fact-list items not verbatim in the variant (the offer text is an item, so a dropped offer counts) + a non-empty fact list with no \"offer:\" line + digit-bearing tokens in the variant found in neither the source piece nor the fact list (an added number). A missing item exits non-zero and names the line. An empty fact list prints \"facts: 0/0\" and is valid. An added non-numeric fact is not detectable by program, and the voice file (bans, style) is not measured here: both stay a human read.",
+     "checkKind": "count",
+     "rung": "L1",
+     "forbidden": "Changing a number, dropping the offer, or adding a fact while adapting to the channel.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "variant",
+      "adapt for channel",
+      "repurpose",
+      "frozen facts",
+      "linkedin version",
+      "email version",
+      "keep the offer"
+     ],
+     "absentTools": [
+      "fact-list extractor",
+      "voice-style checker"
+     ]
+    },
+    "series": {
+     "trigger": "A brand file and a previous piece are present. Quiet when no brand file exists; session chat is never the memory.",
+     "doneWhen": "`cmp` over two files exits 0: bans.expected (the ban lines read from the brand file's \"Bans\" heading) and bans.kept (the same lines minus any whose phrase occurs in the new piece, so a piece that restates a ban also drops it). Exit 1 names the first differing line. One check: the new piece keeps the brand file's bans. The previous piece is context for voice, not a second measured check. A missing brand file is a valid result: stop and report \"brand file absent\".",
+     "checkKind": "exit-code",
+     "rung": "L1",
+     "forbidden": "Taking rules from session chat instead of the brand file, or restating the rules inside the draft (a restated ban phrase also fails cmp).",
+     "tool": "Bash:cmp",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "series",
+      "brand file",
+      "house style",
+      "match the last piece",
+      "consistent with previous",
+      "brand bans"
+     ],
+     "absentTools": [
+      "brand-file ban extractor"
+     ]
+    },
+    "fact": {
+     "trigger": "A piece with factual claims is present. Quiet when the piece holds no checkable claim or the ask is style.",
+     "doneWhen": "`python3` over the piece and the source corpus exits 0 and prints \"claims: N = S sourced + U unsupported\" with N equal to the claim count. A claim line ends with exactly one of: the label \"unsupported\", or a quote plus locator (doc, line) whose quote appears verbatim at that line of that source (localsearch finds it; the program compares the text). A quote absent from the cited line, a missing locator, or any other label (\"likely\", \"reportedly\") exits non-zero naming the claim line. Zero sourced is a valid result.",
+     "checkKind": "quote",
+     "rung": "L1",
+     "forbidden": "Upgrading a label by tone: a hedged or confident claim passed off as sourced without a matching quote, or a third state such as \"likely\".",
+     "tool": "Bash:localsearch",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "fact check",
+      "source or unsupported",
+      "cite claims",
+      "attach sources",
+      "verify claims",
+      "label unsupported"
+     ],
+     "absentTools": [
+      "cite-resolution service"
+     ]
+    }
    }
   },
   "sales": {
@@ -392,12 +1815,132 @@
     "go-to-market"
    ],
    "directives": {
-    "frame": null,
-    "cluster": null,
-    "question": null,
-    "brief": null,
-    "asset": null,
-    "test": null
+    "frame": {
+     "trigger": "An offer or market note is present and candidate frames (buyer, job, what they pay for) are asked for.",
+     "doneWhen": "Write frames to frames.json as a list of {buyer, job, pays_for}. `jq -e 'all(.[]; (.buyer|length>0) and (.job|length>0) and (.pays_for|length>0))' frames.json` exits 0. Any frame with an empty buyer is deleted, and the dropped count is printed. An empty list `[]` is a valid result when no buyer can be named.",
+     "checkKind": "schema",
+     "rung": "L1",
+     "forbidden": "Keeping a frame whose buyer is blank, generic, or implied.",
+     "tool": "Bash:jq",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "sales frame",
+      "buyer job",
+      "who pays",
+      "what they pay for",
+      "candidate frames"
+     ],
+     "absentTools": []
+    },
+    "cluster": {
+     "trigger": "A file of raw customer or interview quotes is present and grouping is asked for.",
+     "doneWhen": "Write clusters.json as {group: [{quote, source, line}]}. A python3 script reads quotes.txt and exits 0 only if every group holds at least one quote that appears verbatim in quotes.txt at the cited line. It prints \"groups: N, quoted: N/N\". Zero quotes in, zero groups out: it prints \"groups: 0, quoted: 0/0\" and exits 0.",
+     "checkKind": "quote",
+     "rung": "L1",
+     "forbidden": "Inventing a segment that no quote supports, or paraphrasing a quote to pass the match.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "cluster quotes",
+      "group interview quotes",
+      "customer segments from quotes",
+      "quote under each group",
+      "theme the feedback"
+     ],
+     "absentTools": []
+    },
+    "question": {
+     "trigger": "A stated sales gap needs falsifiable explanatory questions.",
+     "doneWhen": "Write questions.json as a list of {question, refuted_if}. `jq -e 'all(.[]; (.question|endswith(\"?\")) and (.refuted_if|length>0) and (has(\"answer\")|not))' questions.json` exits 0. An empty list is valid when no gap is stated.",
+     "checkKind": "schema",
+     "rung": "L1",
+     "forbidden": "Answering the question in the same directive.",
+     "tool": "Bash:jq",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "reliable",
+     "checkRunnable": false,
+     "keywords": [
+      "falsifiable question",
+      "why the gap",
+      "what would explain",
+      "hypothesis questions",
+      "refuted if"
+     ],
+     "absentTools": []
+    },
+    "brief": {
+     "trigger": "A named prospect and an upcoming meeting need a pre-call brief from public facts.",
+     "doneWhen": "Every fact line in brief.md is either quoted or marked unsupported. A quoted fact line carries a verbatim quote and public URL fetched by firecrawl_scrape; an unsupported fact line carries the word \"unsupported\", no quote, and no number. A python3 script reads brief.md and exits 0 only if every quoted fact's quote is found in the saved page text (a quote not found exits 1), no digit appears outside a quoted span except on the one \"prepared:\" and one \"meeting:\" line (each an ISO date YYYY-MM-DD, prepared earlier than meeting), and exactly one line starts \"objection:\" with non-empty text. It prints \"facts: N, quoted: Q, unsupported: U, objection: 1, prepared: before\" with Q+U=N. Unsupported facts count as a result and do not fail the check; \"no public facts found\" (N=0) is a valid result (objection and dates still required).",
+     "checkKind": "quote",
+     "rung": "L1",
+     "forbidden": "Inventing metrics with no quoted public source.",
+     "tool": "mcp__FireCrawl__firecrawl_scrape",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "prospect brief",
+      "pre-call brief",
+      "meeting prep",
+      "likely objection",
+      "public facts on prospect"
+     ],
+     "absentTools": []
+    },
+    "asset": {
+     "trigger": "A winning frame is recorded and one asset for it is asked for.",
+     "doneWhen": "`python3 -c` over asset.md counts lines and exits 0 only if exactly one line starts \"frame:\" and its id equals the winning id in state, exactly one line starts \"segment:\" and equals the segment named in brief.md, and exactly one line starts \"objection:\" and equals the objection line in brief.md. It prints \"frames: 1/1, segment: 1/1, objection: 1/1\". With no winning frame it prints \"frames: 0/0\" and exits 0; no asset is written.",
+     "checkKind": "count",
+     "rung": "L1",
+     "forbidden": "Producing the other frames alongside the winner.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "landing page copy",
+      "one-pager",
+      "pitch asset",
+      "winning frame copy",
+      "outbound email body"
+     ],
+     "absentTools": []
+    },
+    "test": {
+     "trigger": "A frame and a budget or audience are present and a smallest test plan is asked for.",
+     "doneWhen": "Write test.json with {frame, smallest_action, cap, kill_result, gate}. `jq -e '(.smallest_action|length>0) and (.cap|length>0) and (.kill_result|length>0) and (.gate|length>0)' test.json` exits 0. Nothing is sent or spent; the plan stops at the gate.",
+     "checkKind": "schema",
+     "rung": "L1",
+     "forbidden": "Opening the gate: sending or committing spend because the plan is ready.",
+     "tool": "none",
+     "toolScope": "none",
+     "gated": true,
+     "gate": "ABSENT send, pay (prepare the test sheet with smallest spend and kill result, stop; a person sends or spends)",
+     "status": "gated",
+     "checkRunnable": false,
+     "keywords": [
+      "smallest spend",
+      "kill result",
+      "a/b test plan",
+      "test the frame",
+      "ad test"
+     ],
+     "absentTools": []
+    }
    }
   },
   "support": {
@@ -426,12 +1969,147 @@
     "policy id"
    ],
    "directives": {
-    "classify": null,
-    "draft": null,
-    "known-path": null,
-    "exception": null,
-    "resolve": null,
-    "incident": null
+    "classify": {
+     "trigger": "A ticket text and a policy id list are both present. Quiet when the ask is to reply, resolve, or promise anything.",
+     "doneWhen": "`python3` lookup exits 0 only if the assigned policy id exists in the policy id list and the quoted policy line matches that entry verbatim, reported as `policy-id: <id> line: <file>:<n>`. The result `escalate: no policy id fits` with exit 0 is valid. An id that does not resolve exits non-zero.",
+     "checkKind": "quote",
+     "rung": "L1",
+     "forbidden": "Inventing or paraphrasing a policy id or policy line that is not in the id list. If no id fits, escalate.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "policy id",
+      "classify ticket",
+      "ticket intent",
+      "which policy",
+      "escalate ticket"
+     ],
+     "absentTools": [
+      "policy id list resolver",
+      "helpdesk ticket connector"
+     ]
+    },
+    "draft": {
+     "trigger": "A classified intent with policy id and policy line is present. Quiet when no classification exists or the ask is to grant a refund or exception.",
+     "doneWhen": "`python3` quote check exits 0 only if the draft contains the classified policy line verbatim, matching the entry at the cited `<file>:<n>`; it prints `quoted: <policy-id> line <n>`. A draft that cannot quote its line is not a pass; the result is `unsupported`. This is the only check. Promise creep and intent drift are not checked by it; a person reviews them, which is why status stays assisted. The check program is not written yet, so checkRunnable is false.",
+     "checkKind": "quote",
+     "rung": "L1",
+     "forbidden": "Promise creep: the draft says or implies a refund, credit, waiver, or exception the policy line does not grant.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "draft reply",
+      "customer reply",
+      "quote policy",
+      "no promise",
+      "reply to ticket"
+     ],
+     "absentTools": [
+      "promise-phrase linter",
+      "helpdesk macro library"
+     ]
+    },
+    "known-path": {
+     "trigger": "A workflow definition with ordered steps and a matching ticket are present. Quiet when no workflow matches; that goes to exception.",
+     "doneWhen": "`jq -e --slurpfile e expected_state.json '. == $e[0]' state.json` exits 0 and prints `true`. Both files are supplied as input: expected_state.json lists the workflow's ordered steps with their end state, state.json is the observed snapshot, so reordering, skipping, or adding a step makes the arrays unequal. Any variance exits non-zero and routes to support-exception; the agent does not improvise. No model is in the loop, so reliable holds. Fetching a live snapshot needs an absent state reader.",
+     "checkKind": "state-diff",
+     "rung": "L0",
+     "forbidden": "Improvising: adding, skipping, or reordering a step, or repairing a variance instead of handing it to exception.",
+     "tool": "Bash:jq",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "reliable",
+     "checkRunnable": true,
+     "keywords": [
+      "workflow steps",
+      "known path",
+      "runbook",
+      "system state",
+      "macro steps"
+     ],
+     "absentTools": [
+      "workflow engine connector",
+      "helpdesk state reader"
+     ]
+    },
+    "exception": {
+     "trigger": "A known path step failed or a variance was reported. Quiet when state matches the workflow.",
+     "doneWhen": "`jq -e --slurpfile f failed_state.json --slurpfile c state.json '(keys-[\"failed_step\",\"observed\",\"expected\",\"handoff_owner\",\"stopped\"]|length==0) and (.failed_step|type==\"string\" and length>0) and (.handoff_owner|type==\"string\" and length>0) and (.stopped==true) and (.expected|length>0) and (.observed==$f[0]) and (.observed!=.expected) and ($c[0]==$f[0])' record.json` exits 0 only if the record has exactly the allowed keys (a remedy or any other extra field fails), names the failed step and handoff owner, carries observed equal to the failure-time snapshot, differs from expected, and the current state still equals that snapshot, so no fix was tried outside the record. Otherwise exits non-zero. The stop is this code check, not a model judgment. Stop is the valid result.",
+     "checkKind": "exit-code",
+     "rung": "L0",
+     "forbidden": "Guessing a remedy: proposing, trying, or applying a fix after the failure instead of stopping.",
+     "tool": "Bash:jq",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "reliable",
+     "checkRunnable": true,
+     "keywords": [
+      "stop and record",
+      "handoff",
+      "path failed",
+      "variance",
+      "hand off ticket"
+     ],
+     "absentTools": [
+      "helpdesk handoff queue connector"
+     ]
+    },
+    "resolve": {
+     "trigger": "A classified ticket with an approved path needs a resolution call prepared. Refund, cancel, and delete requests stop here for a person.",
+     "doneWhen": "The prepared request sheet validates against its typed schema: it names the typed tool, carries a non-empty idempotency key, and either its action is a non-gated typed action, or its action is refund, cancel, or delete and the sheet has state `awaiting-person` with no executed field. Waiting for a person is the valid result for those three actions. The execution itself is not performed by this skill.",
+     "checkKind": "schema",
+     "rung": "L1",
+     "forbidden": "Executing or promising a refund, cancel, or delete, or calling an untyped tool without an idempotency key.",
+     "tool": "none",
+     "toolScope": "none",
+     "gated": true,
+     "gate": "ABSENT refund, cancel, delete, typed resolution tool (prepare the request sheet with idempotency key, stop; a person executes)",
+     "status": "gated",
+     "checkRunnable": false,
+     "keywords": [
+      "idempotency key",
+      "typed tool",
+      "resolve ticket",
+      "prepare refund",
+      "cancel request"
+     ],
+     "absentTools": [
+      "typed support resolution tool"
+     ]
+    },
+    "incident": {
+     "trigger": "Log files or log lines are present and a timeline is asked for. Quiet when no logs exist.",
+     "doneWhen": "`python3` check exits 0 only if every timeline event has `<file>:<line>`, `ts`, and `quote`; the quote equals the line at that locator; the `ts` equals the timestamp parsed from that line; and the events are in non-decreasing `ts` order (ties keep `<file>:<line>` order). An event with no matching log line fails, so no gap is filled; a mis-ordered timeline fails. An empty log yields `events: 0` and exits 0.",
+     "checkKind": "quote",
+     "rung": "L1",
+     "forbidden": "Filling a gap with a likely story: stating a cause or event no log line supports.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "incident timeline",
+      "log order",
+      "outage",
+      "quote log line",
+      "postmortem timeline"
+     ],
+     "absentTools": [
+      "log store connector"
+     ]
+    }
    }
   },
   "recruiting": {
@@ -456,11 +2134,121 @@
     "job description"
    ],
    "directives": {
-    "scorecard": null,
-    "extract": null,
-    "screen-note": null,
-    "compare": null,
-    "decide": null
+    "scorecard": {
+     "trigger": "A job requisition text is present and the ask is to turn it into scorecard lines. Quiet when no req exists, or when the ask concerns a candidate.",
+     "doneWhen": "Every scorecard line carries a verbatim quote from the req with its line number, and a program confirms each quote is a substring of the req at that line (python3 exits 0, prints \"lines: N/N quoted\"). A line with no req quote fails. The status stays \"awaiting manager accept\" until a person marks each line accepted; a req with zero usable lines is a valid result and prints \"lines: 0/0\".",
+     "checkKind": "quote",
+     "rung": "L1",
+     "forbidden": "Adding a trait the req does not state (culture fit, energy, leadership presence). The req wins; drop the line.",
+     "tool": "none",
+     "toolScope": "none",
+     "gated": true,
+     "gate": "ABSENT accept (the hiring manager accepts each scorecard line; the draft is prepared with req quotes and stops at status \"awaiting manager accept\")",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "scorecard lines",
+      "req lines",
+      "job requisition",
+      "hiring manager accepts",
+      "draft scorecard",
+      "job description criteria"
+     ],
+     "absentTools": []
+    },
+    "extract": {
+     "trigger": "An accepted scorecard and a resume are both present and the ask is to fill the scorecard fields. Quiet when the scorecard is not yet accepted.",
+     "doneWhen": "`jq` (with the resume loaded via --rawfile and split into lines) validates the output: keys equal the accepted scorecard fields exactly, and each value is null or an object with a value, a quote string and a resume line number where the quote is a substring of that resume line. An extra key, a missing key, or a quote that does not resolve at its line fails; a null field passes. An all-null result is valid.",
+     "checkKind": "schema",
+     "rung": "L1",
+     "forbidden": "Inferring a trait or filling a blank from tone, school, or fluency. A field without a quoted resume line stays null.",
+     "tool": "Bash:jq",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "extract resume fields",
+      "resume quote",
+      "fill scorecard fields",
+      "blank stays blank",
+      "candidate fields",
+      "parse resume"
+     ],
+     "absentTools": []
+    },
+    "screen-note": {
+     "trigger": "An accepted scorecard and one candidate's extracted fields or resume are present, and the ask is a note per line. Quiet when asked for an overall score.",
+     "doneWhen": "`jq` (with the resume loaded via --rawfile and split into lines) counts notes: the number of notes equals the number of scorecard lines (N/N), each note is null or a quote with a locator whose quote is a substring of that resume line, and no overall, vibe, or total field exists in the output. An unsupported line stays blank and passes; a missing or extra note, an unresolved quote, or any overall field fails.",
+     "checkKind": "count",
+     "rung": "L1",
+     "forbidden": "Adding an overall vibe score, summary rating, or recommendation field. One note per line, nothing aggregated.",
+     "tool": "Bash:jq",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "screen note",
+      "per line note",
+      "screening notes",
+      "evidence or blank",
+      "phone screen notes",
+      "no overall score"
+     ],
+     "absentTools": []
+    },
+    "compare": {
+     "trigger": "Two or more candidates' screen notes share one accepted scorecard. Quiet for a single candidate or when lines differ between candidates.",
+     "doneWhen": "`jq` joins the grid to each candidate's screen notes by scorecard line and compares: for every candidate and every line, the grid cell equals that candidate's screen-note value for that line (a null note gives a null cell; a cell filled where the note is null, or a value taken from another line, fails). Each candidate has exactly N cells for N lines, and no rank, total, or fluency field exists. A null cell stays null and passes; exit code 0 on all-match.",
+     "checkKind": "count",
+     "rung": "L0",
+     "forbidden": "Ranking or scoring candidates on writing polish or fluency, or filling a missing cell from another line. Missing stays missing.",
+     "tool": "Bash:jq",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "compare candidates",
+      "side by side",
+      "same lines",
+      "candidate grid",
+      "missing evidence",
+      "candidate comparison sheet"
+     ],
+     "absentTools": [
+      "blind-review redaction tool for style normalization"
+     ]
+    },
+    "decide": {
+     "trigger": "A compare grid exists and the ask is to decide, pick, or hire. Prepare the sheet and stop; a person hires.",
+     "doneWhen": "A person reads the sheet and decides. No program can pass a hire. The sheet lists the compare grid cells as quoted evidence, nulls as missing, and ends with the line \"STOP: a human decides.\"",
+     "checkKind": "human-only",
+     "rung": "L3",
+     "forbidden": "Naming a winner, drafting an offer, or sending anything. The hire tool is absent; a reminder is not a gate.",
+     "tool": "none",
+     "toolScope": "none",
+     "gated": true,
+     "gate": "ABSENT hire, offer, send (prepare the decision sheet from the compare grid, stop; a human decides and hires)",
+     "status": "gated",
+     "checkRunnable": false,
+     "keywords": [
+      "decide",
+      "hire decision",
+      "decision sheet",
+      "pick candidate",
+      "make offer",
+      "who to hire"
+     ],
+     "absentTools": [
+      "hiring tool",
+      "offer or send tool"
+     ]
+    }
    }
   },
   "education": {
@@ -484,11 +2272,124 @@
     "worked example"
    ],
    "directives": {
-    "explain": null,
-    "check": null,
-    "sequence": null,
-    "drill": null,
-    "curriculum": null
+    "explain": {
+     "trigger": "A learner names one concept and wants it explained. Quiet when two or more concepts are named, or when the ask is to mark, drill, or plan a course.",
+     "doneWhen": "Before writing, the one concept's neighbouring terms are saved to neighbours.txt (model-authored today, so the term search is only as strong as that list). The reply is exactly three non-empty lines, one each starting 'Concept:', 'Example:', 'Question:' (count 1/1/1), no body text, and the last starts with 'Question:' and ends with '?'. leaks = (non-empty lines outside those three) + (neighbours.txt terms found anywhere in the reply other than the Concept line); leaks must be 0. 'Concept not stated' is a valid result.",
+     "checkKind": "count",
+     "rung": "L1",
+     "forbidden": "Leaking a second concept: naming, defining, or previewing a neighbouring idea in the Example, the Question, or any extra line.",
+     "tool": "none",
+     "toolScope": "none",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "explain this concept",
+      "one concept",
+      "worked example",
+      "teach me",
+      "explain with an example",
+      "eli5"
+     ],
+     "absentTools": [
+      "concept-graph or glossary service (supplies the neighbouring terms so neighbours.txt is not model-authored)"
+     ]
+    },
+    "check": {
+     "trigger": "A learner answer exists for a restate or one-application prompt, with the key written down first, and the last answer was a miss. Quiet when no key exists, or when the ask is many questions on one skill.",
+     "doneWhen": "After a miss, the old and new example are saved to old_example.txt and new_example.txt, each starting with a 'scenario:' line, and python3 compares their lowercase word sets: Jaccard similarity must be below 0.5 (exit 0 pass, exit 1 means the paragraph or scenario was repeated or reworded and fails). A hit needs no new example, so no comparison run is a valid result.",
+     "checkKind": "exit-code",
+     "rung": "L1",
+     "forbidden": "Repeating the same paragraph or the same scenario after a miss; rewording or a one-byte edit does not count, the scenario must change.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "restate",
+      "check understanding",
+      "did i get it",
+      "apply it once",
+      "mark my answer",
+      "change the example"
+     ],
+     "absentTools": [
+      "scenario-similarity checker (a program under desk/ that exits 1 when two examples overlap too much)"
+     ]
+    },
+    "sequence": {
+     "trigger": "A learner's current state is given (a quiz result, a stated stuck point) and the ask is what comes next. Quiet when the ask is for the whole path or an order of topics.",
+     "doneWhen": "The whole reply is exactly two non-empty lines: one starting 'gap:' and one starting 'next:' (count 1/1, total non-empty lines 2), each at most 160 characters, and the 'next:' line contains no ';', no numerals-with-period or bullet markers, and none of 'then', 'after that', 'finally', 'step 2' (so prose course dumps fail). 'gap: none found' with 'next: none' is valid when evidence shows no gap; no stated state gives 'gap: unsupported'.",
+     "checkKind": "count",
+     "rung": "L1",
+     "forbidden": "Laying out the whole course: any list of steps beyond the single next one.",
+     "tool": "none",
+     "toolScope": "none",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "what next",
+      "smallest gap",
+      "next step to learn",
+      "where am i stuck",
+      "what should i learn next"
+     ],
+     "absentTools": [
+      "prerequisite graph service",
+      "learner-record store (would make the smallest-gap judgment a lookup)"
+     ]
+    },
+    "drill": {
+     "trigger": "One named skill and an answer key (or a computable answer) exist. Quiet when the key is absent, or when the ask spans more than one skill.",
+     "doneWhen": "A python3 script marks every given answer against the stored key file and prints one 'marked: N/N' line with each mark citing a key item locator; exit 0 only when N equals the number of answers given and every answer has a key item. No key prints 'marked: 0/N unmarked, key absent' and is valid.",
+     "checkKind": "count",
+     "rung": "L0",
+     "forbidden": "Moving on inside the same directive: any text after the marked line that introduces a second skill, a next level, or a new item set, or marking an answer with no key.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "drill me",
+      "practice problems",
+      "one skill",
+      "flashcards",
+      "mark each answer",
+      "answer key"
+     ],
+     "absentTools": [
+      "key-marking script under desk/ (not yet written)"
+     ]
+    },
+    "curriculum": {
+     "trigger": "A request to order topics, plan a course, or set a curriculum. Quiet for one concept, one check, or one next step.",
+     "doneWhen": "A person reads the proposal and sets the order. The proposal file is marked 'status: proposed' and no 'order set' field is written by the model.",
+     "checkKind": "human-only",
+     "rung": "L3",
+     "forbidden": "Running an autonomous curriculum: fixing the order, presenting it as final, or starting lessons from it before a person sets it.",
+     "tool": "none",
+     "toolScope": "none",
+     "gated": true,
+     "gate": "ABSENT accept (prepare the proposed order, stop; a person sets it)",
+     "status": "gated",
+     "checkRunnable": false,
+     "keywords": [
+      "curriculum",
+      "course order",
+      "syllabus",
+      "study plan",
+      "order the topics",
+      "learning path"
+     ],
+     "absentTools": []
+    }
    }
   },
   "personal-admin": {
@@ -518,12 +2419,138 @@
     "flight"
    ],
    "directives": {
-    "triage": null,
-    "draft": null,
-    "brief": null,
-    "pack": null,
-    "book": null,
-    "pay": null
+    "triage": {
+     "trigger": "A mailbox or thread list is present and a triage rule is stated; quiet when no rule exists or the ask is to reply.",
+     "doneWhen": "One program reads the triage log and the header list and compares id sets: the opened thread ids equal the rule-marked header ids (symmetric difference 0), printed \"opened: N/N\"; exits 0 only then. 0/0 is valid.",
+     "checkKind": "count",
+     "rung": "L0",
+     "forbidden": "Opening a thread the rule did not mark, opening before the header scan, or replying while triaging.",
+     "tool": "mcp__Gmail__search_threads",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "triage inbox",
+      "triage headers",
+      "sort inbox by rule",
+      "inbox rule",
+      "which emails to open",
+      "header scan"
+     ],
+     "absentTools": [
+      "mail rule engine"
+     ]
+    },
+    "draft": {
+     "trigger": "Exactly one thread id is named and a reply is wanted; quiet for send or multiple threads.",
+     "doneWhen": "Program greps the draft's quoted ask line in the named thread's message text at the cited message locator (quote: msg N, line L); exits 0 only if the quote is verbatim there. No thread or no ask yields \"no draft: unsupported\", which is valid. Stop-before-send is enforced by the absent send, reply, forward tools and the deny hook, not by this check: the output is draft text only.",
+     "checkKind": "quote",
+     "rung": "L1",
+     "forbidden": "Sending, replying, or forwarding the draft, or answering a question the thread never asked.",
+     "tool": "none",
+     "toolScope": "none",
+     "gated": true,
+     "gate": "ABSENT send, reply, forward (prepare the draft text and stop; a person sends)",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "draft reply",
+      "reply draft",
+      "draft email response",
+      "answer this thread",
+      "draft but do not send"
+     ],
+     "absentTools": [
+      "ask-match verifier"
+     ]
+    },
+    "brief": {
+     "trigger": "Calendar events with start and end times for a stated window are present; quiet when only prose exists.",
+     "doneWhen": "Program computes every pair of calendar events with startA < endB and startB < endA from the structured times and prints the list (overlaps: N/N); the brief's list equals that list and names both events of each pair. Back-to-back (endA == startB) is excluded. 0/0 is valid. No calendar times means unread.",
+     "checkKind": "count",
+     "rung": "L0",
+     "forbidden": "Calling a back-to-back or near-miss a conflict, or naming an overlap from prose without calendar times.",
+     "tool": "mcp__Google_Calendar__list_events",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "calendar overlaps",
+      "double booked",
+      "schedule conflicts",
+      "day brief",
+      "real overlaps",
+      "week conflicts"
+     ],
+     "absentTools": []
+    },
+    "pack": {
+     "trigger": "A meeting and source threads or documents are present; quiet when no source is attached.",
+     "doneWhen": "Program greps each item's verbatim quote at its cited locator in that item's own source and prints \"items: N/N sourced\"; exits 0 only if every kept item greps. Unsourced items are dropped; an empty agenda (0/0) is valid.",
+     "checkKind": "quote",
+     "rung": "L1",
+     "forbidden": "Adding an agenda item from memory alone, two items from one source, or paraphrasing a source into a quote it does not contain.",
+     "tool": "mcp__Gmail__get_thread",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "meeting agenda",
+      "build agenda",
+      "agenda from threads",
+      "agenda items with sources",
+      "pack meeting"
+     ],
+     "absentTools": []
+    },
+    "book": {
+     "trigger": "A booking is wanted (travel, appointment, reservation, event); always gated, prepare details and stop.",
+     "doneWhen": "Bash:jq -e exits 0 on the booking sheet JSON: non-empty what, who, when, where, price, source_link and booked false. Stop is enforced by the absent book tools (calendar create_event, Zapier or other write actions, form or browser submit), not by this check.",
+     "checkKind": "schema",
+     "rung": "L0",
+     "forbidden": "Creating the event or reservation, submitting a booking form, or reporting a booking as done.",
+     "tool": "none",
+     "toolScope": "none",
+     "gated": true,
+     "gate": "ABSENT book, calendar create_event, zapier write action, form or browser submit (prepare the booking sheet, stop; a person books)",
+     "status": "gated",
+     "checkRunnable": false,
+     "keywords": [
+      "book flight",
+      "reservation details",
+      "appointment booking",
+      "book travel",
+      "itinerary booking"
+     ],
+     "absentTools": []
+    },
+    "pay": {
+     "trigger": "A payment is wanted (bill, invoice, fee, purchase); always gated, prepare details and stop.",
+     "doneWhen": "Bash:jq -e exits 0 on the payment sheet JSON: non-empty payee, amount, due_date, source_document and paid false. Stop is enforced by the absent pay, payment, checkout tools, not by this check.",
+     "checkKind": "schema",
+     "rung": "L0",
+     "forbidden": "Submitting a payment, entering card or account numbers, checking out, or reporting a payment as made.",
+     "tool": "none",
+     "toolScope": "none",
+     "gated": true,
+     "gate": "ABSENT pay, payment, checkout, form or browser submit (prepare the payment sheet, stop; a person pays)",
+     "status": "gated",
+     "checkRunnable": false,
+     "keywords": [
+      "pay bill",
+      "pay invoice",
+      "payment details",
+      "settle bill",
+      "prepare payment"
+     ],
+     "absentTools": []
+    }
    }
   },
   "computer-use": {
@@ -549,12 +2576,144 @@
     "browser tab"
    ],
    "directives": {
-    "perceive": null,
-    "plan": null,
-    "act": null,
-    "recover": null,
-    "remember": null,
-    "finish": null
+    "perceive": {
+     "trigger": "A screenshot file and a named target (button, field, tab, dialog) are present and the question is whether the target is visible and unobstructed. Quiet when no screenshot exists or when the ask is to click.",
+     "doneWhen": "Output names the target, quotes the screenshot path with a pixel bounding box (path:x,y,w,h), and prints occluded: yes|no naming any covering modal. 'target absent' and 'occluded: yes' are valid passing results; a remembered coordinate with no screenshot locator fails.",
+     "checkKind": "quote",
+     "rung": "L1",
+     "forbidden": "Clicking or reporting a remembered location instead of the one in this screenshot, or calling a target visible when a modal covers it.",
+     "tool": "Bash:playwright",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "target in screenshot",
+      "modal covers",
+      "is it visible",
+      "locate button",
+      "occluded element",
+      "screenshot target"
+     ],
+     "absentTools": [
+      "accessibility-tree reader",
+      "OCR service"
+     ]
+    },
+    "plan": {
+     "trigger": "An external step list file (steps.md), an executed-steps log (done.txt, one executed line number per line, empty if none), and a current screenshot or screen description are all present. Quiet when no list exists; ask for one instead of inventing steps.",
+     "doneWhen": "Output is exactly one action quoted verbatim from one line of steps.md with its line number (steps.md:L7), and L7 must be the next unexecuted step: the lowest non-blank line number of steps.md that is absent from done.txt. A python3 one-liner computes that line number and string-compares the quote; exit 0 only on exact match, so a skipped or reordered step fails. If the screen disagrees with that next step, output ASK with a one-line disagreement and no action. Two actions or an action not in the list fails.",
+     "checkKind": "quote",
+     "rung": "L1",
+     "forbidden": "Diverging from the step list: inventing, merging, skipping, or reordering steps (picking any line other than the next unexecuted one), or guessing when the screen and list disagree instead of asking.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "weak",
+     "checkRunnable": true,
+     "keywords": [
+      "next ui action",
+      "step list",
+      "one action at a time",
+      "ask if screen differs",
+      "gui plan"
+     ],
+     "absentTools": []
+    },
+    "act": {
+     "trigger": "One approved action has been performed by the host's approved GUI driver (not by this skill), and pre-state.json and post-state.json both exist. Quiet when the action is not yet chosen or no pre-state was captured.",
+     "doneWhen": "python3 loads pre-state.json and post-state.json and prints each changed field as field: before -> after. Pass only if the printed diff is exactly the one expected change (field plus before and after values). An empty diff or any extra changed field fails; a click returning success is not a result. If post-state.json is missing the result is 'unread', not pass.",
+     "checkKind": "state-diff",
+     "rung": "L1",
+     "forbidden": "Reporting success because the click or keystroke ran, with no after-state diff; or performing the click or keystroke from this skill, which holds no act tool.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "state diff",
+      "after state",
+      "click result",
+      "did the click work",
+      "verify ui change"
+     ],
+     "absentTools": [
+      "accessibility-tree reader",
+      "act-scope GUI driver (human_added)"
+     ]
+    },
+    "recover": {
+     "trigger": "A step produced an unexpected state diff, a saved pre-step snapshot exists, and a revert has been carried out by a person or the host's approved GUI driver. Quiet when no snapshot was saved: report that revert cannot be confirmed.",
+     "doneWhen": "Output first prints 'bad step: <step id or steps.md:L<n>>' naming the step that caused the unexpected diff; without that line the result fails. After the revert is made by a person or host driver (this skill holds no act tool), `cmp pre-step-snapshot post-revert-snapshot` exits 0; then stop with no further action. Non-zero cmp is reported as 'revert unconfirmed' and also stops. The check is the cmp exit code.",
+     "checkKind": "exit-code",
+     "rung": "L1",
+     "forbidden": "Continuing or retrying the task after the revert, claiming a revert without confirming the prior state, or reverting from this skill instead of naming the step and stopping.",
+     "tool": "Bash:cmp",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "weak",
+     "checkRunnable": true,
+     "keywords": [
+      "undo bad step",
+      "revert ui",
+      "roll back click",
+      "wrong click",
+      "restore prior state"
+     ],
+     "absentTools": [
+      "act-scope GUI revert tool (human_added)"
+     ]
+    },
+    "remember": {
+     "trigger": "A fact observed at one step is needed at a later step. Quiet when the next step uses it directly.",
+     "doneWhen": "Write the fact to state.json; at the later step `jq -e '.<key> == \"<value>\"' state.json` exits 0 and the value matches the quoted source. A missing key exits non-zero and is reported 'unread', a valid result.",
+     "checkKind": "exit-code",
+     "rung": "L0",
+     "forbidden": "Relying on the transcript to recall the fact at the later step instead of reading state.json.",
+     "tool": "Bash:jq",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": true,
+     "keywords": [
+      "state.json",
+      "save value for later step",
+      "carry fact forward",
+      "read back from file",
+      "gui memory"
+     ],
+     "absentTools": []
+    },
+    "finish": {
+     "trigger": "The last step list item is done and a submit control is the only remaining action. Quiet before then.",
+     "doneWhen": "Prepare only: list each instruction-required field with its final-state value from final-state.json and print 'unmet: 0' or 'unmet: <field>' per mismatched or unread field, then stop. Submit is performed by a person; it is never performed here. Early submit fails the card. Ceiling not awarded.",
+     "checkKind": "state-diff",
+     "rung": "L1",
+     "forbidden": "Submitting early, before the final state is checked field by field against the instruction; or submitting at all.",
+     "tool": "none",
+     "toolScope": "none",
+     "gated": true,
+     "gate": "ABSENT submit (prepare the field-by-field unmet list, stop; a person presses submit)",
+     "status": "gated",
+     "checkRunnable": false,
+     "keywords": [
+      "submit form",
+      "final state check",
+      "early submit",
+      "ready to submit",
+      "confirm before submit"
+     ],
+     "absentTools": [
+      "submit control driver (act-scope GUI tool)",
+      "accessibility-tree reader"
+     ]
+    }
    }
   },
   "strategy": {
@@ -579,11 +2738,116 @@
     "problem statement"
    ],
    "directives": {
-    "compress": null,
-    "frame": null,
-    "analogy": null,
-    "constrain": null,
-    "what-if": null
+    "compress": {
+     "trigger": "A source document and a request to compress it to assumptions and kill conditions. Quiet when the ask is a general summary, a rewrite, or a framing task.",
+     "doneWhen": "`python3` over the output and the input prints \"assumptions: A\", \"kill: K\" and \"other: 0\". A and K count lines starting \"A:\" and \"K:\"; other counts every non-blank line that starts with neither, and any other > 0 exits 1 (the rest must be cut). Each A:/K: line carries a locator (source line or section) and a quote that appears verbatim in the input. An input that states no assumption or no kill condition is a valid result: write \"assumptions: 0\" or \"kill: 0\" and do not invent one. Exit 0 only if other is 0 and every quote matches the input.",
+     "checkKind": "count",
+     "rung": "L1",
+     "forbidden": "Keeping a line that is neither a stated assumption nor a kill condition, or inventing an unstated assumption. An assumption not stated does not exist.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "compress",
+      "assumptions",
+      "kill conditions",
+      "cut the rest",
+      "list assumptions",
+      "strategy brief"
+     ],
+     "absentTools": []
+    },
+    "frame": {
+     "trigger": "A problem is given and the ask is to frame it. Quiet when the ask is to rank options, summarise, or pick one statement.",
+     "doneWhen": "`python3` over the output prints \"statements: 2\" and \"actions: 2 distinct\": exactly two lines starting \"P:\" each followed by one line starting \"Action:\". After lowercasing and removing stop words, the two Action lines must have different leading verbs and a content-word overlap (Jaccard) of at most 0.34, and the two P: lines must also overlap at most 0.6; otherwise it prints \"restatement\" and exits 1. Exit 0 only then. A source with only one framing is a valid result: print \"statements: 1\" and exit 1 rather than pad a restatement. The program only rejects near-restatements; whether the actions differ in practice stays a person review.",
+     "checkKind": "count",
+     "rung": "L1",
+     "forbidden": "Writing a restatement: a second statement whose Action line matches the first in substance. Drop it.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "frame",
+      "problem statement",
+      "two framings",
+      "reframe",
+      "different action",
+      "problem framing"
+     ],
+     "absentTools": []
+    },
+    "analogy": {
+     "trigger": "A proposed analogy or a request to reason by analogy. Quiet when no source domain is named or the ask is a rank or a what-if.",
+     "doneWhen": "`python3` over the output prints \"analogy: 3/3\" only if exactly three labelled non-empty lines exist: \"Source:\", \"Transfers:\", \"Does not transfer:\", and no later line (any reasoning after the three) contains a content word that appears in the Does not transfer line but not in the Transfers line; a hit prints \"analogy: leak <word>\" and exits 1. A line reading \"Does not transfer: none found\" prints \"analogy: 2/3 (none stated)\" and exits 1: the skipped half is flagged, not smoothed. Whether the Does not transfer line is true stays a person review.",
+     "checkKind": "count",
+     "rung": "L1",
+     "forbidden": "Skipping or softening the Does not transfer line, or using a property from it afterwards.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "analogy",
+      "does not transfer",
+      "source domain",
+      "borrowed model",
+      "what transfers",
+      "like a"
+     ],
+     "absentTools": []
+    },
+    "constrain": {
+     "trigger": "A closed list of options plus a time and money budget. Quiet when the options are not yet listed or the ask is to generate more.",
+     "doneWhen": "`python3` compares the output to the input option list and prints \"rank: N/N\" and \"new: 0\". Each option has a \"time:\" and \"money:\" value, the order is ascending by time then money, and a line starting \"Runner-up lost:\" names the second option with a reason quoting its time or money. Exit 0 only if every ranked name is in the input list (a name outside the list prints \"new: 1\" and exits 1). A list with fewer than two options prints \"rank: 1/1\" with no runner-up and is valid.",
+     "checkKind": "count",
+     "rung": "L1",
+     "forbidden": "Adding a new idea: any option in the ranking that was not in the input list.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "rank by time and money",
+      "runner-up",
+      "constrain",
+      "trade-off",
+      "cheapest fastest",
+      "why it lost"
+     ],
+     "absentTools": []
+    },
+    "what-if": {
+     "trigger": "A decision with named variables and a request to test a change. Quiet when more than one variable is to move or no decision exists.",
+     "doneWhen": "`python3` over the base and moved tables counts rows marked \"moved\". If the output states \"Binding: none\" (the request moves no single variable, an unsupported case) and no row is marked moved, it prints \"binding: none named\" and exits 0 (valid result, no move is made). Otherwise it prints \"moved: 1\" and \"held: H\" where H equals the count of other variables in the base case, and every held cell equals its base value, and exits 0 only if exactly one row is moved and a \"Decision:\" line appears for base and moved cases. A second moved variable prints \"moved: 2\" and exits 1; a held cell that differs from base prints \"held: drift\" and exits 1.",
+     "checkKind": "count",
+     "rung": "L1",
+     "forbidden": "Drifting: changing a second variable, or a held value, while showing the moved case.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "what-if",
+      "what if",
+      "binding variable",
+      "one variable",
+      "sensitivity",
+      "hold the others"
+     ],
+     "absentTools": []
+    }
    }
   },
   "clinical-notes": {
@@ -608,10 +2872,103 @@
     "scribe"
    ],
    "directives": {
-    "transcribe": null,
-    "gap": null,
-    "cite": null,
-    "sign": null
+    "transcribe": {
+     "trigger": "A transcript and a note template are both present; fill the template fields from what was said. Quiet for diagnosis or plan of care.",
+     "doneWhen": "Every non-MISSING field value is a verbatim substring of the transcript, reported with its turn or line locator and checked by a program; a field the transcript does not state reads the literal MISSING. All-MISSING is a valid result.",
+     "checkKind": "quote",
+     "rung": "L1",
+     "forbidden": "Smoothing a gap into a finding: writing a plausible value, normal exam, or inferred symptom into a field the transcript does not state.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "transcribe visit",
+      "fill template",
+      "soap template",
+      "mark missing",
+      "scribe note",
+      "template fields"
+     ],
+     "absentTools": [
+      "transcript line-trace checker"
+     ]
+    },
+    "gap": {
+     "trigger": "A drafted note has empty or MISSING template fields; ask the clinician for exactly those fields.",
+     "doneWhen": "A program lists the MISSING or empty template fields by name and counts them; the set of field names in the ask equals that list (set equality by template field name, so every empty field is named and no filled field is named in its place), with no proposed value. Zero gaps is valid: output reads gaps: 0.",
+     "checkKind": "count",
+     "rung": "L0",
+     "forbidden": "Inventing the field: filling an empty field with a guessed value, suggesting an answer, or asking about a filled field.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "empty field",
+      "missing field",
+      "name the gap",
+      "ask clinician",
+      "unfilled field",
+      "note gap"
+     ],
+     "absentTools": [
+      "note template schema validator"
+     ]
+    },
+    "cite": {
+     "trigger": "A drafted note and its source transcript are present; trace each line to the transcript and cut lines it does not hold.",
+     "doneWhen": "Each kept line is followed by a quote that is a verbatim substring of the transcript with a turn or line locator, checked by a program; unmatched lines are cut and listed. All cut or empty transcript is valid: kept 0, cut N.",
+     "checkKind": "quote",
+     "rung": "L1",
+     "forbidden": "Importing history: keeping a line from the chart, a prior visit, or medical knowledge that was not spoken in this transcript.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "cite transcript",
+      "trace line",
+      "cut unsupported",
+      "line to transcript",
+      "imported history",
+      "verify note lines"
+     ],
+     "absentTools": [
+      "transcript line-trace checker"
+     ]
+    },
+    "sign": {
+     "trigger": "A note has passed transcribe, gap, and cite and awaits the clinician; present it and stop.",
+     "doneWhen": "A program diffs the presented note against the note that passed cite: the only difference is an empty signature block. Any added assessment, impression, plan of care, agent-written signature, attestation, or signed date fails the diff. Presenting the cite-passed note unchanged with an empty signature block is the valid result. Only the clinician signs, outside this session.",
+     "checkKind": "state-diff",
+     "rung": "L0",
+     "forbidden": "Becoming a diagnosis: adding an assessment, impression, or plan of care, or marking the note signed, approved, or final on the clinician's behalf.",
+     "tool": "none",
+     "toolScope": "none",
+     "gated": true,
+     "gate": "ABSENT sign, diagnose (present the note, stop; the clinician signs)",
+     "status": "gated",
+     "checkRunnable": false,
+     "keywords": [
+      "sign note",
+      "clinician signature",
+      "present note",
+      "attest",
+      "finalize note",
+      "ready to sign"
+     ],
+     "absentTools": [
+      "signature tool",
+      "clinician attestation service"
+     ]
+    }
    }
   },
   "security-review": {
@@ -641,10 +2998,95 @@
     "secret scan"
    ],
    "directives": {
-    "scan": null,
-    "diff": null,
-    "rank": null,
-    "patch-review": null
+    "scan": {
+     "trigger": "A repo or branch is present and the ask is to scan for leaked secrets; defensive only.",
+     "doneWhen": "One result line from one tool run: mcp__github__run_secret_scanning stdout quoted verbatim with exit status; each finding a quoted tool line with file and line; zero findings valid as 'secret scan: 0 findings'; a scan that did not run is 'secret scan: unscanned'; a finding without a quoted scanner line is never reported and unscanned is never reported as clean.",
+     "checkKind": "exit-code",
+     "rung": "L0",
+     "forbidden": "Reporting a model hunch as a finding: anything not a quoted line of scanner output.",
+     "tool": "mcp__github__run_secret_scanning",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "reliable",
+     "checkRunnable": true,
+     "keywords": [
+      "secret scan",
+      "leaked secrets",
+      "scanner output",
+      "credential leak",
+      "scan repo for secrets"
+     ],
+     "absentTools": [
+      "dependency scanner (pip-audit, npm audit)",
+      "SAST scanner"
+     ]
+    },
+    "diff": {
+     "trigger": "A diff or scanner finding is present and the ask is file, line, and what it reaches; stop there.",
+     "doneWhen": "Each item is a quoted line with file:line from git diff output, one sentence of reach, then STOP; no reproduction steps; zero items valid as 'diff: 0 items'; unquotable lines dropped.",
+     "checkKind": "quote",
+     "rung": "L1",
+     "forbidden": "Continuing past the reach sentence into payload text, exploit steps, or a proof of concept.",
+     "tool": "Bash:git",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "reach of line",
+      "blast radius",
+      "what can this reach",
+      "flagged line",
+      "security diff"
+     ],
+     "absentTools": [
+      "harness stop hook that blocks attack continuation"
+     ]
+    },
+    "rank": {
+     "trigger": "Quoted findings and a written rubric are both present and the ask is to order them.",
+     "doneWhen": "Precondition: no written rubric gives 'rank: unsupported' and empty input gives 'rank: 0 rows', before any row. Rubric file lines are 'clause | pattern | rank'. Check: for every ranked row, one python3 -c run exits 0 only when the quoted text is a substring of line <line> of <file> and the row's cited clause exists in the rubric with its pattern inside the quote and its rank equal to the row's rank; a row that exits non-zero (including a rank that ignores or contradicts its clause) is removed as dropped; rows in equal rows out plus dropped, both stated.",
+     "checkKind": "quote",
+     "rung": "L1",
+     "forbidden": "Ranking unquoted code: assigning severity to anything no quoted line supports.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": true,
+     "keywords": [
+      "rank findings",
+      "severity rubric",
+      "prioritize vulnerabilities",
+      "triage order",
+      "apply rubric"
+     ],
+     "absentTools": []
+    },
+    "patch-review": {
+     "trigger": "A quoted finding and a proposed patch are both present and the ask is whether the quoted line changed.",
+     "doneWhen": "git diff -U0 base..head -- file read against the quoted file:line gives exactly one verdict: 'changed: old -> new' with the @@ hunk locator when a hunk covers that line and its '-' line equals the quote; 'unchanged: line at file:line' when no hunk covers it (empty diff included); 'unmatched' when the base line at file:line is not the quote.",
+     "checkKind": "state-diff",
+     "rung": "L0",
+     "forbidden": "Opening, filing, or drafting the fix task, issue, or pull request (the human hand-off dropping out), or declaring the vulnerability fixed from a plausible patch without a diff hunk touching the quoted line.",
+     "tool": "Bash:git",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": true,
+     "keywords": [
+      "review the patch",
+      "did the line change",
+      "proposed fix",
+      "fix diff",
+      "patch touches line"
+     ],
+     "absentTools": []
+    }
    }
   },
   "harness": {
@@ -669,11 +3111,126 @@
     "append-only"
    ],
    "directives": {
-    "skill": null,
-    "hook": null,
-    "memory": null,
-    "trace": null,
-    "evolve": null
+    "skill": {
+     "trigger": "A SKILL.md is being authored or its description tuned. One trigger, one trick. Quiet for hook, memory, trace, evolve asks.",
+     "doneWhen": "A static lint over the SKILL.md (python3; the wrong-task fire test is a separate model-judged check and is not part of this exit code) exits 0 only if: the description has exactly one 'Use when' clause; the description and the Trigger section each contain 'Quiet' followed by a stated quiet case; the Done-when section has exactly one 'check:' line and exactly one backticked command, and the Tool section exactly one 'tool:' line (one trick). A missing or empty file is unsupported, not a pass.",
+     "checkKind": "exit-code",
+     "rung": "L0",
+     "forbidden": "Firing on the wrong task: two triggers, a broad description, or no stated quiet case. Writing a second trick (a second check command or tool) into the same file instead of a second skill.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "reliable",
+     "checkRunnable": false,
+     "keywords": [
+      "skill file",
+      "skill description",
+      "wrong-fire",
+      "one trigger",
+      "skill trigger",
+      "quiet case"
+     ],
+     "absentTools": [
+      "skill lint script",
+      "skill fire-test harness (wrong-task prompts)"
+     ]
+    },
+    "hook": {
+     "trigger": "A lifecycle event (PreToolUse, PostToolUse, Stop) needs a blocking check. Quiet for reminders or prose.",
+     "doneWhen": "python3 .claude/hooks/test_hooks.py exits 0 (git ls-files .claude/hooks/test_hooks.py lists it): the hook exits 2 on a case where the model would have continued, exits 0 on a clean case. A hook that never fired fails.",
+     "checkKind": "exit-code",
+     "rung": "L0",
+     "forbidden": "Exit 1 or 0 on a bad condition, or warning and letting the model continue; only exit 2 blocks.",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "reliable",
+     "checkRunnable": true,
+     "keywords": [
+      "lifecycle hook",
+      "exit 2",
+      "pretooluse",
+      "stop hook",
+      "settings.json hook",
+      "block tool call"
+     ],
+     "absentTools": []
+    },
+    "memory": {
+     "trigger": "A note must be saved or recalled during a coding task, keyed by stage analyze, reproduce, edit, verify. Quiet for story-like summaries of a past session.",
+     "doneWhen": "Recall is a stage filter, jq -c --arg s STAGE 'select(.stage==$s)' memory.jsonl, saved to recalled.jsonl; jq -s -e --arg s STAGE '($s|IN(\"analyze\",\"reproduce\",\"edit\",\"verify\")) and all(.[]; .stage==$s and (.body|type==\"string\" and length<=280 and (contains(\"\\n\")|not)))' recalled.jsonl exits 0: STAGE is one of analyze, reproduce, edit, verify; every recalled record carries exactly the requested stage (a record recalled by similar story fails); every body is a string of at most 280 characters with no newline (longer or multi-line bodies are episode blobs and fail). Zero recalled records is valid.",
+     "checkKind": "schema",
+     "rung": "L0",
+     "forbidden": "Storing an episode blob, or retrieving by similar story instead of by stage.",
+     "tool": "Bash:jq",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": true,
+     "keywords": [
+      "stage key",
+      "subtask memory",
+      "episode blob",
+      "analyze reproduce edit verify",
+      "agent memory",
+      "stage memory"
+     ],
+     "absentTools": [
+      "stage-keyed memory store with retrieval api"
+     ]
+    },
+    "trace": {
+     "trigger": "A log of agent actions is kept as a record of what happened and must be append-only.",
+     "doneWhen": "python3 .claude/hooks/test_hooks.py deny exits 0, running desk/gate.py through the PreToolUse hook: a Write to trace/trace.jsonl, a Bash rm, a truncating redirect and a sed -i on it each exit 2, while cat, tail and python3 desk/desk.py verify-trace exit 0 (attempts to tamper or delete fail). Detection of a mid-file edit is the separate python3 desk/desk.py verify-trace, which exits 1 naming the line. Not covered: tail edit, truncation and a write by a route the patterns miss; real append-only needs chattr +a or a remote write-once sink, both absent.",
+     "checkKind": "exit-code",
+     "rung": "L0",
+     "forbidden": "Giving the agent a write or delete path to its own trace, or trusting its report that the log is intact.",
+     "tool": "none",
+     "toolScope": "none",
+     "gated": true,
+     "gate": "ABSENT write, delete (the agent holds no write or delete path to its own trace: the PreToolUse hook denies them; a person or an external sink owns the file)",
+     "status": "weak",
+     "checkRunnable": true,
+     "keywords": [
+      "append-only",
+      "tamper",
+      "hash chain",
+      "agent log",
+      "trace file",
+      "audit log"
+     ],
+     "absentTools": [
+      "write-once log sink",
+      "filesystem append-only attribute (chattr +a)"
+     ]
+    },
+    "evolve": {
+     "trigger": "One harness piece was changed and a baseline exists; decide promotion on a held-out task with token count.",
+     "doneWhen": "test \"$(git diff --name-only BASE CAND -- .claude CLAUDE.md | wc -l)\" -eq 1 && python3 desk/desk.py promote-gate <json> exits 0 printing PROMOTE: exactly one harness file differs between baseline and candidate (two files is two evolve runs), candidate.heldout_pass and candidate.tune_pass are true and candidate.tokens is less than baseline.tokens, both counts present in the json and published with the result; a json lacking either token count is unsupported, not PROMOTE. HOLD (exit 1) is valid. A person promotes.",
+     "checkKind": "exit-code",
+     "rung": "L0",
+     "forbidden": "Promoting on a tuning-set gain only, or the agent promoting its own change.",
+     "tool": "none",
+     "toolScope": "none",
+     "gated": true,
+     "gate": "ABSENT promote (prepare change, held-out result and token count, stop; a person promotes)",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "held-out task",
+      "promote harness",
+      "token count",
+      "harness change",
+      "self-evolve",
+      "tuning set"
+     ],
+     "absentTools": [
+      "held-out benchmark runner with token meter"
+     ]
+    }
    }
   },
   "reverse-engineering": {
@@ -704,13 +3261,171 @@
     "strings"
    ],
    "directives": {
-    "triage": null,
-    "static": null,
-    "lift": null,
-    "dynamic": null,
-    "protocol": null,
-    "summarize": null,
-    "state": null
+    "triage": {
+     "trigger": "One or more files are in hand and the ask is what is this: format, class, endianness, architecture, entry. Quiet for function lists, call graphs, naming, lifting, or decrypting or bypassing anything.",
+     "doneWhen": "`python3 fixtures/re-triage/check.py --fixture <dir> --out <out.json>` exits 0: for each file the output fields format, class, endian, arch, and entry (the entry point address) equal what the checker parses from `file` and `readelf -h` itself, or is {\"stop\":\"tools disagree\"} when the tools error or disagree, or {\"unsupported\":\"not ELF\"}.",
+     "checkKind": "exit-code",
+     "rung": "L0",
+     "forbidden": "any field the tools did not emit; continuing past a disagreement; anything beyond identification (no decryption, no bypass)",
+     "tool": "Bash:file",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": true,
+     "keywords": [
+      "identify binary format",
+      "elf header",
+      "file architecture",
+      "entry point",
+      "what is this binary",
+      "triage binary"
+     ],
+     "absentTools": []
+    },
+    "static": {
+     "trigger": "A binary is in hand and triage already named its format and architecture; the ask is the function list, call graph, or strings. Quiet for names or purposes, runtime behavior, or decrypting or bypassing.",
+     "doneWhen": "One combined output holding the function list, the call-graph edge list, and the strings is generated from `objdump -d` and `strings` output twice, and `cmp first.out second.out` exits 0 (all three regenerate byte for byte). A binary with no functions is a valid result: empty function and edge sections that regenerate empty, not a guess.",
+     "checkKind": "exit-code",
+     "rung": "L0",
+     "forbidden": "redrawing or editing the call graph by hand or by model; adding an edge or function the disassembler output does not show; listing any function address or string the tool output does not contain",
+     "tool": "Bash:objdump",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "call graph",
+      "function list",
+      "extract strings",
+      "disassembly listing",
+      "regenerate graph",
+      "list functions"
+     ],
+     "absentTools": [
+      "headless disassembler with a call-graph export"
+     ]
+    },
+    "lift": {
+     "trigger": "A known-architecture sample with ground truth exists and a target needs a recovered spec. Quiet when no scored sample exists, or for decrypting or bypassing.",
+     "doneWhen": "A scoring program run on the known-architecture sample prints the line \"lift: M/N matched\" and exits 0, and writes remainder.json holding exactly N-M items (the unmatched ones; `jq length remainder.json` equals N-M), which is the only input a model pass receives. M=N (empty remainder), or an unknown architecture reported as \"unsupported\", is a valid result.",
+     "checkKind": "count",
+     "rung": "L1",
+     "forbidden": "sending the whole target, or any item outside remainder.json, to a model; touching the target before the known-architecture score exists; calling an unknown-ISA lift reliable",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "lift binary",
+      "recover spec",
+      "known architecture",
+      "isa recovery",
+      "unmatched remainder",
+      "score lift"
+     ],
+     "absentTools": [
+      "disassembler",
+      "ISA-specific disassembly for unknown architectures"
+     ]
+    },
+    "dynamic": {
+     "trigger": "A static claim list and a saved emulation trace are both in hand. Quiet when only one exists, to start hardware, or to decrypt or bypass anything.",
+     "doneWhen": "A comparison program prints \"claims: K kept, D dropped of N\" with K+D=N; each dropped claim cites the contradicting trace line by line number and no kept claim has one. With no trace the result is \"unsupported: no trace\" and exit 0.",
+     "checkKind": "count",
+     "rung": "L1",
+     "forbidden": "keeping a claim the trace contradicts, or dropping one without a cited trace line; inventing a trace when no emulator is registered",
+     "tool": "Bash:python3",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "emulation trace",
+      "trace versus claim",
+      "drop contradicted claim",
+      "dynamic analysis",
+      "emulated run",
+      "trace line"
+     ],
+     "absentTools": [
+      "emulator with a trace export",
+      "emulator"
+     ]
+    },
+    "protocol": {
+     "trigger": "Saved captures are in hand and the ask is to parse them and show the parse reproduces them. Quiet for live interception, crafting or replaying traffic, or decrypting or bypassing.",
+     "doneWhen": "For every capture, parse then re-serialize, and `cmp capture.bin roundtrip.bin` exits 0. A capture that does not round-trip is reported as failed, and an empty capture set is a valid result.",
+     "checkKind": "exit-code",
+     "rung": "L1",
+     "forbidden": "parsing any field not seen in the captures in hand; generalizing a field layout, length rule, or message type past the captures in hand; calling a spec from a few captures trustworthy",
+     "tool": "Bash:cmp",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "assisted",
+     "checkRunnable": false,
+     "keywords": [
+      "pcap round trip",
+      "parse capture",
+      "packet capture",
+      "wire format",
+      "message layout",
+      "protocol parser"
+     ],
+     "absentTools": []
+    },
+    "summarize": {
+     "trigger": "A function from disassembly or decompilation needs a name or one-line purpose. Quiet when the ask is only listing functions, or decrypting or bypassing anything.",
+     "doneWhen": "Each proposed name carries a quoted evidence line: a string with its offset, a call target with its address, or a trace line with its line number, confirmed by a program to appear in the tool output at that locator. A function with no evidence stays unnamed, a valid result. This proves the evidence exists, not that the name is right.",
+     "checkKind": "quote",
+     "rung": "L1",
+     "forbidden": "giving a plausible name with no string, call, or trace behind it",
+     "tool": "Bash:strings",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "weak",
+     "checkRunnable": false,
+     "keywords": [
+      "name function",
+      "stripped function name",
+      "evidence cited name",
+      "function purpose",
+      "rename decompiled",
+      "label function"
+     ],
+     "absentTools": [
+      "disassembler",
+      "emulator with a trace export"
+     ]
+    },
+    "state": {
+     "trigger": "Findings from any reverse-engineering directive exist, or a session must resume one. Quiet when there is nothing yet to record.",
+     "doneWhen": "A fresh session reads only the state file and its listed artifacts and writes restated.json; then `jq -S .findings state.json > a.json; jq -S .findings restated.json > b.json; cmp a.json b.json` exits 0 (the resumed findings equal the saved findings). An empty findings list is a valid result.",
+     "checkKind": "state-diff",
+     "rung": "L0",
+     "forbidden": "leaving findings in chat only, or resuming from memory instead of the files",
+     "tool": "Bash:jq",
+     "toolScope": "read",
+     "gated": false,
+     "gate": "",
+     "status": "reliable",
+     "checkRunnable": false,
+     "keywords": [
+      "resume investigation",
+      "investigation state",
+      "state file",
+      "reverse engineering notes",
+      "resume analysis",
+      "artifact files"
+     ],
+     "absentTools": []
+    }
    }
   }
  }

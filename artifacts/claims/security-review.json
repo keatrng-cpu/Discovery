@@ -1,0 +1,98 @@
+{
+ "shelf": "security-review",
+ "directives": [
+  {
+   "directive": "scan",
+   "trigger": "A repo or branch is present and the ask is to scan for leaked secrets; defensive only.",
+   "doneWhen": "One result line from one tool run: mcp__github__run_secret_scanning stdout quoted verbatim with exit status; each finding a quoted tool line with file and line; zero findings valid as 'secret scan: 0 findings'; a scan that did not run is 'secret scan: unscanned'; a finding without a quoted scanner line is never reported and unscanned is never reported as clean.",
+   "checkKind": "exit-code",
+   "rung": "L0",
+   "forbidden": "Reporting a model hunch as a finding: anything not a quoted line of scanner output.",
+   "tool": "mcp__github__run_secret_scanning",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "reliable",
+   "checkRunnable": true,
+   "keywords": [
+    "secret scan",
+    "leaked secrets",
+    "scanner output",
+    "credential leak",
+    "scan repo for secrets"
+   ],
+   "absentTools": [
+    "dependency scanner (pip-audit, npm audit)",
+    "SAST scanner"
+   ]
+  },
+  {
+   "directive": "diff",
+   "trigger": "A diff or scanner finding is present and the ask is file, line, and what it reaches; stop there.",
+   "doneWhen": "Each item is a quoted line with file:line from git diff output, one sentence of reach, then STOP; no reproduction steps; zero items valid as 'diff: 0 items'; unquotable lines dropped.",
+   "checkKind": "quote",
+   "rung": "L1",
+   "forbidden": "Continuing past the reach sentence into payload text, exploit steps, or a proof of concept.",
+   "tool": "Bash:git",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "reach of line",
+    "blast radius",
+    "what can this reach",
+    "flagged line",
+    "security diff"
+   ],
+   "absentTools": [
+    "harness stop hook that blocks attack continuation"
+   ]
+  },
+  {
+   "directive": "rank",
+   "trigger": "Quoted findings and a written rubric are both present and the ask is to order them.",
+   "doneWhen": "Precondition: no written rubric gives 'rank: unsupported' and empty input gives 'rank: 0 rows', before any row. Rubric file lines are 'clause | pattern | rank'. Check: for every ranked row, one python3 -c run exits 0 only when the quoted text is a substring of line <line> of <file> and the row's cited clause exists in the rubric with its pattern inside the quote and its rank equal to the row's rank; a row that exits non-zero (including a rank that ignores or contradicts its clause) is removed as dropped; rows in equal rows out plus dropped, both stated.",
+   "checkKind": "quote",
+   "rung": "L1",
+   "forbidden": "Ranking unquoted code: assigning severity to anything no quoted line supports.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": true,
+   "keywords": [
+    "rank findings",
+    "severity rubric",
+    "prioritize vulnerabilities",
+    "triage order",
+    "apply rubric"
+   ],
+   "absentTools": []
+  },
+  {
+   "directive": "patch-review",
+   "trigger": "A quoted finding and a proposed patch are both present and the ask is whether the quoted line changed.",
+   "doneWhen": "git diff -U0 base..head -- file read against the quoted file:line gives exactly one verdict: 'changed: old -> new' with the @@ hunk locator when a hunk covers that line and its '-' line equals the quote; 'unchanged: line at file:line' when no hunk covers it (empty diff included); 'unmatched' when the base line at file:line is not the quote.",
+   "checkKind": "state-diff",
+   "rung": "L0",
+   "forbidden": "Opening, filing, or drafting the fix task, issue, or pull request (the human hand-off dropping out), or declaring the vulnerability fixed from a plausible patch without a diff hunk touching the quoted line.",
+   "tool": "Bash:git",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": true,
+   "keywords": [
+    "review the patch",
+    "did the line change",
+    "proposed fix",
+    "fix diff",
+    "patch touches line"
+   ],
+   "absentTools": []
+  }
+ ]
+}

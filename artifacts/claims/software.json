@@ -1,0 +1,179 @@
+{
+ "shelf": "software",
+ "directives": [
+  {
+   "directive": "analyze",
+   "trigger": "A failing path, stack trace, or error log is present and the owning file is unknown. Quiet when the ask is to edit, run tests, or explain the whole repo.",
+   "doneWhen": "Output one record, and a program reads each field: (1) a log line quoted verbatim with its line number in the log file, read back with python3 (line N of the log equals the quote); (2) that line names the entry file, given as file:line from the trace, and the file:line exists in the tree; (3) the broken invariant quoted verbatim from a source line at a stated file:line; (4) a do-not-touch list of paths, each present in `git ls-files`. A log with no matching line is a valid result: write \"unmatched\" and stop; do not guess a file.",
+   "checkKind": "quote",
+   "rung": "L1",
+   "forbidden": "Guessing a file from a noisy log that the grep did not return; naming a file with no quoted line.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "reliable",
+   "checkRunnable": false,
+   "keywords": [
+    "stack trace",
+    "traceback",
+    "failing path",
+    "entry file",
+    "which file",
+    "invariant",
+    "root cause location"
+   ],
+   "absentTools": []
+  },
+  {
+   "directive": "reproduce",
+   "trigger": "A bug report and an existing test harness are present. Quiet when asked to fix it, or when no harness exists.",
+   "doneWhen": "The named smallest command (pytest or python3 -m unittest, one test id, pinned input file) exits non-zero on the unedited tree, and its output is recorded as two quoted lines: the expected value and the actual value, the actual copied verbatim from that run's output (the assertion line) so a program finds it in the output. Red is the pass here. Exit 0 means the bug did not reproduce and the check fails. No harness in the repo is a valid result: report \"harness: absent\" and stop; status holds as reliable only when a harness exists.",
+   "checkKind": "exit-code",
+   "rung": "L1",
+   "forbidden": "Editing source to make the failure appear, or reporting a failure that was not run red.",
+   "tool": "Bash:pytest",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "reliable",
+   "checkRunnable": true,
+   "keywords": [
+    "reproduce",
+    "repro",
+    "smallest failing command",
+    "pinned input",
+    "red before fix",
+    "actual vs expected",
+    "failing test case"
+   ],
+   "absentTools": []
+  },
+  {
+   "directive": "edit",
+   "trigger": "A frozen plan lists the files to change and any signature change. Quiet when no plan exists or the plan is still open.",
+   "doneWhen": "`git diff --name-only` lists exactly the files named in the plan and no others (a sorted set comparison of the two lists); `git diff -U0` shows no added or removed `def` or `class` line unless the plan lists that signature change; and each hunk the plan marks non-obvious has an added one-line comment inside that hunk. An empty diff is a valid result when the plan needs no change: report \"diff: empty\".",
+   "checkKind": "state-diff",
+   "rung": "L1",
+   "forbidden": "Drift: editing an unnamed file, renaming a public signature, or tidying beyond the plan.",
+   "tool": "Bash:git",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "apply the plan",
+    "frozen plan",
+    "named files only",
+    "signature stable",
+    "constrained diff",
+    "diff matches plan"
+   ],
+   "absentTools": [
+    "plan-to-diff matcher"
+   ]
+  },
+  {
+   "directive": "verify",
+   "trigger": "A project directory holds verify_gate.sh and a change claims to be finished. Quiet when no gate script exists: report gate absent and stop.",
+   "doneWhen": "`bash verify_gate.sh` in the project directory exits 0 (unit test, then build, then render-compare against the fixture; the first failure stops it). The Stop hook blocks 'done' until it does. The script runs `python3 -m unittest discover -s tests` (tune fixture tests test_simple and test_zero_numerator in tests/test_mod.py), then py_compile, then cmp against fixture.txt, under one exit code. A non-zero exit is a valid result: report RED with the exit code and the first failing line quoted verbatim, declared_done false. No verify_gate.sh in the directory is also a valid result: report \"gate: absent\" and stop. Never report GREEN without exit 0.",
+   "checkKind": "exit-code",
+   "rung": "L0",
+   "forbidden": "declaring done, or editing any file, on a model read of the output; verify never fixes",
+   "tool": "Bash:unittest",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "reliable",
+   "checkRunnable": true,
+   "keywords": [
+    "verify",
+    "is it done",
+    "run the gate",
+    "stop hook",
+    "build passes",
+    "screenshot compare",
+    "verify_gate"
+   ],
+   "absentTools": []
+  },
+  {
+   "directive": "migrate",
+   "trigger": "One transform of one file shape applies to many files. Quiet for a single file, or when two different shapes are mixed.",
+   "doneWhen": "`git ls-files` filtered by the one file shape prints N target paths, and the worker manifest lists exactly those N paths (sorted set comparison). N of 0 is a valid result: report \"targets: 0\".",
+   "checkKind": "count",
+   "rung": "L2",
+   "forbidden": "Guessing the file list instead of enumerating it, or accepting a file whose result was not rechecked.",
+   "tool": "Bash:git",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "migrate",
+    "port",
+    "codemod",
+    "bulk rename",
+    "upgrade across files",
+    "isolated copies",
+    "one file shape"
+   ],
+   "absentTools": [
+    "codemod runner with per-file recheck"
+   ]
+  },
+  {
+   "directive": "review",
+   "trigger": "A diff or pull request is present. Quiet when asked to fix the code or to run tests.",
+   "doneWhen": "Every comment carries file:line and the quoted line text, and the quote appears verbatim at that line in `git diff` output. Any comment with no matching quote is dropped; zero surviving comments is a valid result: report \"findings: 0\".",
+   "checkKind": "quote",
+   "rung": "L1",
+   "forbidden": "Posting a comment that cannot point at a line, or over-commenting style; cross-file logic no single line shows is reported unsupported, not smoothed.",
+   "tool": "Bash:git",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "code review",
+    "review the diff",
+    "review this pull request",
+    "logic miss",
+    "security reach",
+    "performance path",
+    "quote the line"
+   ],
+   "absentTools": [
+    "cross-file static analyzer"
+   ]
+  },
+  {
+   "directive": "onboard",
+   "trigger": "A named request or endpoint and a runtime log are present. Quiet for explain-the-repo or architecture overview asks.",
+   "doneWhen": "One record, read by a program: the hops of one request from entry to store, each as file:line of the hop function (the line exists in the file and contains the function name) plus the owning module; the first hop is the route entry and the last hop is the store call. Exactly one hop is also matched to a runtime log line quoted verbatim with its log line number; python3 reading that log line number returns the quote, and the line names the hop's function or file. No log line matching any hop is a valid result: report \"log: unmatched\" and stop.",
+   "checkKind": "quote",
+   "rung": "L1",
+   "forbidden": "Touring the repo: describing modules that are not on the traced request path.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "onboard",
+    "trace one request",
+    "entry to store",
+    "who owns this hop",
+    "new to this codebase",
+    "request flow"
+   ],
+   "absentTools": [
+    "runtime tracing connector"
+   ]
+  }
+ ]
+}
