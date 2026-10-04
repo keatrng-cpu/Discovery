@@ -1,4 +1,4 @@
-trace/trace.jsonl
+trace/
 __pycache__/
 *.pyc
 .pytest_cache/

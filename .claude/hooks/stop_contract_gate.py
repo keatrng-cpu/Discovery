@@ -21,7 +21,7 @@ except Exception:
     d = {}
 cwd = d.get("cwd") or os.getcwd()
 contract = os.path.join(cwd, "contract.md")
-sp = os.path.join(cwd, "state.json")
+sp = os.path.join(cwd, "trace", "stop_blocks.json")  # runtime counter: ignored by git, never churns tracked state
 
 
 def state():
@@ -33,6 +33,7 @@ def state():
 
 
 def save(st):
+    os.makedirs(os.path.dirname(sp), exist_ok=True)
     with open(sp, "w") as f:
         json.dump(st, f, indent=1)
         f.write("\n")

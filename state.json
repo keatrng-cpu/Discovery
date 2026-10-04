@@ -3,7 +3,6 @@
  "shelf": "harness",
  "directive": "evolve",
  "contract_status": "RED",
- "stop_blocks": 1,
  "resume_from": [
   "plan.md",
   "contract.md",
