@@ -6,13 +6,13 @@ description: Use when a reservation, appointment, flight, or event details must 
 A booking is wanted (travel, appointment, reservation, calendar event). Always gated: prepare the details, then stop.
 ## Done-when
 check: schema
-Bash:jq -e exits 0 on one JSON file holding the sheet and two calendar-event snapshots: sheet has non-empty what, who, when, where, price, source_link and booked false; events_before equals events_after (state unchanged, no booking made).
+Bash:jq -e exits 0 on the booking sheet JSON: non-empty what, who, when, where, price, source_link and booked false. Stop is enforced by the absent book tools (calendar create_event, Zapier or other write actions, form or browser submit), not by this check.
 ## Rung
 rung: L0
-A jq filter validates the sheet and the unchanged state. A person books afterward.
+A jq filter validates the sheet. A person books afterward.
 ## Forbidden move
 Creating the event or reservation, submitting a booking form, or reporting a booking as done. Preparing is not booking.
 ## Tool
 tool: none
 scope: none
-gate: ABSENT book, calendar create_event (prepare the booking sheet, stop; a person books)
+gate: ABSENT book, calendar create_event, zapier write action, form or browser submit (prepare the booking sheet, stop; a person books)

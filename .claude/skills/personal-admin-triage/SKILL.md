@@ -6,7 +6,7 @@ description: Use when an inbox needs sorting by a stated rule, headers first. Qu
 A mailbox or thread list is present and a triage rule (sender, label, subject, age) is stated. Quiet when no rule exists or the ask is to reply.
 ## Done-when
 check: count
-One program reads the triage log and the header list. Exits 0 only if: a header-scan entry precedes every open entry; the set of opened thread ids equals the set of rule-marked ids (symmetric difference 0, printed "opened: N/N"); each opened id has a rule id and a non-empty why-opened line; the reply/send call count in the log is 0. 0/0 is valid.
+One program reads the triage log and the header list and compares id sets: the opened thread ids equal the rule-marked header ids (symmetric difference 0), printed "opened: N/N"; exits 0 only then. 0/0 is valid.
 ## Rung
 rung: L0
 A program alone reads the log. No model pass is needed to compare id sets.

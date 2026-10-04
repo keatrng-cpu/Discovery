@@ -6,7 +6,7 @@ description: Use when one email thread needs a reply drafted to match what was a
 Exactly one thread id is named and a reply is wanted. Quiet when more than one thread is named, or when the ask is to send.
 ## Done-when
 check: quote
-Program greps the draft's quoted ask line in the named thread's message text at the cited message locator (quote: msg N, line L); exits 0 only if the quote is verbatim there. No thread or no ask yields "no draft: unsupported", which is valid.
+Program greps the draft's quoted ask line in the named thread's message text at the cited message locator (quote: msg N, line L); exits 0 only if the quote is verbatim there. No thread or no ask yields "no draft: unsupported", which is valid. Stop-before-send is enforced by the absent send, reply, forward tools and the deny hook, not by this check: the output is draft text only.
 ## Rung
 rung: L1
 One fast-model pass writes the draft text; a program greps the ask quote. Escalate only if the grep fails.
