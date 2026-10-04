@@ -65,7 +65,9 @@
     "ask if screen differs",
     "gui plan"
    ],
-   "absentTools": []
+   "absentTools": [
+    "accessibility-tree reader"
+   ]
   },
   "act": {
    "trigger": "One approved action has been performed by the host's approved GUI driver (not by this skill), and pre-state.json and post-state.json both exist. Quiet when the action is not yet chosen or no pre-state was captured.",
@@ -93,16 +95,16 @@
   },
   "recover": {
    "trigger": "A step produced an unexpected state diff, a saved pre-step snapshot exists, and a revert has been carried out by a person or the host's approved GUI driver. Quiet when no snapshot was saved: report that revert cannot be confirmed.",
-   "doneWhen": "Output first prints 'bad step: <step id or steps.md:L<n>>' naming the step that caused the unexpected diff; without that line the result fails. After the revert is made by a person or host driver (this skill holds no act tool), `cmp pre-step-snapshot post-revert-snapshot` exits 0; then stop with no further action. Non-zero cmp is reported as 'revert unconfirmed' and also stops. The check is the cmp exit code.",
+   "doneWhen": "One composite command, check-recover.py (not yet in the repo; the desk would run it), takes the output text, pre-step-snapshot and post-revert-snapshot and has one exit code. It exits 0 only if the output's first line matches 'bad step: <step id or steps.md:L<n>>'. It also requires that a byte comparison of the two snapshots is identical. Any other result exits non-zero: a missing bad-step line fails, and a snapshot mismatch is reported 'revert unconfirmed'. The revert is made by a person or host driver (this skill holds no act tool); then stop with no further action.",
    "checkKind": "exit-code",
    "rung": "L1",
    "forbidden": "Continuing or retrying the task after the revert, claiming a revert without confirming the prior state, or reverting from this skill instead of naming the step and stopping.",
-   "tool": "Bash:cmp",
+   "tool": "Bash:python3",
    "toolScope": "read",
    "gated": false,
    "gate": "",
    "status": "weak",
-   "checkRunnable": true,
+   "checkRunnable": false,
    "keywords": [
     "undo bad step",
     "revert ui",
