@@ -6,7 +6,7 @@ description: Use when temp music must be placed under a rule file and the hook c
 A rule file (cue names, windows, levels) and existing music assets are present. Quiet when the ask is to compose or generate a theme; that is outside this directive.
 ## Done-when
 check: exit-code
-A python3 script reads the placement list and the rule file and exits 0 only if the hook cue starts and ends inside its rule window and uses an asset the rule file names; it prints "hook: ok" or "hook: <cue> outside <start>-<end>". Only the hook is checked; other cues are not claimed. An unplaced hook is a valid result and prints "hook: absent".
+A python3 script reads the placement list and the rule file and exits 0 if the hook cue starts and ends inside its rule window and uses an asset the rule file names (prints "hook: ok"), and exits non-zero for a placed hook outside its window (prints "hook: <cue> outside <start>-<end>"). Only the hook is checked; other cues are not claimed. An unplaced hook is a valid result and prints "hook: absent".
 ## Rung
 rung: L1
 A fast-model pass proposes temp placements from the rules; code checks the hook window. Escalate only if the hook check fails twice.
