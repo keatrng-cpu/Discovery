@@ -25,11 +25,137 @@
   "flight"
  ],
  "directives": {
-  "triage": null,
-  "draft": null,
-  "brief": null,
-  "pack": null,
-  "book": null,
-  "pay": null
+  "triage": {
+   "trigger": "A mailbox or thread list is present and a triage rule is stated; quiet when no rule exists or the ask is to reply.",
+   "doneWhen": "One program reads the triage log and the header list and compares id sets: the opened thread ids equal the rule-marked header ids (symmetric difference 0), printed \"opened: N/N\"; exits 0 only then. 0/0 is valid.",
+   "checkKind": "count",
+   "rung": "L0",
+   "forbidden": "Opening a thread the rule did not mark, opening before the header scan, or replying while triaging.",
+   "tool": "mcp__Gmail__search_threads",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "triage inbox",
+    "triage headers",
+    "sort inbox by rule",
+    "inbox rule",
+    "which emails to open",
+    "header scan"
+   ],
+   "absentTools": [
+    "mail rule engine"
+   ]
+  },
+  "draft": {
+   "trigger": "Exactly one thread id is named and a reply is wanted; quiet for send or multiple threads.",
+   "doneWhen": "Program greps the draft's quoted ask line in the named thread's message text at the cited message locator (quote: msg N, line L); exits 0 only if the quote is verbatim there. No thread or no ask yields \"no draft: unsupported\", which is valid. Stop-before-send is enforced by the absent send, reply, forward tools and the deny hook, not by this check: the output is draft text only.",
+   "checkKind": "quote",
+   "rung": "L1",
+   "forbidden": "Sending, replying, or forwarding the draft, or answering a question the thread never asked.",
+   "tool": "none",
+   "toolScope": "none",
+   "gated": true,
+   "gate": "ABSENT send, reply, forward (prepare the draft text and stop; a person sends)",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "draft reply",
+    "reply draft",
+    "draft email response",
+    "answer this thread",
+    "draft but do not send"
+   ],
+   "absentTools": [
+    "ask-match verifier"
+   ]
+  },
+  "brief": {
+   "trigger": "Calendar events with start and end times for a stated window are present; quiet when only prose exists.",
+   "doneWhen": "Program computes every pair of calendar events with startA < endB and startB < endA from the structured times and prints the list (overlaps: N/N); the brief's list equals that list and names both events of each pair. Back-to-back (endA == startB) is excluded. 0/0 is valid. No calendar times means unread.",
+   "checkKind": "count",
+   "rung": "L0",
+   "forbidden": "Calling a back-to-back or near-miss a conflict, or naming an overlap from prose without calendar times.",
+   "tool": "mcp__Google_Calendar__list_events",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "calendar overlaps",
+    "double booked",
+    "schedule conflicts",
+    "day brief",
+    "real overlaps",
+    "week conflicts"
+   ],
+   "absentTools": []
+  },
+  "pack": {
+   "trigger": "A meeting and source threads or documents are present; quiet when no source is attached.",
+   "doneWhen": "Program greps each item's verbatim quote at its cited locator in that item's own source and prints \"items: N/N sourced\"; exits 0 only if every kept item greps. Unsourced items are dropped; an empty agenda (0/0) is valid.",
+   "checkKind": "quote",
+   "rung": "L1",
+   "forbidden": "Adding an agenda item from memory alone, two items from one source, or paraphrasing a source into a quote it does not contain.",
+   "tool": "mcp__Gmail__get_thread",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "meeting agenda",
+    "build agenda",
+    "agenda from threads",
+    "agenda items with sources",
+    "pack meeting"
+   ],
+   "absentTools": []
+  },
+  "book": {
+   "trigger": "A booking is wanted (travel, appointment, reservation, event); always gated, prepare details and stop.",
+   "doneWhen": "Bash:jq -e exits 0 on the booking sheet JSON: non-empty what, who, when, where, price, source_link and booked false. Stop is enforced by the absent book tools (calendar create_event, Zapier or other write actions, form or browser submit), not by this check.",
+   "checkKind": "schema",
+   "rung": "L0",
+   "forbidden": "Creating the event or reservation, submitting a booking form, or reporting a booking as done.",
+   "tool": "none",
+   "toolScope": "none",
+   "gated": true,
+   "gate": "ABSENT book, calendar create_event, zapier write action, form or browser submit (prepare the booking sheet, stop; a person books)",
+   "status": "gated",
+   "checkRunnable": false,
+   "keywords": [
+    "book flight",
+    "reservation details",
+    "appointment booking",
+    "book travel",
+    "itinerary booking"
+   ],
+   "absentTools": []
+  },
+  "pay": {
+   "trigger": "A payment is wanted (bill, invoice, fee, purchase); always gated, prepare details and stop.",
+   "doneWhen": "Bash:jq -e exits 0 on the payment sheet JSON: non-empty payee, amount, due_date, source_document and paid false. Stop is enforced by the absent pay, payment, checkout tools, not by this check.",
+   "checkKind": "schema",
+   "rung": "L0",
+   "forbidden": "Submitting a payment, entering card or account numbers, checking out, or reporting a payment as made.",
+   "tool": "none",
+   "toolScope": "none",
+   "gated": true,
+   "gate": "ABSENT pay, payment, checkout, form or browser submit (prepare the payment sheet, stop; a person pays)",
+   "status": "gated",
+   "checkRunnable": false,
+   "keywords": [
+    "pay bill",
+    "pay invoice",
+    "payment details",
+    "settle bill",
+    "prepare payment"
+   ],
+   "absentTools": []
+  }
  }
 }
