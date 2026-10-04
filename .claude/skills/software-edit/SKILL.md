@@ -6,7 +6,7 @@ description: Use when a frozen plan names files and a constrained diff must be a
 A frozen plan lists the files to change and any signature change. Quiet when no plan exists or the plan is still open.
 ## Done-when
 check: state-diff
-`git diff --name-only` lists exactly the files named in the plan and no others (a sorted set comparison of the two lists); `git diff -U0` shows no added or removed `def` or `class` line unless the plan lists that signature change; and each hunk the plan marks non-obvious has an added one-line comment inside that hunk. An empty diff is a valid result when the plan needs no change: report "diff: empty".
+One command, `python3 edit_check.py plan.json`, with one exit code. It does not exist in the repo yet: it is the program the desk would run, reading `git diff`. Input: the frozen plan. It exits 0 only if the sorted `git diff --name-only` equals the plan's file list; `git diff -U0` shows no added or removed `def` or `class` line unless the plan lists that signature change; each hunk the plan marks non-obvious has an added one-line comment inside it. An empty diff is a valid result when the plan needs no change: it prints "diff: empty" and exits 0.
 
 ## Rung
 rung: L1
