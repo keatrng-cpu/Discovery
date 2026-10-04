@@ -1,0 +1,31 @@
+{
+ "shelf": "research",
+ "now": "assisted; deep-research URL hallucination is worse than search-augmented; volume is not reliability",
+ "stakes": "med",
+ "gates": [],
+ "keywords": [
+  "source",
+  "sources",
+  "citation",
+  "citations",
+  "literature",
+  "paper",
+  "papers",
+  "claim",
+  "claims",
+  "evidence",
+  "doi",
+  "preprint",
+  "survey",
+  "references",
+  "unsupported"
+ ],
+ "directives": {
+  "retrieve": null,
+  "extract": null,
+  "gap": null,
+  "conflict": null,
+  "synthesize": null,
+  "monitor": null
+ }
+}

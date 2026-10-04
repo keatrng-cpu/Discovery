@@ -1,0 +1,19 @@
+{
+ "expected": {
+  "C1": {
+   "status": "unsupported",
+   "searched": true,
+   "resolution": "open"
+  },
+  "C2": {
+   "status": "unsupported",
+   "searched": false,
+   "resolution": "not-searched"
+  },
+  "C3": {
+   "status": "unsupported",
+   "searched": false,
+   "resolution": "not-searched"
+  }
+ }
+}

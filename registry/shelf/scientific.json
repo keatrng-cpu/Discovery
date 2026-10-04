@@ -1,0 +1,33 @@
+{
+ "shelf": "scientific",
+ "now": "Robin-style loop is real; the model does not run the wet lab",
+ "stakes": "med",
+ "gates": [
+  "hardware-start"
+ ],
+ "keywords": [
+  "hypothesis",
+  "experiment",
+  "assay",
+  "lab",
+  "wet lab",
+  "control group",
+  "measurement",
+  "figure",
+  "manuscript",
+  "inclusion rule",
+  "reagent",
+  "replicate",
+  "outlier",
+  "result files",
+  "lab notebook"
+ ],
+ "directives": {
+  "triage": null,
+  "hypothesis": null,
+  "design": null,
+  "analyze": null,
+  "update": null,
+  "manuscript": null
+ }
+}

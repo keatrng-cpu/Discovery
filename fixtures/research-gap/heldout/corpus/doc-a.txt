@@ -1,0 +1,3 @@
+Lakeside Bike-Share annual summary.
+The Lakeside bike-share served 2,100 households at its peak.
+The fleet held 640 bikes.

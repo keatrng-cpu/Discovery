@@ -1,0 +1,17 @@
+{
+ "shelf": "software",
+ "directive": "verify",
+ "command": "bash verify_gate.sh",
+ "tool": "Bash:unittest",
+ "scope": "read",
+ "rung": "L0",
+ "checkKind": "exit-code",
+ "status": "reliable",
+ "tune": "fixtures/sw-verify/tune",
+ "heldout": "fixtures/sw-verify/heldout",
+ "heldoutCheck": "python3 fixtures/sw-verify/check.py --fixture heldout --out artifacts/seeds/software-verify.heldout.out.json",
+ "doneWhen": "`bash verify_gate.sh` in the project directory exits 0 (unit test, then build, then render-compare against the fixture; the first failure stops it). The Stop hook blocks 'done' until it does.",
+ "outputSpec": "{\"status\":\"RED\"|\"GREEN\",\"gate_exit\":<int>,\"failing_line\":<verbatim line from the gate output or null>,\"declared_done\":false}",
+ "forbidden": "declaring done, or editing any file, on a model read of the output; verify never fixes",
+ "checkRunnable": true
+}

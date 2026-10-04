@@ -1,0 +1,17 @@
+{
+ "shelf": "markets",
+ "directive": "print",
+ "command": "python3 fixtures/markets-print/check.py",
+ "tool": "none",
+ "scope": "none",
+ "rung": "L1",
+ "checkKind": "exit-code",
+ "status": "reliable",
+ "tune": "fixtures/markets-print/tune",
+ "heldout": "fixtures/markets-print/heldout",
+ "heldoutCheck": "python3 fixtures/markets-print/check.py --fixture heldout --out artifacts/seeds/markets-print.heldout.out.json",
+ "doneWhen": "`python3 fixtures/markets-print/check.py --fixture <dir> --out <out.json>` exits 0: eps, guidance, and surprise each carry a verbatim quote and the line number of the release; every number in the output appears in the release and none comes from the recap only.",
+ "outputSpec": "{\"eps\":{\"value\",\"quote\",\"line\"},\"guidance\":{\"quote\",\"line\"},\"surprise\":{\"quote\",\"line\"}}",
+ "forbidden": "any number taken from a recap; averaging two figures; filling a field the release does not hold",
+ "checkRunnable": true
+}

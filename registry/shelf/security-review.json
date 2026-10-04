@@ -1,0 +1,33 @@
+{
+ "shelf": "security-review",
+ "now": "defensive only; scan is tool stdout; no exploit skill",
+ "stakes": "high",
+ "gates": [
+  "exploit",
+  "payload",
+  "bypass"
+ ],
+ "keywords": [
+  "vulnerability",
+  "cve",
+  "secret",
+  "scanner",
+  "dependency",
+  "sast",
+  "advisory",
+  "exposure",
+  "patch",
+  "security",
+  "rubric",
+  "sbom",
+  "reach",
+  "audit",
+  "secret scan"
+ ],
+ "directives": {
+  "scan": null,
+  "diff": null,
+  "rank": null,
+  "patch-review": null
+ }
+}

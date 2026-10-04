@@ -1,0 +1,28 @@
+{
+ "shelf": "clinical-notes",
+ "now": "documentation only; no diagnosis, no plan of care; the clinician signs",
+ "stakes": "high",
+ "gates": [
+  "sign",
+  "diagnose"
+ ],
+ "keywords": [
+  "clinical",
+  "patient",
+  "soap",
+  "encounter",
+  "clinician",
+  "chart note",
+  "visit",
+  "template field",
+  "symptom",
+  "medical note",
+  "scribe"
+ ],
+ "directives": {
+  "transcribe": null,
+  "gap": null,
+  "cite": null,
+  "sign": null
+ }
+}

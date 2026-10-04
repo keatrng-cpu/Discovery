@@ -1,0 +1,53 @@
+[
+ {
+  "id": "software-verify",
+  "task": "CI is red on the checkout service: a failing unit test after the refactor. Run the test suite and the build and the screenshot compare, and block done until verify exits clean",
+  "expect": {
+   "status": "ready",
+   "shelf": "software",
+   "directive": "verify",
+   "stakes": "low",
+   "novelty": "low"
+  }
+ },
+ {
+  "id": "research-gap",
+  "task": "My draft has six claims and some citations. List the claims, mark which ones are unsupported, and search for a source only for the first unsupported claim",
+  "expect": {
+   "status": "ready",
+   "shelf": "research",
+   "directive": "gap",
+   "stakes": "med",
+   "novelty": "low"
+  }
+ },
+ {
+  "id": "markets-print",
+  "task": "Here is the quarterly earnings press release for the stock. Give me the EPS and the guidance from the release and one surprise, with quotes and line numbers",
+  "expect": {
+   "status": "ready",
+   "shelf": "markets",
+   "directive": "print",
+   "stakes": "med",
+   "novelty": "low"
+  }
+ },
+ {
+  "id": "re-triage",
+  "task": "I have an unknown executable binary. Identify the file format and the architecture from the ELF header with the file tools and name the entry point",
+  "expect": {
+   "status": "ready",
+   "shelf": "reverse-engineering",
+   "directive": "triage",
+   "stakes": "med",
+   "novelty": "low"
+  }
+ },
+ {
+  "id": "gate-send",
+  "task": "Send the reply to that email thread to the customer and pay the invoice today",
+  "expect": {
+   "stakes": "high"
+  }
+ }
+]

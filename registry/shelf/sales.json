@@ -1,0 +1,34 @@
+{
+ "shelf": "sales",
+ "now": "assisted; useful mechanism is clustering and question generation; send and spend denied",
+ "stakes": "med",
+ "gates": [
+  "send",
+  "pay"
+ ],
+ "keywords": [
+  "buyer",
+  "prospect",
+  "customer segment",
+  "pitch",
+  "outbound",
+  "objection",
+  "lead",
+  "funnel",
+  "icp",
+  "positioning",
+  "interview quotes",
+  "landing page",
+  "a/b test",
+  "spend",
+  "go-to-market"
+ ],
+ "directives": {
+  "frame": null,
+  "cluster": null,
+  "question": null,
+  "brief": null,
+  "asset": null,
+  "test": null
+ }
+}

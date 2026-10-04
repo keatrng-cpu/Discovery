@@ -1,0 +1,28 @@
+{
+ "shelf": "education",
+ "now": "explain assisted to reliable; curriculum gated to a person",
+ "stakes": "low",
+ "gates": [],
+ "keywords": [
+  "student",
+  "learner",
+  "lesson",
+  "teach",
+  "concept",
+  "quiz",
+  "drill",
+  "curriculum",
+  "practice",
+  "exercise",
+  "course",
+  "grade",
+  "worked example"
+ ],
+ "directives": {
+  "explain": null,
+  "check": null,
+  "sequence": null,
+  "drill": null,
+  "curriculum": null
+ }
+}

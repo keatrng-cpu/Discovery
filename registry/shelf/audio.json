@@ -1,0 +1,28 @@
+{
+ "shelf": "audio",
+ "now": "ceiling closed; names reliable only if the list is a tool",
+ "stakes": "low",
+ "gates": [],
+ "keywords": [
+  "audio",
+  "podcast",
+  "episode",
+  "take",
+  "takes",
+  "music",
+  "pronunciation",
+  "speech",
+  "voice",
+  "waveform",
+  "mix",
+  "hook",
+  "narration",
+  "soundtrack"
+ ],
+ "directives": {
+  "cut": null,
+  "names": null,
+  "score": null,
+  "assemble": null
+ }
+}

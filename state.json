@@ -1,0 +1,8 @@
+{
+  "stage": "scaffold",
+  "shelf": "harness",
+  "directive": "evolve",
+  "contract_status": "RED",
+  "stop_blocks": 0,
+  "resume_from": ["plan.md", "contract.md", "state.json"]
+}

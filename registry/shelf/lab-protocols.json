@@ -1,0 +1,31 @@
+{
+ "shelf": "lab-protocols",
+ "now": "simulated protocol graphs are strong; hardware stays gated",
+ "stakes": "high",
+ "gates": [
+  "hardware-start"
+ ],
+ "keywords": [
+  "protocol",
+  "instrument",
+  "pipette",
+  "incubate",
+  "centrifuge",
+  "reagent",
+  "graph node",
+  "liquid handler",
+  "plate",
+  "method",
+  "campaign",
+  "sample",
+  "volume",
+  "instrument action"
+ ],
+ "directives": {
+  "transcribe": null,
+  "graph": null,
+  "repair": null,
+  "campaign": null,
+  "handoff": null
+ }
+}

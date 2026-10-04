@@ -1,0 +1,31 @@
+{
+ "shelf": "writing",
+ "now": "outline reliable; draft assisted; cut can be a claim-count diff",
+ "stakes": "low",
+ "gates": [],
+ "keywords": [
+  "outline",
+  "article",
+  "essay",
+  "voice file",
+  "brand file",
+  "paragraph",
+  "headline",
+  "copy",
+  "editorial",
+  "rewrite",
+  "blog",
+  "newsletter",
+  "tone",
+  "claim count",
+  "banned defaults"
+ ],
+ "directives": {
+  "outline": null,
+  "draft": null,
+  "cut": null,
+  "variant": null,
+  "series": null,
+  "fact": null
+ }
+}

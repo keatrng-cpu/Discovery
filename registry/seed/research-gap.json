@@ -1,0 +1,17 @@
+{
+ "shelf": "research",
+ "directive": "gap",
+ "command": "python3 fixtures/research-gap/check.py",
+ "tool": "Bash:localsearch",
+ "scope": "read",
+ "rung": "L1",
+ "checkKind": "exit-code",
+ "status": "assisted",
+ "tune": "fixtures/research-gap/tune",
+ "heldout": "fixtures/research-gap/heldout",
+ "heldoutCheck": "python3 fixtures/research-gap/check.py --fixture heldout --out artifacts/seeds/research-gap.heldout.out.json --searchlog artifacts/seeds/research-gap.heldout.search.log",
+ "doneWhen": "`python3 fixtures/research-gap/check.py --fixture <dir> --out <out.json> --searchlog <log>` exits 0: the claims table validates, every quote is verbatim in the cited document, exactly one search was logged, and it targeted the first unsupported claim only.",
+ "outputSpec": "{\"claims\":[{\"id\",\"text\",\"status\":\"supported\"|\"unsupported\",\"evidence\":null|{\"doc\",\"quote\"},\"searched\":bool,\"resolution\":\"filled\"|\"open\"|\"not-searched\"|\"n/a\"}]}",
+ "forbidden": "searching a second claim; a quote that is not verbatim; marking a cited-but-mismatching claim supported",
+ "checkRunnable": true
+}

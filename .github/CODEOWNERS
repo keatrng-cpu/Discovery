@@ -1,0 +1,6 @@
+# Human-owned files: a promotion or a gate change needs a person.
+registry/tools.json @keatrng-cpu
+.claude/settings.json @keatrng-cpu
+.claude/hooks/ @keatrng-cpu
+desk/gate.py @keatrng-cpu
+contract.md @keatrng-cpu

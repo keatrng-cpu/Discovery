@@ -1,0 +1,5 @@
+trace/trace.jsonl
+__pycache__/
+*.pyc
+.pytest_cache/
+artifacts/tmp/

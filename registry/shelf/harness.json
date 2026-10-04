@@ -1,0 +1,29 @@
+{
+ "shelf": "harness",
+ "now": "skill and hook reliable; trace weak without a tool property; the agent does not promote itself",
+ "stakes": "med",
+ "gates": [
+  "promote"
+ ],
+ "keywords": [
+  "harness",
+  "hook",
+  "skill",
+  "memory",
+  "trace",
+  "subagent",
+  "held-out",
+  "token count",
+  "settings.json",
+  "tool registry",
+  "claude.md",
+  "append-only"
+ ],
+ "directives": {
+  "skill": null,
+  "hook": null,
+  "memory": null,
+  "trace": null,
+  "evolve": null
+ }
+}

@@ -1,0 +1,61 @@
+{
+ "weak": [
+  {
+   "shelf": "research",
+   "directive": "conflict",
+   "failure": "averages the two sources in the sentence after",
+   "tool": "mcp__FireCrawl__firecrawl_scrape",
+   "checkIdea": "two quoted lines with URL and access date; any number in the next sentence that is in neither quote fails"
+  },
+  {
+   "shelf": "legal",
+   "directive": "authority",
+   "failure": "invented or mis-pinned cite",
+   "tool": "cite-resolution API (court-opinion citation lookup)",
+   "checkIdea": "resolver returns a record and the quoted holding is a substring of it, else drop"
+  },
+  {
+   "shelf": "reverse-engineering",
+   "directive": "summarize",
+   "failure": "plausible name with no evidence",
+   "tool": "Bash:strings",
+   "checkIdea": "each name carries a string, call, or trace locator that strings or objdump reproduces"
+  },
+  {
+   "shelf": "computer-use",
+   "directive": "finish",
+   "failure": "early submit",
+   "tool": "Bash:playwright",
+   "checkIdea": "final-state screenshot diff against the instruction's expected fields before any submit"
+  },
+  {
+   "shelf": "markets",
+   "directive": "filing",
+   "failure": "tables and exhibits slip",
+   "tool": "Bash:pdftotext",
+   "checkIdea": "quote must be a substring of pdftotext -layout output at the cited page"
+  },
+  {
+   "shelf": "design-systems",
+   "directive": "components",
+   "failure": "prompt-only lists leak",
+   "tool": "mcp__Figma__get_variable_defs",
+   "checkIdea": "every token name in the output resolves in the design file; a raw hex fails"
+  },
+  {
+   "shelf": "data",
+   "directive": "reconcile",
+   "failure": "averages the two totals",
+   "tool": "mcp__Supabase__execute_sql",
+   "checkIdea": "both totals and the unmatched-key count come from two SELECTs; an averaged figure fails"
+  },
+  {
+   "shelf": "personal-admin",
+   "directive": "brief",
+   "failure": "calls a back-to-back a conflict",
+   "tool": "mcp__Google_Calendar__list_events",
+   "checkIdea": "overlap is computed from start and end times by code; prose cannot assert it"
+  }
+ ],
+ "last_failures": "filled from artifacts/verdicts after the shelf swarm; see invention skill"
+}

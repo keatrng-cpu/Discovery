@@ -1,0 +1,37 @@
+{
+ "shelf": "markets",
+ "now": "reliable if document-locked; no broker tool",
+ "stakes": "med",
+ "gates": [
+  "order"
+ ],
+ "keywords": [
+  "earnings",
+  "eps",
+  "guidance",
+  "filing",
+  "10-k",
+  "10-q",
+  "8-k",
+  "revenue",
+  "quarter",
+  "ticker",
+  "analyst",
+  "consensus",
+  "release",
+  "sec",
+  "stock",
+  "margin",
+  "thesis",
+  "kill condition",
+  "press release"
+ ],
+ "directives": {
+  "print": null,
+  "filing": null,
+  "cross": null,
+  "memo": null,
+  "monitor": null,
+  "scenario": null
+ }
+}

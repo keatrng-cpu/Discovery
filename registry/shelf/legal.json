@@ -1,0 +1,35 @@
+{
+ "shelf": "legal",
+ "now": "authority weak; all-pass verified legal research is well under reliable; signature gated",
+ "stakes": "high",
+ "gates": [
+  "sign"
+ ],
+ "keywords": [
+  "contract",
+  "clause",
+  "agreement",
+  "indemnity",
+  "liability",
+  "termination",
+  "nda",
+  "lease",
+  "counterparty",
+  "case law",
+  "statute",
+  "redline",
+  "msa",
+  "governing law",
+  "diligence",
+  "precedent",
+  "house paper"
+ ],
+ "directives": {
+  "extract": null,
+  "risk": null,
+  "compare": null,
+  "draft": null,
+  "authority": null,
+  "diligence": null
+ }
+}

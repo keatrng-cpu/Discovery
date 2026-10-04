@@ -1,0 +1,35 @@
+{
+ "shelf": "personal-admin",
+ "now": "triage reliable on headers plus a rule; send, book, and pay denied",
+ "stakes": "med",
+ "gates": [
+  "send",
+  "book",
+  "pay"
+ ],
+ "keywords": [
+  "email",
+  "inbox",
+  "calendar",
+  "thread",
+  "meeting",
+  "agenda",
+  "schedule",
+  "invite",
+  "travel",
+  "itinerary",
+  "headers",
+  "reservation",
+  "appointment",
+  "booking",
+  "flight"
+ ],
+ "directives": {
+  "triage": null,
+  "draft": null,
+  "brief": null,
+  "pack": null,
+  "book": null,
+  "pay": null
+ }
+}

@@ -1,0 +1,38 @@
+{
+ "shelf": "data",
+ "now": "profile and one-field clean reliable; define gated",
+ "stakes": "low",
+ "gates": [
+  "sign"
+ ],
+ "keywords": [
+  "dataset",
+  "csv",
+  "column",
+  "columns",
+  "rows",
+  "nulls",
+  "schema",
+  "grain",
+  "query",
+  "sql",
+  "metric",
+  "chart",
+  "table",
+  "dedupe",
+  "anomaly",
+  "reconcile",
+  "slice",
+  "pivot",
+  "extract"
+ ],
+ "directives": {
+  "profile": null,
+  "clean": null,
+  "hypothesis": null,
+  "chart": null,
+  "anomaly": null,
+  "reconcile": null,
+  "define": null
+ }
+}

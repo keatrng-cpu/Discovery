@@ -1,0 +1,29 @@
+{
+ "shelf": "recruiting",
+ "now": "assisted; decide stops; no hire tool",
+ "stakes": "high",
+ "gates": [
+  "hire"
+ ],
+ "keywords": [
+  "candidate",
+  "resume",
+  "req",
+  "scorecard",
+  "hiring manager",
+  "job requisition",
+  "screen",
+  "applicant",
+  "recruiter",
+  "offer",
+  "interview loop",
+  "job description"
+ ],
+ "directives": {
+  "scorecard": null,
+  "extract": null,
+  "screen-note": null,
+  "compare": null,
+  "decide": null
+ }
+}

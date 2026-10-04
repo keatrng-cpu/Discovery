@@ -1,0 +1,37 @@
+{
+ "shelf": "reverse-engineering",
+ "now": "interoperability and defensive understanding only; deterministic tools first; no decryption, no bypass",
+ "stakes": "med",
+ "gates": [
+  "decrypt",
+  "bypass"
+ ],
+ "keywords": [
+  "binary",
+  "firmware",
+  "disassembler",
+  "elf",
+  "executable",
+  "call graph",
+  "stripped",
+  "decompile",
+  "header",
+  "capture",
+  "pcap",
+  "packet",
+  "protocol",
+  "interoperability",
+  "opcode",
+  "emulation",
+  "strings"
+ ],
+ "directives": {
+  "triage": null,
+  "static": null,
+  "lift": null,
+  "dynamic": null,
+  "protocol": null,
+  "summarize": null,
+  "state": null
+ }
+}

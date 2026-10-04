@@ -1,0 +1,29 @@
+{
+ "shelf": "strategy",
+ "now": "compress reliable; analogy's does-not-transfer half is the weak part",
+ "stakes": "low",
+ "gates": [],
+ "keywords": [
+  "strategy",
+  "assumption",
+  "assumptions",
+  "kill conditions",
+  "trade-off",
+  "tradeoff",
+  "what-if",
+  "constraint",
+  "analogy",
+  "decision",
+  "roadmap",
+  "priorities",
+  "runner-up",
+  "problem statement"
+ ],
+ "directives": {
+  "compress": null,
+  "frame": null,
+  "analogy": null,
+  "constrain": null,
+  "what-if": null
+ }
+}

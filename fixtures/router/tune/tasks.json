@@ -1,0 +1,16 @@
+[
+ {
+  "id": "tune-software",
+  "task": "The unit test test_parse_dates fails after the refactor; run the build and the test and tell me when verify is clean",
+  "expect": {
+   "shelf": "software"
+  }
+ },
+ {
+  "id": "tune-research",
+  "task": "Here is my draft with five claims and two citations. Mark which claims are unsupported and find a source for the first unsupported one",
+  "expect": {
+   "shelf": "research"
+  }
+ }
+]

@@ -1,0 +1,31 @@
+{
+ "shelf": "computer-use",
+ "now": "ceiling not awarded; OSWorld numbers conflict; file memory works, transcript memory does not",
+ "stakes": "med",
+ "gates": [],
+ "keywords": [
+  "screenshot",
+  "click",
+  "browser",
+  "form",
+  "modal",
+  "screen",
+  "gui",
+  "desktop",
+  "button",
+  "dialog",
+  "window",
+  "osworld",
+  "ui action",
+  "cursor",
+  "browser tab"
+ ],
+ "directives": {
+  "perceive": null,
+  "plan": null,
+  "act": null,
+  "recover": null,
+  "remember": null,
+  "finish": null
+ }
+}

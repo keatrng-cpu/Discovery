@@ -1,0 +1,717 @@
+{
+ "generated": "from registry/shelf/*.json by desk.py merge-registry; do not edit",
+ "shelves": {
+  "software": {
+   "shelf": "software",
+   "now": "verify reliable; reproduce reliable if a harness exists; edit reliable once the plan is frozen; review and onboard assisted",
+   "stakes": "low",
+   "gates": [],
+   "keywords": [
+    "test",
+    "tests",
+    "unit test",
+    "failing test",
+    "build",
+    "compile",
+    "repo",
+    "codebase",
+    "stack trace",
+    "traceback",
+    "regression",
+    "refactor",
+    "pull request",
+    "function",
+    "commit",
+    "lint",
+    "module",
+    "endpoint",
+    "bug"
+   ],
+   "directives": {
+    "analyze": null,
+    "reproduce": null,
+    "edit": null,
+    "verify": null,
+    "migrate": null,
+    "review": null,
+    "onboard": null
+   }
+  },
+  "research": {
+   "shelf": "research",
+   "now": "assisted; deep-research URL hallucination is worse than search-augmented; volume is not reliability",
+   "stakes": "med",
+   "gates": [],
+   "keywords": [
+    "source",
+    "sources",
+    "citation",
+    "citations",
+    "literature",
+    "paper",
+    "papers",
+    "claim",
+    "claims",
+    "evidence",
+    "doi",
+    "preprint",
+    "survey",
+    "references",
+    "unsupported"
+   ],
+   "directives": {
+    "retrieve": null,
+    "extract": null,
+    "gap": null,
+    "conflict": null,
+    "synthesize": null,
+    "monitor": null
+   }
+  },
+  "scientific": {
+   "shelf": "scientific",
+   "now": "Robin-style loop is real; the model does not run the wet lab",
+   "stakes": "med",
+   "gates": [
+    "hardware-start"
+   ],
+   "keywords": [
+    "hypothesis",
+    "experiment",
+    "assay",
+    "lab",
+    "wet lab",
+    "control group",
+    "measurement",
+    "figure",
+    "manuscript",
+    "inclusion rule",
+    "reagent",
+    "replicate",
+    "outlier",
+    "result files",
+    "lab notebook"
+   ],
+   "directives": {
+    "triage": null,
+    "hypothesis": null,
+    "design": null,
+    "analyze": null,
+    "update": null,
+    "manuscript": null
+   }
+  },
+  "lab-protocols": {
+   "shelf": "lab-protocols",
+   "now": "simulated protocol graphs are strong; hardware stays gated",
+   "stakes": "high",
+   "gates": [
+    "hardware-start"
+   ],
+   "keywords": [
+    "protocol",
+    "instrument",
+    "pipette",
+    "incubate",
+    "centrifuge",
+    "reagent",
+    "graph node",
+    "liquid handler",
+    "plate",
+    "method",
+    "campaign",
+    "sample",
+    "volume",
+    "instrument action"
+   ],
+   "directives": {
+    "transcribe": null,
+    "graph": null,
+    "repair": null,
+    "campaign": null,
+    "handoff": null
+   }
+  },
+  "data": {
+   "shelf": "data",
+   "now": "profile and one-field clean reliable; define gated",
+   "stakes": "low",
+   "gates": [
+    "sign"
+   ],
+   "keywords": [
+    "dataset",
+    "csv",
+    "column",
+    "columns",
+    "rows",
+    "nulls",
+    "schema",
+    "grain",
+    "query",
+    "sql",
+    "metric",
+    "chart",
+    "table",
+    "dedupe",
+    "anomaly",
+    "reconcile",
+    "slice",
+    "pivot",
+    "extract"
+   ],
+   "directives": {
+    "profile": null,
+    "clean": null,
+    "hypothesis": null,
+    "chart": null,
+    "anomaly": null,
+    "reconcile": null,
+    "define": null
+   }
+  },
+  "markets": {
+   "shelf": "markets",
+   "now": "reliable if document-locked; no broker tool",
+   "stakes": "med",
+   "gates": [
+    "order"
+   ],
+   "keywords": [
+    "earnings",
+    "eps",
+    "guidance",
+    "filing",
+    "10-k",
+    "10-q",
+    "8-k",
+    "revenue",
+    "quarter",
+    "ticker",
+    "analyst",
+    "consensus",
+    "release",
+    "sec",
+    "stock",
+    "margin",
+    "thesis",
+    "kill condition",
+    "press release"
+   ],
+   "directives": {
+    "print": null,
+    "filing": null,
+    "cross": null,
+    "memo": null,
+    "monitor": null,
+    "scenario": null
+   }
+  },
+  "legal": {
+   "shelf": "legal",
+   "now": "authority weak; all-pass verified legal research is well under reliable; signature gated",
+   "stakes": "high",
+   "gates": [
+    "sign"
+   ],
+   "keywords": [
+    "contract",
+    "clause",
+    "agreement",
+    "indemnity",
+    "liability",
+    "termination",
+    "nda",
+    "lease",
+    "counterparty",
+    "case law",
+    "statute",
+    "redline",
+    "msa",
+    "governing law",
+    "diligence",
+    "precedent",
+    "house paper"
+   ],
+   "directives": {
+    "extract": null,
+    "risk": null,
+    "compare": null,
+    "draft": null,
+    "authority": null,
+    "diligence": null
+   }
+  },
+  "design-systems": {
+   "shelf": "design-systems",
+   "now": "reliable only if the tool rejects; prompt-only lists leak",
+   "stakes": "low",
+   "gates": [],
+   "keywords": [
+    "design system",
+    "design tokens",
+    "token",
+    "component",
+    "components",
+    "figma",
+    "spacing",
+    "typography",
+    "brand",
+    "css",
+    "style guide",
+    "palette",
+    "page type",
+    "hex",
+    "ui kit"
+   ],
+   "directives": {
+    "tokens": null,
+    "ban-list": null,
+    "components": null,
+    "flows": null,
+    "cli": null
+   }
+  },
+  "motion-games-3d": {
+   "shelf": "motion-games-3d",
+   "now": "assisted; tool success is not scene success; max effort only on opening seconds",
+   "stakes": "low",
+   "gates": [],
+   "keywords": [
+    "frame",
+    "render",
+    "animation",
+    "3d",
+    "mesh",
+    "rig",
+    "uv",
+    "unity",
+    "unreal",
+    "godot",
+    "level",
+    "shader",
+    "scene",
+    "video",
+    "timeline",
+    "keyframe",
+    "texture",
+    "contact sheet",
+    "game engine"
+   ],
+   "directives": {
+    "still": null,
+    "time": null,
+    "score": null,
+    "asset": null,
+    "level": null,
+    "engine": null
+   }
+  },
+  "audio": {
+   "shelf": "audio",
+   "now": "ceiling closed; names reliable only if the list is a tool",
+   "stakes": "low",
+   "gates": [],
+   "keywords": [
+    "audio",
+    "podcast",
+    "episode",
+    "take",
+    "takes",
+    "music",
+    "pronunciation",
+    "speech",
+    "voice",
+    "waveform",
+    "mix",
+    "hook",
+    "narration",
+    "soundtrack"
+   ],
+   "directives": {
+    "cut": null,
+    "names": null,
+    "score": null,
+    "assemble": null
+   }
+  },
+  "writing": {
+   "shelf": "writing",
+   "now": "outline reliable; draft assisted; cut can be a claim-count diff",
+   "stakes": "low",
+   "gates": [],
+   "keywords": [
+    "outline",
+    "article",
+    "essay",
+    "voice file",
+    "brand file",
+    "paragraph",
+    "headline",
+    "copy",
+    "editorial",
+    "rewrite",
+    "blog",
+    "newsletter",
+    "tone",
+    "claim count",
+    "banned defaults"
+   ],
+   "directives": {
+    "outline": null,
+    "draft": null,
+    "cut": null,
+    "variant": null,
+    "series": null,
+    "fact": null
+   }
+  },
+  "sales": {
+   "shelf": "sales",
+   "now": "assisted; useful mechanism is clustering and question generation; send and spend denied",
+   "stakes": "med",
+   "gates": [
+    "send",
+    "pay"
+   ],
+   "keywords": [
+    "buyer",
+    "prospect",
+    "customer segment",
+    "pitch",
+    "outbound",
+    "objection",
+    "lead",
+    "funnel",
+    "icp",
+    "positioning",
+    "interview quotes",
+    "landing page",
+    "a/b test",
+    "spend",
+    "go-to-market"
+   ],
+   "directives": {
+    "frame": null,
+    "cluster": null,
+    "question": null,
+    "brief": null,
+    "asset": null,
+    "test": null
+   }
+  },
+  "support": {
+   "shelf": "support",
+   "now": "classify and exception reliable as code; resolve inside a typed tool; refund, cancel, delete gated",
+   "stakes": "med",
+   "gates": [
+    "refund",
+    "cancel",
+    "delete"
+   ],
+   "keywords": [
+    "ticket",
+    "policy",
+    "refund",
+    "escalate",
+    "incident",
+    "workflow",
+    "helpdesk",
+    "sla",
+    "macro",
+    "queue",
+    "cancel",
+    "resolution",
+    "customer complaint",
+    "policy id"
+   ],
+   "directives": {
+    "classify": null,
+    "draft": null,
+    "known-path": null,
+    "exception": null,
+    "resolve": null,
+    "incident": null
+   }
+  },
+  "recruiting": {
+   "shelf": "recruiting",
+   "now": "assisted; decide stops; no hire tool",
+   "stakes": "high",
+   "gates": [
+    "hire"
+   ],
+   "keywords": [
+    "candidate",
+    "resume",
+    "req",
+    "scorecard",
+    "hiring manager",
+    "job requisition",
+    "screen",
+    "applicant",
+    "recruiter",
+    "offer",
+    "interview loop",
+    "job description"
+   ],
+   "directives": {
+    "scorecard": null,
+    "extract": null,
+    "screen-note": null,
+    "compare": null,
+    "decide": null
+   }
+  },
+  "education": {
+   "shelf": "education",
+   "now": "explain assisted to reliable; curriculum gated to a person",
+   "stakes": "low",
+   "gates": [],
+   "keywords": [
+    "student",
+    "learner",
+    "lesson",
+    "teach",
+    "concept",
+    "quiz",
+    "drill",
+    "curriculum",
+    "practice",
+    "exercise",
+    "course",
+    "grade",
+    "worked example"
+   ],
+   "directives": {
+    "explain": null,
+    "check": null,
+    "sequence": null,
+    "drill": null,
+    "curriculum": null
+   }
+  },
+  "personal-admin": {
+   "shelf": "personal-admin",
+   "now": "triage reliable on headers plus a rule; send, book, and pay denied",
+   "stakes": "med",
+   "gates": [
+    "send",
+    "book",
+    "pay"
+   ],
+   "keywords": [
+    "email",
+    "inbox",
+    "calendar",
+    "thread",
+    "meeting",
+    "agenda",
+    "schedule",
+    "invite",
+    "travel",
+    "itinerary",
+    "headers",
+    "reservation",
+    "appointment",
+    "booking",
+    "flight"
+   ],
+   "directives": {
+    "triage": null,
+    "draft": null,
+    "brief": null,
+    "pack": null,
+    "book": null,
+    "pay": null
+   }
+  },
+  "computer-use": {
+   "shelf": "computer-use",
+   "now": "ceiling not awarded; OSWorld numbers conflict; file memory works, transcript memory does not",
+   "stakes": "med",
+   "gates": [],
+   "keywords": [
+    "screenshot",
+    "click",
+    "browser",
+    "form",
+    "modal",
+    "screen",
+    "gui",
+    "desktop",
+    "button",
+    "dialog",
+    "window",
+    "osworld",
+    "ui action",
+    "cursor",
+    "browser tab"
+   ],
+   "directives": {
+    "perceive": null,
+    "plan": null,
+    "act": null,
+    "recover": null,
+    "remember": null,
+    "finish": null
+   }
+  },
+  "strategy": {
+   "shelf": "strategy",
+   "now": "compress reliable; analogy's does-not-transfer half is the weak part",
+   "stakes": "low",
+   "gates": [],
+   "keywords": [
+    "strategy",
+    "assumption",
+    "assumptions",
+    "kill conditions",
+    "trade-off",
+    "tradeoff",
+    "what-if",
+    "constraint",
+    "analogy",
+    "decision",
+    "roadmap",
+    "priorities",
+    "runner-up",
+    "problem statement"
+   ],
+   "directives": {
+    "compress": null,
+    "frame": null,
+    "analogy": null,
+    "constrain": null,
+    "what-if": null
+   }
+  },
+  "clinical-notes": {
+   "shelf": "clinical-notes",
+   "now": "documentation only; no diagnosis, no plan of care; the clinician signs",
+   "stakes": "high",
+   "gates": [
+    "sign",
+    "diagnose"
+   ],
+   "keywords": [
+    "clinical",
+    "patient",
+    "soap",
+    "encounter",
+    "clinician",
+    "chart note",
+    "visit",
+    "template field",
+    "symptom",
+    "medical note",
+    "scribe"
+   ],
+   "directives": {
+    "transcribe": null,
+    "gap": null,
+    "cite": null,
+    "sign": null
+   }
+  },
+  "security-review": {
+   "shelf": "security-review",
+   "now": "defensive only; scan is tool stdout; no exploit skill",
+   "stakes": "high",
+   "gates": [
+    "exploit",
+    "payload",
+    "bypass"
+   ],
+   "keywords": [
+    "vulnerability",
+    "cve",
+    "secret",
+    "scanner",
+    "dependency",
+    "sast",
+    "advisory",
+    "exposure",
+    "patch",
+    "security",
+    "rubric",
+    "sbom",
+    "reach",
+    "audit",
+    "secret scan"
+   ],
+   "directives": {
+    "scan": null,
+    "diff": null,
+    "rank": null,
+    "patch-review": null
+   }
+  },
+  "harness": {
+   "shelf": "harness",
+   "now": "skill and hook reliable; trace weak without a tool property; the agent does not promote itself",
+   "stakes": "med",
+   "gates": [
+    "promote"
+   ],
+   "keywords": [
+    "harness",
+    "hook",
+    "skill",
+    "memory",
+    "trace",
+    "subagent",
+    "held-out",
+    "token count",
+    "settings.json",
+    "tool registry",
+    "claude.md",
+    "append-only"
+   ],
+   "directives": {
+    "skill": null,
+    "hook": null,
+    "memory": null,
+    "trace": null,
+    "evolve": null
+   }
+  },
+  "reverse-engineering": {
+   "shelf": "reverse-engineering",
+   "now": "interoperability and defensive understanding only; deterministic tools first; no decryption, no bypass",
+   "stakes": "med",
+   "gates": [
+    "decrypt",
+    "bypass"
+   ],
+   "keywords": [
+    "binary",
+    "firmware",
+    "disassembler",
+    "elf",
+    "executable",
+    "call graph",
+    "stripped",
+    "decompile",
+    "header",
+    "capture",
+    "pcap",
+    "packet",
+    "protocol",
+    "interoperability",
+    "opcode",
+    "emulation",
+    "strings"
+   ],
+   "directives": {
+    "triage": null,
+    "static": null,
+    "lift": null,
+    "dynamic": null,
+    "protocol": null,
+    "summarize": null,
+    "state": null
+   }
+  }
+ }
+}

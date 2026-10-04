@@ -1,0 +1,30 @@
+{
+ "shelf": "design-systems",
+ "now": "reliable only if the tool rejects; prompt-only lists leak",
+ "stakes": "low",
+ "gates": [],
+ "keywords": [
+  "design system",
+  "design tokens",
+  "token",
+  "component",
+  "components",
+  "figma",
+  "spacing",
+  "typography",
+  "brand",
+  "css",
+  "style guide",
+  "palette",
+  "page type",
+  "hex",
+  "ui kit"
+ ],
+ "directives": {
+  "tokens": null,
+  "ban-list": null,
+  "components": null,
+  "flows": null,
+  "cli": null
+ }
+}

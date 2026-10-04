@@ -1,0 +1,35 @@
+{
+ "shelf": "motion-games-3d",
+ "now": "assisted; tool success is not scene success; max effort only on opening seconds",
+ "stakes": "low",
+ "gates": [],
+ "keywords": [
+  "frame",
+  "render",
+  "animation",
+  "3d",
+  "mesh",
+  "rig",
+  "uv",
+  "unity",
+  "unreal",
+  "godot",
+  "level",
+  "shader",
+  "scene",
+  "video",
+  "timeline",
+  "keyframe",
+  "texture",
+  "contact sheet",
+  "game engine"
+ ],
+ "directives": {
+  "still": null,
+  "time": null,
+  "score": null,
+  "asset": null,
+  "level": null,
+  "engine": null
+ }
+}

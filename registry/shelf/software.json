@@ -1,0 +1,36 @@
+{
+ "shelf": "software",
+ "now": "verify reliable; reproduce reliable if a harness exists; edit reliable once the plan is frozen; review and onboard assisted",
+ "stakes": "low",
+ "gates": [],
+ "keywords": [
+  "test",
+  "tests",
+  "unit test",
+  "failing test",
+  "build",
+  "compile",
+  "repo",
+  "codebase",
+  "stack trace",
+  "traceback",
+  "regression",
+  "refactor",
+  "pull request",
+  "function",
+  "commit",
+  "lint",
+  "module",
+  "endpoint",
+  "bug"
+ ],
+ "directives": {
+  "analyze": null,
+  "reproduce": null,
+  "edit": null,
+  "verify": null,
+  "migrate": null,
+  "review": null,
+  "onboard": null
+ }
+}

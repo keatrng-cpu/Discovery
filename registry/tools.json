@@ -1,0 +1,498 @@
+{
+ "_doc": "Tool registry. scope: read | draft | act. Act requires a human add (human_added true). Deny list wins. MCP catalogs are untrusted: search them, never connect them; connecting is a human accept, scope read first. alwaysLoad stays empty and MCP tool search stays on.",
+ "deny_verbs": [
+  "broker",
+  "buy",
+  "bypass",
+  "checkout",
+  "decrypt",
+  "diagnose",
+  "exploit",
+  "forward",
+  "hardware-start",
+  "hire",
+  "order",
+  "pay",
+  "payload",
+  "payment",
+  "purchase",
+  "reply",
+  "send",
+  "sign",
+  "trade"
+ ],
+ "deny_commands": [
+  "sendmail",
+  "mail",
+  "mailx",
+  "mutt",
+  "msmtp",
+  "ssmtp",
+  "swaks"
+ ],
+ "unregistered_mcp": "deny",
+ "builtin_deny": [],
+ "mcp_policy": {
+  "tool_search": "on",
+  "alwaysLoad": [],
+  "catalogs": "untrusted"
+ },
+ "tools": [
+  {
+   "name": "Bash:python3",
+   "kind": "local",
+   "scope": "read",
+   "cmd": "python3",
+   "check": "exit-code"
+  },
+  {
+   "name": "Bash:unittest",
+   "kind": "local",
+   "scope": "read",
+   "cmd": "python3 -m unittest",
+   "check": "exit-code"
+  },
+  {
+   "name": "Bash:pytest",
+   "kind": "local",
+   "scope": "read",
+   "cmd": "pytest",
+   "check": "exit-code"
+  },
+  {
+   "name": "Bash:git",
+   "kind": "local",
+   "scope": "read",
+   "cmd": "git",
+   "check": "state-diff",
+   "note": "read verbs only: diff, log, show, status, ls-files"
+  },
+  {
+   "name": "Bash:file",
+   "kind": "local",
+   "scope": "read",
+   "cmd": "file",
+   "check": "quote"
+  },
+  {
+   "name": "Bash:readelf",
+   "kind": "local",
+   "scope": "read",
+   "cmd": "readelf",
+   "check": "quote"
+  },
+  {
+   "name": "Bash:nm",
+   "kind": "local",
+   "scope": "read",
+   "cmd": "nm",
+   "check": "quote"
+  },
+  {
+   "name": "Bash:objdump",
+   "kind": "local",
+   "scope": "read",
+   "cmd": "objdump",
+   "check": "quote"
+  },
+  {
+   "name": "Bash:strings",
+   "kind": "local",
+   "scope": "read",
+   "cmd": "strings",
+   "check": "quote"
+  },
+  {
+   "name": "Bash:cmp",
+   "kind": "local",
+   "scope": "read",
+   "cmd": "cmp",
+   "check": "exit-code"
+  },
+  {
+   "name": "Bash:jq",
+   "kind": "local",
+   "scope": "read",
+   "cmd": "jq",
+   "check": "schema"
+  },
+  {
+   "name": "Bash:pdftotext",
+   "kind": "local",
+   "scope": "read",
+   "cmd": "pdftotext",
+   "check": "quote"
+  },
+  {
+   "name": "Bash:ruff",
+   "kind": "local",
+   "scope": "read",
+   "cmd": "ruff",
+   "check": "exit-code"
+  },
+  {
+   "name": "Bash:playwright",
+   "kind": "local",
+   "scope": "read",
+   "cmd": "npx",
+   "check": "state-diff",
+   "note": "npx playwright screenshot; chromium at /opt/pw-browsers/chromium-1194"
+  },
+  {
+   "name": "Bash:localsearch",
+   "kind": "local",
+   "scope": "read",
+   "cmd": "python3",
+   "check": "quote",
+   "note": "desk/tools/localsearch.py: offline corpus search that logs every query; held-out harness for retrieval directives"
+  },
+  {
+   "name": "mcp__FireCrawl__firecrawl_search",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "note": "production retrieval; keyless session has usage limits"
+  },
+  {
+   "name": "mcp__FireCrawl__firecrawl_scrape",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote"
+  },
+  {
+   "name": "mcp__FireCrawl__firecrawl_research_search_papers",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote"
+  },
+  {
+   "name": "mcp__FireCrawl__firecrawl_research_read_paper",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote"
+  },
+  {
+   "name": "mcp__Alpha_Vantage_MCP_Server__EARNINGS",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "note": "reportedEPS cross-check for markets print; never the check itself"
+  },
+  {
+   "name": "mcp__Alpha_Vantage_MCP_Server__EARNINGS_CALL_TRANSCRIPT",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote"
+  },
+  {
+   "name": "mcp__Alpha_Vantage_MCP_Server__INCOME_STATEMENT",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema"
+  },
+  {
+   "name": "mcp__github__get_file_contents",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote"
+  },
+  {
+   "name": "mcp__github__pull_request_read",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote"
+  },
+  {
+   "name": "mcp__github__issue_read",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote"
+  },
+  {
+   "name": "mcp__github__search_code",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote"
+  },
+  {
+   "name": "mcp__github__run_secret_scanning",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "exit-code",
+   "note": "security scan is tool stdout"
+  },
+  {
+   "name": "mcp__Supabase__execute_sql",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "count",
+   "note": "SELECT only; any write is act and is not registered"
+  },
+  {
+   "name": "mcp__Supabase__list_tables",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema"
+  },
+  {
+   "name": "mcp__Supabase__search_docs",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "note": "docs server for library facts"
+  },
+  {
+   "name": "mcp__Figma__get_variable_defs",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "note": "design-file read for tokens"
+  },
+  {
+   "name": "mcp__Figma__get_design_context",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote"
+  },
+  {
+   "name": "mcp__Figma__get_screenshot",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "state-diff"
+  },
+  {
+   "name": "mcp__Vercel__search_vercel_documentation",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote",
+   "note": "docs server"
+  },
+  {
+   "name": "mcp__Google_Calendar__list_events",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema",
+   "note": "calendar data for real overlaps"
+  },
+  {
+   "name": "mcp__Gmail__search_threads",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema"
+  },
+  {
+   "name": "mcp__Gmail__get_thread",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "quote"
+  },
+  {
+   "name": "mcp__Gmail__create_draft",
+   "kind": "mcp",
+   "scope": "draft",
+   "check": "state-diff",
+   "note": "draft-only mail; send is absent"
+  },
+  {
+   "name": "mcp__Windsor_ai__get_data",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema"
+  },
+  {
+   "name": "mcp__Semrush__keyword_research",
+   "kind": "mcp",
+   "scope": "read",
+   "check": "schema"
+  },
+  {
+   "name": "mcp__github__create_pull_request",
+   "kind": "mcp",
+   "scope": "act",
+   "human_added": true,
+   "added_by": "session instruction: open a draft PR after a push",
+   "check": "state-diff"
+  },
+  {
+   "name": "mcp__claude-code-remote__subscribe_pr_activity",
+   "kind": "mcp",
+   "scope": "act",
+   "human_added": true,
+   "added_by": "session instruction: watch the PR after creating it",
+   "check": "state-diff"
+  },
+  {
+   "name": "mcp__github__merge_pull_request",
+   "kind": "mcp",
+   "scope": "act",
+   "human_added": false
+  },
+  {
+   "name": "mcp__Gmail__send_message",
+   "kind": "mcp",
+   "scope": "act",
+   "human_added": false
+  },
+  {
+   "name": "mcp__Google_Calendar__create_event",
+   "kind": "mcp",
+   "scope": "act",
+   "human_added": false
+  },
+  {
+   "name": "mcp__Vercel__buy_domain",
+   "kind": "mcp",
+   "scope": "act",
+   "human_added": false
+  },
+  {
+   "name": "mcp__Zapier__execute_zapier_write_action",
+   "kind": "mcp",
+   "scope": "act",
+   "human_added": false
+  },
+  {
+   "name": "mcp__Windsor_ai__execute_action",
+   "kind": "mcp",
+   "scope": "act",
+   "human_added": false
+  }
+ ],
+ "proposed": [
+  {
+   "name": "cite-resolution API (court-opinion citation lookup)",
+   "scope": "read",
+   "human_add_required": true,
+   "verified": false,
+   "why": "turns legal authority from a judgment into resolve-or-drop; availability and terms not verified by the lead"
+  },
+  {
+   "name": "read-only database role (profile and print)",
+   "scope": "read",
+   "human_add_required": true,
+   "verified": false,
+   "why": "data profile counts from a database instead of a model read"
+  },
+  {
+   "name": "engine connector (named system, editor check)",
+   "scope": "read",
+   "human_add_required": true,
+   "verified": false,
+   "why": "games level and engine directives need an editor-side path check"
+  },
+  {
+   "name": "headless disassembler with a call-graph export",
+   "scope": "read",
+   "human_add_required": true,
+   "verified": false,
+   "why": "reverse-engineering static needs a tool that regenerates the graph"
+  },
+  {
+   "name": "emulator with a trace export",
+   "scope": "read",
+   "human_add_required": true,
+   "verified": false,
+   "why": "reverse-engineering dynamic compares a trace to the static claim"
+  }
+ ],
+ "absent": [
+  {
+   "name": "broker or order tool",
+   "needed_for": "markets (any order)",
+   "why": "gated by design; never added"
+  },
+  {
+   "name": "mail send tool",
+   "needed_for": "personal-admin draft, sales test",
+   "why": "gated by design; draft-only mail is registered"
+  },
+  {
+   "name": "payment tool",
+   "needed_for": "personal-admin pay, support resolve (refund)",
+   "why": "gated by design"
+  },
+  {
+   "name": "hiring tool",
+   "needed_for": "recruiting decide",
+   "why": "gated by design"
+  },
+  {
+   "name": "signature tool",
+   "needed_for": "legal, data define, clinical sign",
+   "why": "gated by design"
+  },
+  {
+   "name": "instrument or hardware control",
+   "needed_for": "lab-protocols campaign",
+   "why": "gated by design; a person starts hardware"
+  },
+  {
+   "name": "cite-resolution service",
+   "needed_for": "legal authority",
+   "why": "not connected in this environment"
+  },
+  {
+   "name": "disassembler",
+   "needed_for": "reverse-engineering static, lift",
+   "why": "not registered in this environment"
+  },
+  {
+   "name": "emulator",
+   "needed_for": "reverse-engineering dynamic",
+   "why": "not registered in this environment"
+  },
+  {
+   "name": "game engine or 3D editor connector",
+   "needed_for": "motion-games-3d level, engine, asset",
+   "why": "not connected in this environment"
+  },
+  {
+   "name": "audio editor or pronunciation list service",
+   "needed_for": "audio cut, names, score, assemble",
+   "why": "not connected in this environment"
+  },
+  {
+   "name": "schema validator for protocol graphs",
+   "needed_for": "lab-protocols graph, repair",
+   "why": "no graph schema supplied; jsonschema not assumed"
+  },
+  {
+   "name": "ISA-specific disassembly for unknown architectures",
+   "needed_for": "reverse-engineering lift on unknown targets",
+   "why": "out of reach by design"
+  },
+  {
+   "name": "n8n MCP",
+   "needed_for": "automation",
+   "why": "failed to connect this session"
+  }
+ ],
+ "models_as_tools": [
+  {
+   "name": "worker",
+   "model": "sonnet",
+   "effort": "medium",
+   "isolation": "worktree",
+   "use": "one shelf or one repeated transform"
+  },
+  {
+   "name": "verifier",
+   "model": "opus",
+   "effort": "high",
+   "sees_draft": false,
+   "use": "cross-check done-when from the claims table only"
+  },
+  {
+   "name": "planner",
+   "model": "opus",
+   "effort": "high",
+   "use": "L3 plan or the three L4 short plans"
+  },
+  {
+   "name": "gate",
+   "model": "sonnet",
+   "effort": "medium",
+   "use": "prepare an irreversible action and stop; holds no act tool"
+  }
+ ]
+}

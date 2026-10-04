@@ -1,0 +1,17 @@
+{
+ "shelf": "reverse-engineering",
+ "directive": "triage",
+ "command": "python3 fixtures/re-triage/check.py",
+ "tool": "Bash:file",
+ "scope": "read",
+ "rung": "L0",
+ "checkKind": "exit-code",
+ "status": "reliable",
+ "tune": "fixtures/re-triage/tune",
+ "heldout": "fixtures/re-triage/heldout",
+ "heldoutCheck": "python3 fixtures/re-triage/check.py --fixture heldout --out artifacts/seeds/reverse-engineering-triage.heldout.out.json",
+ "doneWhen": "`python3 fixtures/re-triage/check.py --fixture <dir> --out <out.json>` exits 0: for each file the output equals what the checker parses from `file` and `readelf -h` itself, or is {\"stop\":\"tools disagree\"} when the tools error or disagree, or {\"unsupported\":\"not ELF\"}.",
+ "outputSpec": "{\"<filename>\":{\"format\",\"class\",\"endian\",\"arch\",\"entry\"} | {\"stop\":\"tools disagree\"} | {\"unsupported\":\"not ELF\"}}",
+ "forbidden": "any field the tools did not emit; continuing past a disagreement; anything beyond identification (no decryption, no bypass)",
+ "checkRunnable": true
+}
