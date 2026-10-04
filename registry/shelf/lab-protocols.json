@@ -46,7 +46,7 @@
   },
   "graph": {
    "trigger": "Transcribed steps and a graph schema are present and the ask is a graph; quiet when no schema is supplied.",
-   "doneWhen": "jq -e filter encoding the supplied schema's required node fields (id, action, params object, source step locator) exits 0 over the graph file, exit code quoted; one node per instrument action with parameters as node fields; GAP stays a GAP field; empty step list gives an empty graph that exits 0.",
+   "doneWhen": "jq -e filter encoding the supplied schema's required node fields (id, action, params object, source step locator) and edge fields (from and to each equal an existing node id, handoff names the material or output passed) exits 0 over the graph file, exit code quoted; every edge without a handoff field or with a dangling id fails; one node per instrument action with parameters as node fields; GAP stays a GAP field; empty step list gives an empty graph and empty edge list that exits 0.",
    "checkKind": "schema",
    "rung": "L1",
    "forbidden": "Fake edges: linking adjacent nodes without a real handoff, or putting parameters in prose.",
@@ -70,7 +70,7 @@
   },
   "repair": {
    "trigger": "A graph and validator output naming a failing node are present; quiet when no node is named.",
-   "doneWhen": "git diff -U0 of the graph file mapped to the named node's line range shows changed lines outside that node: 0, count quoted; clean graph with empty diff is valid.",
+   "doneWhen": "Validator re-run on the repaired graph: diff of validator output before vs after (git diff --no-index, output quoted) shows the named node's error line removed and zero added error lines, and the re-run exit code is quoted; clean graph with empty diff is valid.",
    "checkKind": "state-diff",
    "rung": "L1",
    "forbidden": "Restyling the rest of the graph: reordering keys, renaming nodes, reformatting, or touching an unnamed node.",
@@ -93,9 +93,9 @@
   },
   "campaign": {
    "trigger": "A validated graph and a goal for repeated runs are present; the skill prepares the plan and stops.",
-   "doneWhen": "Campaign file holds per-parameter bounds set before the loop, a stop condition, and an iteration log schema; STARTED-BY line stays blank until a person writes it; confirmation is a person's.",
-   "checkKind": "human-only",
-   "rung": "L3",
+   "doneWhen": "jq -e filter over the campaign file exits 0, exit code quoted: every parameter has min and max set before the loop, a stop condition field is non-empty, the iteration log schema has the required fields and zero entries; grep -c '^STARTED-BY:$' prints 1 (line blank until a person writes it); a person starting the hardware is the gate, not part of this check.",
+   "checkKind": "schema",
+   "rung": "L1",
    "forbidden": "Starting or simulating-as-real a hardware run, or writing a loop with no bound or stop condition.",
    "tool": "none",
    "toolScope": "none",
@@ -116,7 +116,7 @@
   },
   "handoff": {
    "trigger": "A graph file and an editor-format target, or a manually edited copy to resync, are present; quiet without an editor format.",
-   "doneWhen": "jq -e . exits 0 on the editor-format file and the jq node projection (id, action, params) of graph file vs editor file diffs empty; after resync diff vs the pre-edit graph shows changes only in person-edited nodes, untouched nodes that differ 0, edited values appear; no edit gives an empty diff.",
+   "doneWhen": "Diff of the jq node projection (id, action, params) of the resynced graph file and of the editor-format file against the expected projection (pre-edit graph with only the person's edits applied) is empty for both views, differing nodes: 0, count quoted; edited values appear; no manual edit gives an empty diff.",
    "checkKind": "state-diff",
    "rung": "L1",
    "forbidden": "Rewriting untouched nodes on resync: regenerating the graph, renumbering ids, or reordering nodes.",

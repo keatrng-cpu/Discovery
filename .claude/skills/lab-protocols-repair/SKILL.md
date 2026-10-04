@@ -6,10 +6,10 @@ description: Use when a protocol graph fails its validator and exactly the faili
 A graph and validator output that names a failing node id are both present. Quiet when the validator names no node: report "node: unnamed" and stop.
 ## Done-when
 check: state-diff
-`git diff -U0` of the graph file, with each hunk mapped to the named node's line range by program, shows changed lines outside that node: 0; the count is quoted. The validator output that named the node is an input to the skill, not a second check. A graph already clean gives an empty diff and is a valid result.
+Re-run the validator on the repaired graph and save its output. A diff of validator output before vs after (git diff --no-index) is quoted, with the re-run exit code: the named node's error line is removed and added error lines: 0. A graph already clean gives an empty diff and is a valid result.
 ## Rung
 rung: L1
-One fast-model pass edits one node; git does the diff. Escalate only if the node still fails after one edit.
+One fast-model pass edits one node; the validator and git do the checking. Escalate only if the node still fails after one edit.
 ## Forbidden move
 Restyling the rest of the graph: reordering keys, renaming nodes, reformatting whitespace, or touching a node the validator did not name.
 ## Tool
