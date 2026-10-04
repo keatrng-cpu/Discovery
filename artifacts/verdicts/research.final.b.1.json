@@ -1,0 +1,8 @@
+{"shelf":"research","lens":"b","vote":1,"verdicts":[
+{"directive":"retrieve","pass":true,"reason":"All rules hold: ungated read scrape tool is registered with matching scope, the done-when is one schema over one retrieval record with a count identity, L1 fits, and the forbidden move names the brief's invented-identifier and recap-over-primary failures."},
+{"directive":"extract","pass":true,"reason":"All rules hold: Bash:pdftotext is registered read, one substring-match check covers every item with unit and scope fields, and the forbidden move names the brief's paraphrase-under-compression and number-without-unit-or-sample failures."},
+{"directive":"gap","pass":true,"reason":"All rules hold: one check.py command with one exit code, registered read tool Bash:localsearch, L1, and the forbidden move names the brief's keeps-searching-after-the-gap failure."},
+{"directive":"conflict","pass":true,"reason":"All rules hold: one composite python3 script exit code, registered read tool, L1 is not dearer than needed, and the forbidden move names the brief's averaging-in-the-sentence-after failure."},
+{"directive":"synthesize","pass":true,"reason":"All rules hold: one python3 script with one exit code asserts one-source-or-label per sentence and answer-first ordering, tool registered read, and the forbidden move names the brief's unsupported-sentence failure."},
+{"directive":"monitor","pass":true,"reason":"All rules hold: one memo_monitor.py command with one exit code computes expiry in code, Bash:python3 is registered read, and the forbidden move names the brief's model-clock and lost-old-conclusion failures."}
+]}

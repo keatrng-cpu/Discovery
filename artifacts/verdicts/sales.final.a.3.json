@@ -1,0 +1,8 @@
+{"shelf":"sales","lens":"a","vote":3,"verdicts":[
+{"directive":"brief","pass":true,"reason":"all rules hold: a python3 exit code checks quotes against the scraped page text, no stray digits, one objection line and prepared before meeting; unsupported and N=0 count as results, the status is assisted as the brief rates it, and checkRunnable is honestly false."},
+{"directive":"asset","pass":false,"reason":"A1 fails: the check must match a segment named in brief.md, but the brief directive's done-when defines no segment line or locator, so no program can read that segment."},
+{"directive":"test","pass":true,"reason":"all rules hold: a jq schema exit code checks smallest_action, cap, kill_result and gate; the status is gated, within the brief's assisted-plan, gated-send rating; send and spend stay with absent tools, and checkRunnable is honestly false."},
+{"directive":"frame","pass":true,"reason":"all rules hold: a jq exit code requires a non-empty buyer, job and pays_for, frames without a buyer are dropped and counted, an empty [] passes, the status matches the brief's Assisted, and checkRunnable is false, which is not an overclaim."},
+{"directive":"cluster","pass":true,"reason":"all rules hold: a python3 exit code checks a verbatim quote at its cited line under each group, zero quotes in gives 0/0 and exits 0, and the status is assisted, which does not exceed the brief's assisted-to-reliable rating."},
+{"directive":"question","pass":true,"reason":"all rules hold: a jq exit code requires a trailing '?', a non-empty refuted_if and no answer key (the block the brief's reliable rating depends on), an empty list passes, and checkRunnable is honestly false."}
+]}

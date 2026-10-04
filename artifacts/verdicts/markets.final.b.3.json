@@ -1,0 +1,8 @@
+{"shelf":"markets","lens":"b","vote":3,"verdicts":[
+{"directive":"memo","pass":true,"reason":"All rules hold: gated with tool none and the gate naming the absent broker/order, one memo_check.py exit code asserting every clause, L1 fits, forbidden matches the brief's unobservable kill condition and no order or size."},
+{"directive":"monitor","pass":true,"reason":"All rules hold: Bash:git is registered at read scope, one card_check.py exit code covers compare/expire/kill/delta, L1 fits, forbidden mirrors the brief's delta/expire/keep-kill directive, and the clock is correctly treated as code."},
+{"directive":"scenario","pass":true,"reason":"All rules hold: gated with tool none naming the absent broker/order per the brief's order gate, one scenario_check.py exit code, L1 fits, and forbidden names the brief's stated failure of moving two variables."},
+{"directive":"print","pass":true,"reason":"All rules hold: tool none and ungated with no deny verb, one existing check.py exit code asserts every field, L1 fits extraction plus program, forbidden names the brief's recap-number failure, and the EDGAR fetch connector is not registered."},
+{"directive":"filing","pass":true,"reason":"All rules hold: Bash:pdftotext is registered at read scope, a quote plus its locator is one composite check with one pass/fail, L1 fits, forbidden names the brief's recap and slipping tables/exhibits failure, and the EDGAR connector is unregistered."},
+{"directive":"cross","pass":false,"reason":"B3 fails: the program only confirms each quote appears in its source, so the required filing/news labels and the agree/disagree/unplaced verdict are not asserted by that one exit code and need a separate schema check."}
+]}
