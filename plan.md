@@ -92,3 +92,6 @@ The 35 still voted down fail on: A3 (done-when does not enforce an element the b
 - The route log (ids and a char count, no prompt text) is written to the ignored trace directory but nothing joins it to tool use yet.
 - Account skill descriptions (the firecrawl skill's is two words) cannot be changed from this repo.
 - `mcp__Supabase__execute_sql` is registered read; a scope label cannot stop a write, so the rule is SELECT only by instruction.
+
+### Tool-name check (live)
+All 249 tool names the map loads or marks never_auto resolve through ToolSearch (`artifacts/caps/live_check.json`). The first check I ran against the session transcript was circular and proved nothing, so it was discarded. A haiku subagent then resolved the names in 13 batches and reported 249 of 249. Its recorded tool results contained 247; the two it filed without a result (`mcp__Semrush__site_audit`, `mcp__github__update_pull_request`) were resolved by a direct ToolSearch call. The evidence file records that discrepancy.
