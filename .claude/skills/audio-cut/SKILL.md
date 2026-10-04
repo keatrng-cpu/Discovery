@@ -6,7 +6,7 @@ description: Use when one named region of one take needs tightening (trim a paus
 One take file and one region given as start and end times. Quiet when the ask spans the whole episode, reorders takes, or has no region bounds.
 ## Done-when
 check: state-diff
-A python3 script compares the take before and after: every sample outside the region bounds is byte-identical (exit 0, prints "outside-region: N/N samples unchanged"), and the duration change is reported in seconds. A cut that declines to change the region is a valid result.
+One python3 check script, with the take before and after plus a listen-note file for the region as inputs, exits 0 only if: the same take file is kept (no new take), every sample outside the region bounds is byte-identical (prints "outside-region: N/N samples unchanged"), the region itself is the only part tightened (duration change reported in seconds), and the listen-note file records a person listening to that region (prints "listen: region noted"). The script is not in the repo yet; the desk would run it. A cut that declines to change the region is a valid result.
 ## Rung
 rung: L1
 One fast-model pass picks the trim points inside the region; code does the diff (the L1 pass is the judgment, the diff is the only check). Escalate only if the diff shows a changed sample outside the region.

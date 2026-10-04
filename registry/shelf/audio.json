@@ -22,7 +22,7 @@
  "directives": {
   "cut": {
    "trigger": "One take file and one region with start and end times; quiet for episode-wide restitch or reorder.",
-   "doneWhen": "python3 diff script exits 0 printing 'outside-region: N/N samples unchanged'; a no-op cut is valid.",
+   "doneWhen": "One python3 check script exits 0 printing 'outside-region: N/N samples unchanged' and 'listen: region noted' only if the same take file is kept, only the region is tightened, and a listen note for that region exists; a no-op cut is valid.",
    "checkKind": "state-diff",
    "rung": "L1",
    "forbidden": "Restitching the episode: changing, moving, or re-joining anything outside the named region.",
@@ -45,7 +45,7 @@
   },
   "names": {
    "trigger": "A script or transcript and a pronunciation list file are present; no list means report no list and stop.",
-   "doneWhen": "python3 script loads the pronunciation list file itself and exits 0 whenever the list was read, printing 'missing: <name> line <n>' for each proper noun not on the list (a flag is a valid result, not a failure) and 'names: K/N listed'; empty script prints 'names: 0/0'; exits non-zero only if the list file is unreadable.",
+   "doneWhen": "python3 script loads the pronunciation list file itself and exits 0 on every completed run, printing 'missing: <name> line <n>' for each proper noun not on the list (a flag is a valid result, not a failure) and 'names: K/N listed'; empty script prints 'names: 0/0'; an unreadable or absent list prints 'no list' and also exits 0 as a reported result.",
    "checkKind": "exit-code",
    "rung": "L1",
    "forbidden": "Guessing a pronunciation or spelling for a proper noun not on the list instead of flagging it.",
@@ -68,7 +68,7 @@
   },
   "score": {
    "trigger": "A rule file and existing music assets are present; quiet when asked to compose a new theme.",
-   "doneWhen": "python3 script exits 0 only if the hook cue lies inside its rule window using a rule-named asset, printing 'hook: ok'; unplaced hook prints 'hook: absent' and is valid.",
+   "doneWhen": "python3 script exits 0 when the hook cue lies inside its rule window using a rule-named asset (prints 'hook: ok') or when the hook is unplaced (prints 'hook: absent', a valid result); exits non-zero only for a placed hook outside its window or using an unnamed asset.",
    "checkKind": "exit-code",
    "rung": "L1",
    "forbidden": "Composing or generating a new theme to fill the hook, or placing a cue the rule file does not name.",
