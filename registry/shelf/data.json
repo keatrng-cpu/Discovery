@@ -54,7 +54,7 @@
   },
   "clean": {
    "trigger": "One named column and one named rule (trim, cast, dedupe, null-fill, drop). Quiet when the ask names several fields or says clean the data with no field; ask for one field.",
-   "doneWhen": "`python3` applies the one rule and prints \"rows before: N\", \"rows after: M\", \"dropped: K\", and writes dropped.csv holding all K dropped rows. Check: N = M + K, dropped.csv has K data rows, and every column other than the named field is byte-identical to the input. K = 0 with an empty dropped.csv is a valid result.",
+   "doneWhen": "`python3` applies the one rule and prints \"rows before: N\", \"rows after: M\", \"dropped: K\", and writes dropped.csv holding all K dropped rows. Check: N = M + K, where K equals the data-row count of dropped.csv. K = 0 with an empty dropped.csv is a valid result.",
    "checkKind": "count",
    "rung": "L0",
    "forbidden": "Cleaning a second field in the same directive (the loose-directive failure), or deleting dropped rows instead of keeping them queryable.",
@@ -79,7 +79,7 @@
   },
   "hypothesis": {
    "trigger": "A question of the form compare A to B over a slice. Quiet when a chart is requested before the query exists; write the query first.",
-   "doneWhen": "A file hypothesis.md holds a line \"comparison: ...\", a line \"slice: ...\" and a fenced saved query. Check: running the saved query with `python3` exits 0. An empty result set is valid: report \"rows: 0\".",
+   "doneWhen": "A file hypothesis.md holds a line \"comparison: ...\", a line \"slice: ...\" and a fenced saved query. Check: one `python3` run of that saved query exits 0, and the directory listing before and after the directive differs only by hypothesis.md (no png, svg or chart html added). An empty result set is valid: report \"rows: 0\".",
    "checkKind": "exit-code",
    "rung": "L1",
    "forbidden": "Jumping to a chart (adding a png, svg or chart html) before the query is saved, or writing a comparison with no slice.",
@@ -104,7 +104,7 @@
   },
   "chart": {
    "trigger": "A saved query and its result are present and a chart is asked for. Quiet when the query is missing or the ask adds extra series.",
-   "doneWhen": "The chart spec (json or svg source) names the query file as its data source. Check: one labeled value is quoted from the chart spec with file and line, the same value is quoted from the query result with file and line, and the two are equal.",
+   "doneWhen": "The chart spec (json or svg source) names the query file as its data source. Check: one `python3` run over the spec quotes, each with file and line, the title (which must contain the hypothesis.md \"comparison:\" text), the series count (must be 1 unless the ask said otherwise), and one labeled value that equals the same value quoted from the query result; any inequality exits nonzero.",
    "checkKind": "quote",
    "rung": "L1",
    "forbidden": "Adding a decorative second series (the spec must keep exactly one series unless the ask said otherwise), a title that does not name the saved comparison line, or plotting values not taken from the saved query result.",
@@ -129,10 +129,10 @@
   },
   "anomaly": {
    "trigger": "A metric spike, dip or odd value with a data file or query. Quiet when the ask is why it happened; isolate first.",
-   "doneWhen": "`python3` filters the slice, recomputes the metric on it, and prints \"anomaly: <row id or date>\" with the recomputed value and the original value. Check: slice row count is above 0 and both values are printed, or the output says \"anomaly: none\" and exits 0. No cause statement appears before that output.",
+   "doneWhen": "`python3` filters the slice, recomputes the metric on it, and prints \"anomaly: <row id or date>\" with the recomputed value and the original value. Check: slice row count is above 0 and both values are printed, or the output says \"anomaly: none\" and exits 0.",
    "checkKind": "count",
    "rung": "L1",
-   "forbidden": "Offering a cause story before the slice has rerun.",
+   "forbidden": "Offering a cause story before the slice has rerun (a rule for the writer; the count check does not read it).",
    "tool": "Bash:python3",
    "toolScope": "read",
    "gated": false,

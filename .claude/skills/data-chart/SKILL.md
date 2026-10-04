@@ -6,7 +6,7 @@ description: Use when a chart must be bound to an existing saved query result. Q
 A saved query and its result are present and a chart is asked for. Quiet when the query is missing or the ask adds extra series.
 ## Done-when
 check: quote
-The chart spec (json or svg source) names the query file as its data source. Check: one labeled value is quoted from the chart spec with file and line, the same value is quoted from the query result with file and line, and the two are equal.
+The chart spec (json or svg source) names the query file as its data source. Check: one `python3` run over the spec quotes, each with file and line, the title (which must contain the hypothesis.md "comparison:" text), the series count (must be 1 unless the ask said otherwise), and one labeled value that equals the same value quoted from the query result; any inequality exits nonzero.
 ## Rung
 rung: L1
 One fast-model pass writes the spec; python3 reads back the value and series count. Escalate only on a value mismatch.

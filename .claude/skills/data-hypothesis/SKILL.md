@@ -6,7 +6,7 @@ description: Use when a comparison and slice need writing as a saved query, with
 A question of the form compare A to B over a slice. Quiet when a chart is requested before the query exists; write the query first.
 ## Done-when
 check: exit-code
-A file hypothesis.md holds a line "comparison: ...", a line "slice: ..." and a fenced saved query. Check: running the saved query with `python3` exits 0. An empty result set is valid: report "rows: 0".
+A file hypothesis.md holds a line "comparison: ...", a line "slice: ..." and a fenced saved query. Check: one `python3` run of that saved query exits 0, and the directory listing before and after the directive differs only by hypothesis.md (no png, svg or chart html added). An empty result set is valid: report "rows: 0".
 ## Rung
 rung: L1
 One fast-model pass drafts comparison, slice and query; python3 runs it. Escalate only if the query fails to run.

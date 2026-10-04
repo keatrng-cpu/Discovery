@@ -6,7 +6,7 @@ description: Use when exactly one field needs exactly one rule applied with befo
 One named column and one named rule (trim, cast, dedupe, null-fill, drop). Quiet when the ask names several fields or says clean the data with no field; ask for one field.
 ## Done-when
 check: count
-`python3` applies the one rule and prints "rows before: N", "rows after: M", "dropped: K", and writes dropped.csv holding all K dropped rows. Check: N = M + K, dropped.csv has K data rows, and every column other than the named field is byte-identical to the input. K = 0 with an empty dropped.csv is a valid result.
+`python3` applies the one rule and prints "rows before: N", "rows after: M", "dropped: K", and writes dropped.csv holding all K dropped rows. Check: N = M + K, where K equals the data-row count of dropped.csv. K = 0 with an empty dropped.csv is a valid result.
 ## Rung
 rung: L0
 Code alone: one deterministic rule per run. If the rule is ambiguous, stop and ask rather than escalate.
