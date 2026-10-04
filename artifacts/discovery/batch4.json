@@ -1,0 +1,418 @@
+[
+ {
+  "id": "P31",
+  "name": "plugin-dev (Anthropic)",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Plugin development toolkit: skills for creating agents, commands, hooks, MCP integrations, and plugin structure guidance.",
+  "facts": "7 skills (agent-development, command-development, hook-development, mcp-integration, plugin-settings, plugin-structure, skill-development), a create-plugin command, 3 agents (agent-creator, plugin-validator, skill-reviewer). Anthropic.",
+  "readiness": 2,
+  "reach": "privileged",
+  "tier": "anthropic"
+ },
+ {
+  "id": "P32",
+  "name": "frontend-design (Anthropic)",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Frontend design skill for UI/UX implementation.",
+  "facts": "1 skill, no MCP, no hooks. Anthropic.",
+  "readiness": 3,
+  "reach": "contained",
+  "tier": "anthropic"
+ },
+ {
+  "id": "P33",
+  "name": "commit-commands (Anthropic)",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Streamline the git workflow with commands for committing, pushing, and creating pull requests.",
+  "facts": "3 commands: commit, commit-push-pr, clean_gone. Anthropic.",
+  "readiness": 2,
+  "reach": "privileged",
+  "tier": "anthropic"
+ },
+ {
+  "id": "P34",
+  "name": "feature-dev (Anthropic)",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Comprehensive feature development workflow with specialized agents for codebase exploration, architecture design, and quality review.",
+  "facts": "1 command, 3 agents (code-architect, code-explorer, code-reviewer). Anthropic.",
+  "readiness": 3,
+  "reach": "contained",
+  "tier": "anthropic"
+ },
+ {
+  "id": "A:K02",
+  "name": "Supabase",
+  "type": "connector",
+  "status": "installed",
+  "desc": "Manage databases, authentication, and storage.",
+  "facts": "Tools: execute_sql, apply_migration, list_tables, get_advisors, query_logs, deploy_edge_function, search_docs, branches, generate_typescript_types.",
+  "readiness": 5
+ },
+ {
+  "id": "P35",
+  "name": "small-business (Anthropic Knowledge Work)",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Pre-built small business workflows to run and grow a business; you approve every step that touches money or customers.",
+  "facts": "About 42 skills incl. review-reputation, seo-ai-visibility, invoice-chase, speed-to-lead, lead-finder, call-list, crm-autopilot, cash-flow-snapshot, close-month, tax-prep, inbox-manager, ad-manager. About 35 MCP servers incl. stripe, quickbooks, gmail, google-calendar, hubspot, mailchimp, square, xero, zapier, notion, slack, canva.",
+  "readiness": 2,
+  "reach": "remote",
+  "tier": "anthropic"
+ },
+ {
+  "id": "P36",
+  "name": "legal (Anthropic Knowledge Work)",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Speed up contract review, NDA triage, and compliance workflows; draft briefs, organize precedent research, manage institutional knowledge.",
+  "facts": "9 skills (review-contract, triage-nda, compliance-check, legal-risk-assessment, signature-request, vendor-check, brief); MCP: docusign, box, egnyte, gmail, google calendar, slack, atlassian.",
+  "readiness": 2,
+  "reach": "remote",
+  "tier": "anthropic"
+ },
+ {
+  "id": "P37",
+  "name": "corporate-legal (Anthropic)",
+  "type": "plugin",
+  "status": "available",
+  "desc": "M&A diligence with cited tabular review, disclosure schedules, closing checklists, board consents and minutes in house format, entity compliance deadlines across jurisdictions.",
+  "facts": "13 skills incl. entity-compliance, board-minutes, written-consent, tabular-review, diligence-issue-extraction; 1 agent (dataroom-watcher); MCP: Box, Google Drive, Slack, iManage.",
+  "readiness": 2,
+  "reach": "remote",
+  "tier": "anthropic"
+ },
+ {
+  "id": "P38",
+  "name": "ip-legal (Anthropic)",
+  "type": "plugin",
+  "status": "available",
+  "desc": "First-pass trademark clearance and freedom-to-operate triage, invention disclosure screening, cease-and-desist and DMCA takedown drafting, open source compliance, IP clause review, registration and renewal tracking.",
+  "facts": "12 skills incl. clearance, fto-triage, cease-desist, takedown, oss-review, portfolio; agent ip-renewal-watcher; MCP: CourtListener, Descrybe, Google Drive, Slack.",
+  "readiness": 2,
+  "reach": "remote",
+  "tier": "anthropic"
+ },
+ {
+  "id": "P39",
+  "name": "operations (Anthropic Knowledge Work)",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Vendor management, process documentation, change management, capacity planning, compliance tracking.",
+  "facts": "9 skills (runbook, status-report, vendor-review, process-doc, risk-assessment, capacity-plan); MCP: asana, atlassian, gmail, google calendar, notion, slack.",
+  "readiness": 2,
+  "reach": "remote",
+  "tier": "anthropic"
+ },
+ {
+  "id": "P40",
+  "name": "design (Anthropic Knowledge Work)",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Design critique, design system management, UX writing, accessibility audits, research synthesis, dev handoff.",
+  "facts": "7 skills (design-critique, accessibility-review, design-handoff, design-system, ux-copy, user-research); MCP: figma, linear, asana, intercom, notion, slack, gmail.",
+  "readiness": 2,
+  "reach": "remote",
+  "tier": "anthropic"
+ },
+ {
+  "id": "P41",
+  "name": "playwright (Microsoft MCP plugin)",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Browser automation and end-to-end testing MCP server by Microsoft: interact with pages, take screenshots, fill forms, click elements, run automated browser tests.",
+  "facts": "1 MCP server, no skills. Partner.",
+  "readiness": 2,
+  "reach": "remote",
+  "tier": "partner"
+ },
+ {
+  "id": "A:K12",
+  "name": "Zapier",
+  "type": "connector",
+  "status": "installed",
+  "desc": "Automate workflows across thousands of apps via conversation.",
+  "facts": "Server text says 9,000+ apps. Tools: discover and enable actions, execute read actions, execute write actions, skills, connections.",
+  "readiness": 5
+ },
+ {
+  "id": "P42",
+  "name": "Browser Use",
+  "type": "plugin",
+  "status": "available",
+  "desc": "A real browser for Claude, your Chrome or a Browser Use Cloud browser: browsing, scraping, form filling, site testing, screenshots, web workflow automation.",
+  "facts": "1 MCP server. Partner: browser-use.",
+  "readiness": 2,
+  "reach": "remote",
+  "tier": "partner"
+ },
+ {
+  "id": "P43",
+  "name": "Axe Accessibility (Deque)",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Accessibility toolkit for coding agents: scan, remediate, verify loop with the Axe MCP Server, including keyboard guided tests.",
+  "facts": "4 skills (mcp-audit, mcp-setup, mcp-usage, mcp-generate-instructions), MCP axe-mcp-server. Partner: Deque.",
+  "readiness": 2,
+  "reach": "remote",
+  "tier": "partner"
+ },
+ {
+  "id": "P44",
+  "name": "IQland Real Estate",
+  "type": "plugin",
+  "status": "available",
+  "desc": "U.S. real-estate development data: parcel and zoning lookup, construction cost, build feasibility, comparable sales, appraisals, property analytics.",
+  "facts": "3 commands (comps, feasibility, property-report), 1 agent, MCP iqland. Community.",
+  "readiness": 2,
+  "reach": "remote",
+  "tier": "community"
+ },
+ {
+  "id": "P45",
+  "name": "Property Management Operator",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Property management workflow support: resident requests, maintenance triage, vendors, inspections, renewals, delinquencies, operating reviews.",
+  "facts": "1 skill (property-operations); no MCP, no hooks. Community: Revuity Systems.",
+  "readiness": 3,
+  "reach": "contained",
+  "tier": "community"
+ },
+ {
+  "id": "P46",
+  "name": "Small Business Operator",
+  "type": "plugin",
+  "status": "available",
+  "desc": "A practical operating layer for small-business owners: sales, cash, customers, delivery, people, vendors, commitments, decisions.",
+  "facts": "1 skill (business-operating-rhythm); no MCP, no hooks. Community: Revuity Systems.",
+  "readiness": 3,
+  "reach": "contained",
+  "tier": "community"
+ },
+ {
+  "id": "P47",
+  "name": "Small Business AI Rules",
+  "type": "plugin",
+  "status": "available",
+  "desc": "AI rules for a person or small business on ChatGPT, Claude, Perplexity or Gemini subscriptions: which tool gets which job, what data may go where, how accounts are locked down, how AI-shaped decisions are logged, how to pull the plug.",
+  "facts": "1 skill (ai-control-plane-solo); no MCP, no hooks. Community.",
+  "readiness": 3,
+  "reach": "contained",
+  "tier": "community"
+ },
+ {
+  "id": "P48",
+  "name": "claude-performance",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Weekly performance digest for Claude Code: reads JSONL session data, computes six effectiveness metrics, fires diagnostic rules, writes behavioral rules into CLAUDE.md so future sessions adapt.",
+  "facts": "Metrics: activity mix, one-shot edit rate, subagent turn count, model mix, project allocation, hookify firings. 1 skill, SessionStart hook. Community.",
+  "readiness": 2,
+  "reach": "privileged",
+  "tier": "community"
+ },
+ {
+  "id": "A:K39",
+  "name": "Shopify",
+  "type": "connector",
+  "status": "available",
+  "desc": "Build, manage, and analyze your Shopify store.",
+  "facts": "Tools: search_products, create-product, list-orders, list-customers (about 25 tools).",
+  "readiness": 2
+ },
+ {
+  "id": "P49",
+  "name": "Dev Loop: Fix, Commit and Ship",
+  "type": "plugin",
+  "status": "available",
+  "desc": "Three commands for the daily loop: fix a bug or apply a review report, commit with pre-flight checks, or run review, fix and commit as one flow, pausing after the review for your go-ahead.",
+  "facts": "3 skills (fix, commit, ship); no MCP, no hooks. Community.",
+  "readiness": 3,
+  "reach": "contained",
+  "tier": "community"
+ },
+ {
+  "id": "K44",
+  "name": "Context7",
+  "type": "connector",
+  "status": "available",
+  "desc": "Up-to-date documentation for LLMs and AI code editors.",
+  "facts": "Tools: resolve-library-id, query-docs. Not installed.",
+  "readiness": 2
+ },
+ {
+  "id": "K45",
+  "name": "Local Falcon",
+  "type": "connector",
+  "status": "available",
+  "desc": "AI visibility and local search intelligence platform.",
+  "facts": "About 37 tools: runLocalFalconScan, scan reports, campaigns create and run and pause. Not installed.",
+  "readiness": 2
+ },
+ {
+  "id": "K46",
+  "name": "TinyFish",
+  "type": "connector",
+  "status": "available",
+  "desc": "Browser automation and web scraping with a cloud browser agent: log in to portals, fill and submit forms, scrape social media, listings, prices and reviews, monitor changes.",
+  "facts": "About 23 tools: create_browser_session, create_monitor, fetch_content, batch runs.",
+  "readiness": 2
+ },
+ {
+  "id": "K47",
+  "name": "Twilio",
+  "type": "connector",
+  "status": "available",
+  "desc": "Communications and customer engagement platform.",
+  "facts": "Authless. Tools: twilio__search, twilio__retrieve (2 tools).",
+  "readiness": 3
+ },
+ {
+  "id": "K48",
+  "name": "Calendly",
+  "type": "connector",
+  "status": "available",
+  "desc": "Manage event types, availability, and bookings.",
+  "facts": "About 36 tools: event types, available times, availability schedules, users.",
+  "readiness": 2
+ },
+ {
+  "id": "K49",
+  "name": "Close",
+  "type": "connector",
+  "status": "available",
+  "desc": "Connect Claude to Close CRM to access and act on sales data.",
+  "facts": "About 55 tools: activity_search, fetch_contact, fetch_lead, fetch_opportunity, email templates.",
+  "readiness": 2
+ },
+ {
+  "id": "A:S11",
+  "name": "docx",
+  "type": "skill",
+  "status": "installed",
+  "desc": "Create, read, edit Word documents and templates, including tracked changes and comments.",
+  "facts": "Enabled.",
+  "readiness": 5
+ },
+ {
+  "id": "K50",
+  "name": "Atlassian MCP",
+  "type": "connector",
+  "status": "available",
+  "desc": "Search, read and update Jira, Confluence, Bitbucket, Loom and other Atlassian apps with existing permissions.",
+  "facts": "About 21 tools incl. executeRead, executeWrite, executeDestructive, getJiraIssue, createJiraIssue.",
+  "readiness": 2
+ },
+ {
+  "id": "K51",
+  "name": "Linear",
+  "type": "connector",
+  "status": "available",
+  "desc": "Manage issues, projects and team workflows in Linear.",
+  "facts": "About 22 tools: list_issues, get_issue, create_issue, cycles, documents, comments.",
+  "readiness": 2
+ },
+ {
+  "id": "K52",
+  "name": "Asana",
+  "type": "connector",
+  "status": "available",
+  "desc": "Coordinate tasks, projects, and goals.",
+  "facts": "About 15 tools: search_tasks, create_task, get_project, get_portfolio, status overview.",
+  "readiness": 2
+ },
+ {
+  "id": "K53",
+  "name": "Inkbox",
+  "type": "connector",
+  "status": "available",
+  "desc": "Email, SMS, and iMessage for AI agents.",
+  "facts": "About 59 tools: calls, call transcripts, contacts, channel status. Includes outward messaging.",
+  "readiness": 2
+ },
+ {
+  "id": "K54",
+  "name": "PandaDoc",
+  "type": "connector",
+  "status": "available",
+  "desc": "Create, send, sign and track documents.",
+  "facts": "About 11 tools: documents_create, create_from_markdown, update, send, status, details. Includes send (act).",
+  "readiness": 2
+ },
+ {
+  "id": "K55",
+  "name": "OpenSEO",
+  "type": "connector",
+  "status": "available",
+  "desc": "SEO made simple: rank tracking, site audits, SERP competitors.",
+  "facts": "About 46 tools: add_rank_tracking_keywords, create_rank_tracker, find_serp_competitors, get_audit_issues, get_audit_pages.",
+  "readiness": 2
+ },
+ {
+  "id": "K56",
+  "name": "Malwarebytes",
+  "type": "connector",
+  "status": "available",
+  "desc": "Check links, phones, and emails for scams.",
+  "facts": "Authless. Tools: reputation-check_link, check_phone, check_email, whois, scan_all, report.",
+  "readiness": 3
+ },
+ {
+  "id": "A:K06",
+  "name": "Gmail",
+  "type": "connector",
+  "status": "installed",
+  "desc": "Draft replies, summarize threads, and search your inbox.",
+  "facts": "Tools: search_threads, get_thread, create_draft, labels; also send_message, reply, forward (act).",
+  "readiness": 5
+ },
+ {
+  "id": "K57",
+  "name": "AccuWeather",
+  "type": "connector",
+  "status": "available",
+  "desc": "Hyper-local forecasts and alerts.",
+  "facts": "Authless. Widgets: current, daily, hourly, minutecast, historical, government alert map, location search.",
+  "readiness": 3
+ },
+ {
+  "id": "K58",
+  "name": "TomTom Maps",
+  "type": "connector",
+  "status": "available",
+  "desc": "Maps, routing, geocoding and traffic data.",
+  "facts": "About 15 tools: geocode, reverse-geocode, fuzzy-search, poi-search, nearby, area-search.",
+  "readiness": 2
+ },
+ {
+  "id": "K59",
+  "name": "Cotality",
+  "type": "connector",
+  "status": "available",
+  "desc": "Property and location intelligence.",
+  "facts": "About 12 tools: property analytics, climate risk, roof age, find property by address, home price index and forecast, property characteristics.",
+  "readiness": 2
+ },
+ {
+  "id": "K60",
+  "name": "Jam",
+  "type": "connector",
+  "status": "available",
+  "desc": "Record the screen and collect automatic context for issues.",
+  "facts": "6 tools: getDetails, getConsoleLogs, getNetworkRequests, getScreenshot, getUserEvents, analyzeVideo.",
+  "readiness": 2
+ },
+ {
+  "id": "K61",
+  "name": "Badger Maps (Standard)",
+  "type": "connector",
+  "status": "available",
+  "desc": "Field sales platform: accounts, check-ins, routes.",
+  "facts": "About 21 tools: create_route, create_checkin, get_account, find_user.",
+  "readiness": 2
+ }
+]
