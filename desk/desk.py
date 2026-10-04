@@ -11,6 +11,7 @@
   invent-check <file>     validate an invention result: 3 candidates, exactly 1 kill, real tools
   promote-gate <json>     promote only if held-out passes and cost or time drops
   verify-trace            verify the hash chain of trace/trace.jsonl
+  tokens --main <jsonl> --workflow-dir <dir>   sum real usage from transcripts into artifacts/tokens.json
   tokens-check <file>     validate artifacts/tokens.json
   report                  print the deterministic part of the final report
   report-check <plan.md>  require the report headings and a written body
@@ -657,6 +658,81 @@ def cmd_verify_trace(a):
     return 0 if ok else 1
 
 
+def _usage_by_model(jsonl):
+    """Sum usage from one transcript. Each API message is counted once (the record with the largest output_tokens for its id)."""
+    ids, last_ts = {}, ""
+    with open(jsonl) as f:
+        for line in f:
+            try:
+                r = json.loads(line)
+            except Exception:
+                continue
+            last_ts = max(last_ts, r.get("timestamp") or "")
+            if r.get("type") != "assistant":
+                continue
+            m = r.get("message") or {}
+            k, u = m.get("id"), m.get("usage") or {}
+            if k and (k not in ids or u.get("output_tokens", 0) >= ids[k][1].get("output_tokens", 0)):
+                ids[k] = (m.get("model") or "unknown", u)
+    by = {}
+    for mod, u in ids.values():
+        b = by.setdefault(mod, {"uncached_input": 0, "cache_creation": 0, "cache_read": 0, "output_tokens": 0, "api_messages": 0})
+        b["uncached_input"] += u.get("input_tokens", 0)
+        b["cache_creation"] += u.get("cache_creation_input_tokens", 0)
+        b["cache_read"] += u.get("cache_read_input_tokens", 0)
+        b["output_tokens"] += u.get("output_tokens", 0)
+        b["api_messages"] += 1
+    return by, last_ts
+
+
+def _fold(by):
+    tot = {"uncached_input": 0, "cache_creation": 0, "cache_read": 0, "output_tokens": 0, "api_messages": 0}
+    for b in by.values():
+        for k in tot:
+            tot[k] += b[k]
+    tot["input_tokens"] = tot["uncached_input"] + tot["cache_creation"] + tot["cache_read"]
+    return tot
+
+
+def cmd_tokens(a):
+    rows = []
+    for wd in a.workflow_dir:
+        for meta in sorted(glob.glob(os.path.join(wd, "agent-*.meta.json"))):
+            jl = meta.replace(".meta.json", ".jsonl")
+            if not os.path.exists(jl):
+                continue
+            m = read_json(meta)
+            by, ts = _usage_by_model(jl)
+            row = {"label": m.get("description", ""), "phase": m.get("workflowPhase", ""), "model": m.get("model", ""),
+                   "source": jl, "last_ts": ts, "by_model": by}
+            row.update(_fold(by))
+            rows.append(row)
+    main_by, main_ts = _usage_by_model(a.main)
+    lead = {"source": a.main, "as_of": main_ts, "by_model": main_by}
+    lead.update(_fold(main_by))
+    authors = sorted((r for r in rows if r["label"].startswith("author:")), key=lambda r: (r["output_tokens"], r["label"]))
+    rep = authors[(len(authors) - 1) // 2] if authors else None
+    out = {"unit": "tokens as reported in each transcript's message.usage; input_tokens = uncached + cache_creation + cache_read",
+           "lead_pass": lead,
+           "worker_pass": dict(rep, note="the median author agent by output tokens; every agent starts with the harness's inherited prefix, so input is dominated by cache reads") if rep else None,
+           "worker_pass_range": ({"authors": len(authors), "output_min": authors[0]["output_tokens"], "output_max": authors[-1]["output_tokens"],
+                                   "first_message_prefix_tokens_example": None} if authors else None),
+           "totals_by_label_prefix": {}, "per_agent": [{k: v for k, v in r.items() if k != "by_model"} for r in rows]}
+    for r in rows:
+        pre = r["label"].split(":")[0] or "unlabelled"
+        t = out["totals_by_label_prefix"].setdefault(pre, {"agents": 0, "input_tokens": 0, "output_tokens": 0})
+        t["agents"] += 1
+        t["input_tokens"] += r["input_tokens"]
+        t["output_tokens"] += r["output_tokens"]
+    Path(a.out).parent.mkdir(parents=True, exist_ok=True)
+    Path(a.out).write_text(json.dumps(out, indent=1) + "\n")
+    print(f"wrote {a.out}: lead output {lead['output_tokens']}, {len(rows)} agents, "
+          f"worker pass {rep['label'] if rep else 'none'} output {rep['output_tokens'] if rep else 'n/a'}")
+    for k, v in out["totals_by_label_prefix"].items():
+        print(f"  {k}: {v['agents']} agents, input {v['input_tokens']}, output {v['output_tokens']}")
+    return 0
+
+
 def cmd_tokens_check(a):
     d = read_json(a.file)
     errs = []
@@ -735,6 +811,7 @@ def main(argv=None):
     s = sp.add_parser("invent-check"); s.add_argument("file"); s.set_defaults(f=cmd_invent_check)
     s = sp.add_parser("promote-gate"); s.add_argument("file"); s.set_defaults(f=cmd_promote_gate)
     s = sp.add_parser("verify-trace"); s.set_defaults(f=cmd_verify_trace)
+    s = sp.add_parser("tokens"); s.add_argument("--workflow-dir", action="append", default=[]); s.add_argument("--main", required=True); s.add_argument("--out", default="artifacts/tokens.json"); s.set_defaults(f=cmd_tokens)
     s = sp.add_parser("tokens-check"); s.add_argument("file"); s.set_defaults(f=cmd_tokens_check)
     s = sp.add_parser("report"); s.set_defaults(f=cmd_report)
     s = sp.add_parser("report-check"); s.add_argument("file"); s.set_defaults(f=cmd_report_check)
