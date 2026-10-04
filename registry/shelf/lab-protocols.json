@@ -22,10 +22,120 @@
   "instrument action"
  ],
  "directives": {
-  "transcribe": null,
-  "graph": null,
-  "repair": null,
-  "campaign": null,
-  "handoff": null
+  "transcribe": {
+   "trigger": "A named method and its source text are present and the ask is to copy the steps; quiet without the source or for graph, repair, campaign, run.",
+   "doneWhen": "Every step carries a verbatim source quote with page/line or step locator, matched by program; quantities and units appear in the quote; each skipped step is written as GAP; zero-step or unread source is a valid result.",
+   "checkKind": "quote",
+   "rung": "L1",
+   "forbidden": "Inventing a step the source skips instead of marking a GAP; rewriting units or quantities.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "reliable",
+   "checkRunnable": false,
+   "keywords": [
+    "transcribe method",
+    "copy protocol steps",
+    "keep units",
+    "mark gaps",
+    "named method",
+    "source steps"
+   ],
+   "absentTools": []
+  },
+  "graph": {
+   "trigger": "Transcribed steps and a graph schema are present and the ask is a graph; quiet when no schema is supplied.",
+   "doneWhen": "Graph JSON validates against the supplied schema (validator exit 0 quoted); one node per instrument action, parameters as node fields; edges with no source handoff count 0; empty step list gives an empty valid graph.",
+   "checkKind": "schema",
+   "rung": "L1",
+   "forbidden": "Fake edges: linking adjacent nodes without a real handoff, or putting parameters in prose.",
+   "tool": "Bash:jq",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "protocol graph",
+    "graph node",
+    "one node per action",
+    "node parameters",
+    "instrument action",
+    "edges handoff"
+   ],
+   "absentTools": [
+    "schema validator for protocol graphs"
+   ]
+  },
+  "repair": {
+   "trigger": "A graph and validator output naming a failing node are present; quiet when no node is named.",
+   "doneWhen": "The diff of the graph shows changes only inside the named node; changed lines outside it are 0; validator output shown before and after with the node id cleared; clean graph with empty diff is valid.",
+   "checkKind": "state-diff",
+   "rung": "L1",
+   "forbidden": "Restyling the rest of the graph: reordering keys, renaming nodes, reformatting, or touching an unnamed node.",
+   "tool": "Bash:git",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "reliable",
+   "checkRunnable": false,
+   "keywords": [
+    "repair node",
+    "failing node",
+    "validator output",
+    "fix one node",
+    "revalidate graph"
+   ],
+   "absentTools": [
+    "schema validator for protocol graphs"
+   ]
+  },
+  "campaign": {
+   "trigger": "A validated graph and a goal for repeated runs are present; the skill prepares the plan and stops.",
+   "doneWhen": "Campaign file holds per-parameter bounds set before the loop, a stop condition, and an iteration log schema; STARTED-BY line stays blank until a person writes it; confirmation is a person's.",
+   "checkKind": "human-only",
+   "rung": "L3",
+   "forbidden": "Starting or simulating-as-real a hardware run, or writing a loop with no bound or stop condition.",
+   "tool": "none",
+   "toolScope": "none",
+   "gated": true,
+   "gate": "ABSENT hardware-start, instrument control (prepare bounds, stop, and log; a person starts the hardware)",
+   "status": "gated",
+   "checkRunnable": false,
+   "keywords": [
+    "campaign bounds",
+    "stop condition",
+    "iteration log",
+    "optimization loop",
+    "start hardware"
+   ],
+   "absentTools": [
+    "instrument or hardware control"
+   ]
+  },
+  "handoff": {
+   "trigger": "A graph file and an editor-format target, or a manually edited copy to resync, are present; quiet without an editor format.",
+   "doneWhen": "After resync the diff vs the pre-edit graph shows changes only in person-edited nodes; untouched nodes that differ count 0; edited values appear; no edit gives an empty diff.",
+   "checkKind": "state-diff",
+   "rung": "L1",
+   "forbidden": "Rewriting untouched nodes on resync: regenerating the graph, renumbering ids, or reordering nodes.",
+   "tool": "Bash:git",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "graph editor",
+    "open in editor",
+    "manual edit resync",
+    "untouched nodes",
+    "editor handoff"
+   ],
+   "absentTools": [
+    "graph editor connector"
+   ]
+  }
  }
 }
