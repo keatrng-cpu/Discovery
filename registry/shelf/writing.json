@@ -21,11 +21,147 @@
   "banned defaults"
  ],
  "directives": {
-  "outline": null,
-  "draft": null,
-  "cut": null,
-  "variant": null,
-  "series": null,
-  "fact": null
+  "outline": {
+   "trigger": "A topic or source notes are present and no outline exists. Quiet when an outline file is given and the ask is prose, or when the ask is to shorten or fact-check.",
+   "doneWhen": "`python3` over the outline file exits 0 and prints \"claims: N/N slotted\": N claim lines, each with a unique order slot, and zero prose lines (a line that is neither a numbered claim nor blank). A claim with no slot is cut, not kept. An empty outline (\"claims: 0/0\") is a valid result when the source holds no claim.",
+   "checkKind": "count",
+   "rung": "L0",
+   "forbidden": "Writing prose or a transition sentence in the outline, or keeping a claim that has no slot.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "reliable",
+   "checkRunnable": false,
+   "keywords": [
+    "outline",
+    "list the claims",
+    "claim order",
+    "no prose outline",
+    "structure the piece"
+   ],
+   "absentTools": []
+  },
+  "draft": {
+   "trigger": "An outline file and a voice file are both present. Quiet when only one exists, or when the ask is cutting, channel change, or fact-checking.",
+   "doneWhen": "`python3` over the draft and outline exits 0 and prints \"paragraphs: N/N mapped\": each paragraph carries one outline claim id, every id appears once, and no paragraph is unmapped. An unmapped paragraph is a new claim and fails. The check is the claim mapping only; banned-default scanning is a separate check.",
+   "checkKind": "count",
+   "rung": "L1",
+   "forbidden": "Adding a claim that is not in the outline, to fill a paragraph or smooth a transition.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "draft from outline",
+    "write in voice file",
+    "one claim per paragraph",
+    "write the paragraphs",
+    "no new claims"
+   ],
+   "absentTools": [
+    "banned-defaults checker",
+    "claim extractor"
+   ]
+  },
+  "cut": {
+   "trigger": "A finished piece is present with a length target. Quiet when the ask is new material, a restyle, or a channel change.",
+   "doneWhen": "`python3` counts claims in the original and the cut and exits 0 only when cut_claims <= original_claims, printing \"claims: A -> B\" with B <= A. A diff of claim lines shows only deletions. Equal counts are a valid result.",
+   "checkKind": "count",
+   "rung": "L1",
+   "forbidden": "Adding a claim while shortening, or restyling the piece into a new one.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "cut",
+    "shorten",
+    "trim",
+    "tighten",
+    "claim count flat or down",
+    "reduce word count"
+   ],
+   "absentTools": [
+    "claim extractor"
+   ]
+  },
+  "variant": {
+   "trigger": "A source piece, a frozen fact list, and a target channel are present. Quiet when no fact list exists or when the ask is to change the offer or numbers.",
+   "doneWhen": "`python3` reads the fact list (offer, numbers, names, one per line) and exits 0 only when every item appears verbatim in the variant, printing \"facts: N/N kept\". A missing item exits non-zero and names the line. An empty fact list prints \"facts: 0/0\" and is valid.",
+   "checkKind": "count",
+   "rung": "L1",
+   "forbidden": "Changing a number, dropping the offer, or adding a fact while adapting to the channel.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "variant",
+    "adapt for channel",
+    "repurpose",
+    "frozen facts",
+    "linkedin version",
+    "email version",
+    "keep the offer"
+   ],
+   "absentTools": [
+    "fact-list extractor"
+   ]
+  },
+  "series": {
+   "trigger": "A brand file and a previous piece are present. Quiet when no brand file exists; session chat is never the memory.",
+   "doneWhen": "`cmp` over the ban list extracted from the brand file and the ban list the new piece declares exits 0, and the previous piece's ban list matches the same file. The draft does not restate the rules. A missing brand file is a valid result: stop and report \"brand file absent\".",
+   "checkKind": "exit-code",
+   "rung": "L1",
+   "forbidden": "Taking rules from session chat instead of the brand file, or restating the rules inside the draft.",
+   "tool": "Bash:cmp",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "series",
+    "brand file",
+    "house style",
+    "match the last piece",
+    "consistent with previous",
+    "brand bans"
+   ],
+   "absentTools": [
+    "brand-file ban extractor"
+   ]
+  },
+  "fact": {
+   "trigger": "A piece with factual claims is present. Quiet when the piece holds no checkable claim or the ask is style.",
+   "doneWhen": "Every claim line ends with either a source quote plus locator (page, line, or item) or the label \"unsupported\", and a program prints \"claims: N = S sourced + U unsupported\" with N equal to the claim count. Zero sourced is a valid result. A claim left with neither is cut or labelled; there is no third option.",
+   "checkKind": "quote",
+   "rung": "L1",
+   "forbidden": "Upgrading a label by tone: a hedged or confident claim passed off as sourced without a matching quote, or a third state such as \"likely\".",
+   "tool": "Bash:localsearch",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "fact check",
+    "source or unsupported",
+    "cite claims",
+    "attach sources",
+    "verify claims",
+    "label unsupported"
+   ],
+   "absentTools": [
+    "cite-resolution service"
+   ]
+  }
  }
 }
