@@ -50,7 +50,7 @@
   },
   "draft": {
    "trigger": "A classified intent with policy id and policy line is present. Quiet when no classification exists or the ask is to grant a refund or exception.",
-   "doneWhen": "`python3` check exits 0 only if the draft contains the classified policy line verbatim, printed as `quoted: <policy-id> line <n>`. A draft that cannot quote its line is not a pass; the result is `unsupported`.",
+   "doneWhen": "`python3` residual-text check exits 0 only if the draft contains the classified policy line verbatim and, once that line is removed, every remaining sentence carries a term of the classified intent and none carries a promise term (refund, credit, waiver, waive, exception, reimburse, compensat). It prints `quoted: <policy-id> line <n>`. A draft that cannot quote its line, answers another intent, or promises is not a pass; the result is `unsupported`. The check program is not written yet, so checkRunnable is false.",
    "checkKind": "quote",
    "rung": "L1",
    "forbidden": "Promise creep: the draft says or implies a refund, credit, waiver, or exception the policy line does not grant.",
@@ -74,16 +74,16 @@
   },
   "known-path": {
    "trigger": "A workflow definition with ordered steps and a matching ticket are present. Quiet when no workflow matches; that goes to exception.",
-   "doneWhen": "`python3` diff of system state against the workflow's expected end state exits 0 with `state: matches steps N/N`. Any variance from a step exits non-zero and routes to support-exception; the agent does not improvise.",
+   "doneWhen": "`jq -e --slurpfile e expected_state.json '. == $e[0]' state.json` exits 0 and prints `true`. Both files are supplied as input: expected_state.json lists the workflow's ordered steps with their end state, state.json is the observed snapshot, so reordering, skipping, or adding a step makes the arrays unequal. Any variance exits non-zero and routes to support-exception; the agent does not improvise. No model is in the loop, so reliable holds. Fetching a live snapshot needs an absent state reader.",
    "checkKind": "state-diff",
    "rung": "L0",
    "forbidden": "Improvising: adding, skipping, or reordering a step, or repairing a variance instead of handing it to exception.",
-   "tool": "Bash:python3",
+   "tool": "Bash:jq",
    "toolScope": "read",
    "gated": false,
    "gate": "",
    "status": "reliable",
-   "checkRunnable": false,
+   "checkRunnable": true,
    "keywords": [
     "workflow steps",
     "known path",
@@ -98,16 +98,16 @@
   },
   "exception": {
    "trigger": "A known path step failed or a variance was reported. Quiet when state matches the workflow.",
-   "doneWhen": "`python3 exception_record.py record.json` exits 0 only if the record names the failed step, the observed vs expected state, and a handoff owner, and has no remedy field; otherwise exits non-zero. Stop is the valid result.",
+   "doneWhen": "`jq -e '(.failed_step|length>0) and (.observed|length>0) and (.expected|length>0) and (.handoff_owner|length>0) and (has(\"remedy\")|not)' record.json` exits 0 only if the record names the failed step, observed vs expected state, and a handoff owner, and has no remedy field; otherwise exits non-zero. The stop is this code check, not a model judgment. Stop is the valid result.",
    "checkKind": "exit-code",
    "rung": "L0",
    "forbidden": "Guessing a remedy: proposing, trying, or applying a fix after the failure instead of stopping.",
-   "tool": "Bash:python3",
+   "tool": "Bash:jq",
    "toolScope": "read",
    "gated": false,
    "gate": "",
    "status": "reliable",
-   "checkRunnable": false,
+   "checkRunnable": true,
    "keywords": [
     "stop and record",
     "handoff",
@@ -121,7 +121,7 @@
   },
   "resolve": {
    "trigger": "A classified ticket with an approved path needs a resolution call prepared. Refund, cancel, and delete requests stop here for a person.",
-   "doneWhen": "The prepared request validates against its typed schema and carries a non-empty idempotency key, with the action not in refund, cancel, delete. The execution itself is not performed by this skill.",
+   "doneWhen": "The prepared request sheet validates against its typed schema: it names the typed tool, carries a non-empty idempotency key, and either its action is a non-gated typed action, or its action is refund, cancel, or delete and the sheet has state `awaiting-person` with no executed field. Waiting for a person is the valid result for those three actions. The execution itself is not performed by this skill.",
    "checkKind": "schema",
    "rung": "L1",
    "forbidden": "Executing or promising a refund, cancel, or delete, or calling an untyped tool without an idempotency key.",
@@ -139,13 +139,12 @@
     "cancel request"
    ],
    "absentTools": [
-    "typed support resolution tool",
-    "payment tool"
+    "typed support resolution tool"
    ]
   },
   "incident": {
    "trigger": "Log files or log lines are present and a timeline is asked for. Quiet when no logs exist.",
-   "doneWhen": "`python3` check exits 0 only if every timeline event quotes its log line with `<file>:<line>` locator and timestamps are non-decreasing; each missing interval is printed as `gap: <t1>..<t2>`. An empty log yields `events: 0` and exits 0.",
+   "doneWhen": "`python3` check exits 0 only if every timeline event's quoted text equals the line at its `<file>:<line>` locator; an event with no matching log line fails, so no gap is filled. An empty log yields `events: 0` and exits 0. Time ordering is a separate sort step done by program and is not part of this check.",
    "checkKind": "quote",
    "rung": "L1",
    "forbidden": "Filling a gap with a likely story: stating a cause or event no log line supports.",
