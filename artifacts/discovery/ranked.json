@@ -392,6 +392,34 @@
   "rank": 14
  },
  {
+  "id": "K55",
+  "name": "OpenSEO",
+  "type": "connector",
+  "status": "available",
+  "readiness": 2,
+  "desc": "SEO made simple: rank tracking, site audits, SERP competitors.",
+  "facts": "About 46 tools: add_rank_tracking_keywords, create_rank_tracker, find_serp_competitors, get_audit_issues, get_audit_pages.",
+  "mean": {
+   "leverage": 4.0,
+   "verifiability": 4.67,
+   "fit": 5.0,
+   "safety": 3.33
+  },
+  "spread": {
+   "leverage": 0,
+   "verifiability": 1,
+   "fit": 0,
+   "safety": 1
+  },
+  "score": 80.0,
+  "why": {
+   "architect": "get_audit_issues and find_serp_competitors return checkable SEO data for local and launched sites.",
+   "operator": "find_serp_competitors and get_audit_issues return SEO data for haul service and launched sites; creates rank trackers in-account.",
+   "skeptic": "get_audit_issues and find_serp_competitors return checkable SEO data for local service sites; creates trackers in its own account."
+  },
+  "rank": 15
+ },
+ {
   "id": "K09",
   "name": "Notion",
   "type": "connector",
@@ -417,7 +445,7 @@
    "operator": "Notion is in my stack; query data sources is retrieval, while create-pages and update-page write inside my workspace.",
    "skeptic": "In-stack; fetch and query data sources retrieve, while create-pages and update-page write inside own workspace."
   },
-  "rank": 15
+  "rank": 16
  },
  {
   "id": "K41",
@@ -445,7 +473,7 @@
    "operator": "SEC filings, earnings calls, market data 'all cited' via fetch_document; directly feeds the markets playbook with sourced numbers.",
    "skeptic": "fetch_document and SEC filings returned cited directly serve the markets playbook's retrieval rule."
   },
-  "rank": 16
+  "rank": 17
  },
  {
   "id": "K01",
@@ -473,7 +501,7 @@
    "operator": "search_code and run_secret_scanning give checkable output for repos; merge_pull_request is act-scope, so blast radius is real.",
    "skeptic": "search_code and run_secret_scanning return checkable data, but merge_pull_request is act-scope on the user's repos."
   },
-  "rank": 17
+  "rank": 18
  },
  {
   "id": "K07",
@@ -501,7 +529,7 @@
    "operator": "list_events and search_events are ground-truth lookups in the stack; delete_event is act-scope.",
    "skeptic": "list_events is ground-truth retrieval, but delete_event and create_event are act tools on the user's calendar."
   },
-  "rank": 18
+  "rank": 19
  },
  {
   "id": "S02",
@@ -529,7 +557,7 @@
    "operator": "Launches revenue-ready web business at $0 infrastructure with competitor recon; directly my web-venture launcher, but a prose playbook.",
    "skeptic": "User skill matching the web-venture launcher, but facts give only 'enabled'; workflow prose, no stated check."
   },
-  "rank": 19
+  "rank": 20
  },
  {
   "id": "K15",
@@ -557,7 +585,7 @@
    "operator": "get-dataset-items returns structured scraped data for local SEO and review recon; Actors come from third-party marketplace.",
    "skeptic": "get-dataset-items returns structured scraped data, but call-actor runs marketplace Actors from unvetted publishers."
   },
-  "rank": 20
+  "rank": 21
  },
  {
   "id": "P26",
@@ -585,7 +613,35 @@
    "operator": "Read-only checker plus fixture tested on n8n 2.23.4 validates workflow JSON I build; no account connection or activation.",
    "skeptic": "Read-only checker plus fixture tested on n8n 2.23.4; no account connection, no network, no activation."
   },
-  "rank": 21
+  "rank": 22
+ },
+ {
+  "id": "K45",
+  "name": "Local Falcon",
+  "type": "connector",
+  "status": "available",
+  "readiness": 2,
+  "desc": "AI visibility and local search intelligence platform.",
+  "facts": "About 37 tools: runLocalFalconScan, scan reports, campaigns create and run and pause. Not installed.",
+  "mean": {
+   "leverage": 3.67,
+   "verifiability": 4.67,
+   "fit": 5.0,
+   "safety": 3.0
+  },
+  "spread": {
+   "leverage": 1,
+   "verifiability": 1,
+   "fit": 0,
+   "safety": 0
+  },
+  "score": 77.3,
+  "why": {
+   "architect": "runLocalFalconScan returns local rank grid data for the haul service; campaigns create and run spend inside the account.",
+   "operator": "runLocalFalconScan gives grid rank data for haul-service local SEO; campaigns create and run spend credits.",
+   "skeptic": "runLocalFalconScan gives measured local rankings for haul-service SEO; campaigns create and run add spend-like actions."
+  },
+  "rank": 23
  },
  {
   "id": "S04",
@@ -613,7 +669,7 @@
    "operator": "Web search retrieval for research and local SEO, but the FireCrawl connector entries need reconnect.",
    "skeptic": "Web search is retrieval, but the description is two words and the FireCrawl connector entries need reconnect."
   },
-  "rank": 22
+  "rank": 24
  },
  {
   "id": "S06",
@@ -641,7 +697,7 @@
    "operator": "Creates or changes Docs, Sheets, Slides in Drive with helper scripts for cell ranges; writes in own account.",
    "skeptic": "Creates or changes Docs, Sheets, Slides in the user's own Drive; output is documents, not checks."
   },
-  "rank": 23
+  "rank": 25
  },
  {
   "id": "S09",
@@ -669,7 +725,7 @@
    "operator": "Read, fill, OCR PDFs serves filings and real estate paperwork; local file operations.",
    "skeptic": "Read and OCR extract text from filings; other functions (create, watermark) are generation; local files."
   },
-  "rank": 24
+  "rank": 26
  },
  {
   "id": "K12",
@@ -697,7 +753,35 @@
    "operator": "Zapier already paid for; 9,000+ apps but execute write actions gives broad outward reach.",
    "skeptic": "execute write actions across claimed 9,000+ apps: maximal blast radius, opaque downstream effects."
   },
-  "rank": 25
+  "rank": 27
+ },
+ {
+  "id": "K44",
+  "name": "Context7",
+  "type": "connector",
+  "status": "available",
+  "readiness": 2,
+  "desc": "Up-to-date documentation for LLMs and AI code editors.",
+  "facts": "Tools: resolve-library-id, query-docs. Not installed.",
+  "mean": {
+   "leverage": 4.0,
+   "verifiability": 4.0,
+   "fit": 4.0,
+   "safety": 4.33
+  },
+  "spread": {
+   "leverage": 0,
+   "verifiability": 0,
+   "fit": 0,
+   "safety": 1
+  },
+  "score": 74.7,
+  "why": {
+   "architect": "resolve-library-id and query-docs retrieve current docs, replacing model memory on Supabase, Netlify, and Stripe APIs.",
+   "operator": "resolve-library-id and query-docs retrieve current Netlify, Supabase, Stripe docs instead of recalled API shapes; read-only.",
+   "skeptic": "resolve-library-id and query-docs are read-only retrieval that cuts invented API usage; publisher not stated."
+  },
+  "rank": 28
  },
  {
   "id": "S07",
@@ -725,7 +809,63 @@
    "operator": "Runs evals and benchmarks with variance analysis, turning skill quality into measured data; local, no outward action.",
    "skeptic": "Runs evals and benchmarks with variance analysis, so skill changes are measured, not asserted."
   },
-  "rank": 26
+  "rank": 29
+ },
+ {
+  "id": "P41",
+  "name": "playwright (Microsoft MCP plugin)",
+  "type": "plugin",
+  "status": "available",
+  "readiness": 2,
+  "desc": "Browser automation and end-to-end testing MCP server by Microsoft: interact with pages, take screenshots, fill forms, click elements, run automated browser tests.",
+  "facts": "1 MCP server, no skills. Partner.",
+  "mean": {
+   "leverage": 4.0,
+   "verifiability": 4.67,
+   "fit": 4.0,
+   "safety": 2.0
+  },
+  "spread": {
+   "leverage": 0,
+   "verifiability": 1,
+   "fit": 0,
+   "safety": 0
+  },
+  "score": 73.3,
+  "why": {
+   "architect": "Runs automated browser tests and screenshots, an exit-code check for static front ends; can fill forms and click.",
+   "operator": "Microsoft MCP runs automated browser tests and screenshots on deployed Netlify/Vercel pages; can fill forms and click.",
+   "skeptic": "Screenshots and automated browser tests are checkable for static sites, but it fills forms and clicks elements."
+  },
+  "rank": 30
+ },
+ {
+  "id": "K59",
+  "name": "Cotality",
+  "type": "connector",
+  "status": "available",
+  "readiness": 2,
+  "desc": "Property and location intelligence.",
+  "facts": "About 12 tools: property analytics, climate risk, roof age, find property by address, home price index and forecast, property characteristics.",
+  "mean": {
+   "leverage": 3.0,
+   "verifiability": 4.67,
+   "fit": 4.0,
+   "safety": 4.67
+  },
+  "spread": {
+   "leverage": 0,
+   "verifiability": 1,
+   "fit": 0,
+   "safety": 1
+  },
+  "score": 72.7,
+  "why": {
+   "architect": "find property by address and home price index return property data for the real estate venture, read-only.",
+   "operator": "find property by address, roof age, home price index give ground-truth property data for real estate and landlord targeting.",
+   "skeptic": "find property by address, home price index, property characteristics: ground-truth real estate retrieval, read-only listed tools."
+  },
+  "rank": 31
  },
  {
   "id": "K33",
@@ -753,7 +893,35 @@
    "operator": "Authless web_search and web_fetch: cheap read-only retrieval, though overlaps FireCrawl; not installed.",
    "skeptic": "Only web_search and web_fetch, authless: read-only retrieval with no outward action."
   },
-  "rank": 27
+  "rank": 32
+ },
+ {
+  "id": "K58",
+  "name": "TomTom Maps",
+  "type": "connector",
+  "status": "available",
+  "readiness": 2,
+  "desc": "Maps, routing, geocoding and traffic data.",
+  "facts": "About 15 tools: geocode, reverse-geocode, fuzzy-search, poi-search, nearby, area-search.",
+  "mean": {
+   "leverage": 2.67,
+   "verifiability": 5.0,
+   "fit": 3.67,
+   "safety": 5.0
+  },
+  "spread": {
+   "leverage": 1,
+   "verifiability": 0,
+   "fit": 1,
+   "safety": 0
+  },
+  "score": 71.7,
+  "why": {
+   "architect": "geocode and poi-search turn haul service-area and routing lookups into tool output.",
+   "operator": "geocode, poi-search, nearby compute service-area and haul routing lookups as data, not guesses; read-only.",
+   "skeptic": "geocode, reverse-geocode, poi-search are deterministic lookups useful for haul routing; read-only."
+  },
+  "rank": 33
  },
  {
   "id": "S03",
@@ -781,7 +949,35 @@
    "operator": "Fills LLC formation and state registrations in Chrome, removing a manual step; drives a real browser toward submission.",
    "skeptic": "Drives Chrome to submit official filings (LLC, EIN); pausing only for card and signature still leaves submission."
   },
-  "rank": 28
+  "rank": 34
+ },
+ {
+  "id": "K57",
+  "name": "AccuWeather",
+  "type": "connector",
+  "status": "available",
+  "readiness": 3,
+  "desc": "Hyper-local forecasts and alerts.",
+  "facts": "Authless. Widgets: current, daily, hourly, minutecast, historical, government alert map, location search.",
+  "mean": {
+   "leverage": 2.67,
+   "verifiability": 4.0,
+   "fit": 3.67,
+   "safety": 5.0
+  },
+  "spread": {
+   "leverage": 1,
+   "verifiability": 2,
+   "fit": 1,
+   "safety": 0
+  },
+  "score": 69.7,
+  "why": {
+   "architect": "Authless hourly forecasts and historical data; schedules leaf-cleanup jobs on retrieved data, not guesses.",
+   "operator": "Authless hourly and daily forecasts plus historical data for scheduling Grand Forks leaf and haul jobs; read-only.",
+   "skeptic": "Authless forecasts help leaf-cleanup scheduling; delivered as widgets, not clearly machine-readable data."
+  },
+  "rank": 35
  },
  {
   "id": "K25",
@@ -809,7 +1005,7 @@
    "operator": "Brevo is in the stack and creates drafts, but installState needs_reconnect; unusable until re-authed.",
    "skeptic": "Brevo is in the stack; desc says analyze campaigns and create drafts, but installState needs_reconnect."
   },
-  "rank": 29
+  "rank": 36
  },
  {
   "id": "S13",
@@ -837,7 +1033,7 @@
    "operator": "Color formula with a runnable validator; useful for Airtable dashboards, but charts are occasional work.",
    "skeptic": "Has a runnable color validator, but most of the method is design heuristics; no outward action."
   },
-  "rank": 30
+  "rank": 37
  },
  {
   "id": "S15",
@@ -865,7 +1061,7 @@
    "operator": "Reviews pending changes on the current branch before deploy of serverless functions; read-only review.",
    "skeptic": "Reviews pending branch changes; output is model review prose, no scanner or exit code stated."
   },
-  "rank": 31
+  "rank": 38
  },
  {
   "id": "S14",
@@ -893,7 +1089,7 @@
    "operator": "Reviews diffs for correctness bugs on serverless functions; --comment posts inline and --fix applies changes.",
    "skeptic": "Reviews diffs for correctness bugs; --comment posts inline and --fix applies edits."
   },
-  "rank": 32
+  "rank": 39
  },
  {
   "id": "K40",
@@ -921,7 +1117,7 @@
    "operator": "get_citator_info and get_source_text give openable citations, useful for LLC and real estate questions; rare use.",
    "skeptic": "get_citator_info and get_source_text give openable citations for LLC and real estate questions; read tools only."
   },
-  "rank": 33
+  "rank": 40
  },
  {
   "id": "K17",
@@ -949,7 +1145,7 @@
    "operator": "get_data reads ad and Google Business Profile metrics for local SEO, but execute_action writes ad budgets and posts.",
    "skeptic": "get_data reads ad metrics, but execute_action writes to ad platforms and Google Business Profile, spending money and posting."
   },
-  "rank": 34
+  "rank": 41
  },
  {
   "id": "K29",
@@ -977,7 +1173,35 @@
    "operator": "Profit and loss, cash flow tools give ledger numbers for LLCs, but not_connected and QuickBooks not in stack.",
    "skeptic": "Profit and loss and cash flow are ledger data, but transaction import writes books; not_connected."
   },
-  "rank": 35
+  "rank": 42
+ },
+ {
+  "id": "P44",
+  "name": "IQland Real Estate",
+  "type": "plugin",
+  "status": "available",
+  "readiness": 2,
+  "desc": "U.S. real-estate development data: parcel and zoning lookup, construction cost, build feasibility, comparable sales, appraisals, property analytics.",
+  "facts": "3 commands (comps, feasibility, property-report), 1 agent, MCP iqland. Community.",
+  "mean": {
+   "leverage": 3.0,
+   "verifiability": 4.0,
+   "fit": 4.0,
+   "safety": 2.67
+  },
+  "spread": {
+   "leverage": 0,
+   "verifiability": 0,
+   "fit": 0,
+   "safety": 1
+  },
+  "score": 65.3,
+  "why": {
+   "architect": "Parcel, zoning and comps lookups for real estate via MCP iqland; community publisher, remote reach.",
+   "operator": "Parcel, zoning and comps commands return retrievable property data for real estate; community publisher with remote MCP.",
+   "skeptic": "Parcel, zoning and comps lookups are ground-truth retrieval for real estate; community-tier remote MCP."
+  },
+  "rank": 43
  },
  {
   "id": "S19",
@@ -1005,7 +1229,7 @@
    "operator": "Reference for parallel-agent workflows with adversarial verify; read-only doc, rarely needed by a solo operator.",
    "skeptic": "Reference text; its adversarial verify and loop-until-dry patterns help checks but generate nothing checkable alone."
   },
-  "rank": 36
+  "rank": 44
  },
  {
   "id": "P27",
@@ -1033,7 +1257,7 @@
    "operator": "Self-check that every quote appears verbatim plus count tables; no connectors; useful for landlord B2B interviews.",
    "skeptic": "Self-check that every quote appears verbatim and count tables; no connectors, community tier."
   },
-  "rank": 37
+  "rank": 45
  },
  {
   "id": "S08",
@@ -1061,7 +1285,7 @@
    "operator": "Guides building FastMCP servers to wrap my own APIs; a guide, not a tool.",
    "skeptic": "Guide for building FastMCP or TypeScript servers; local guidance only, no outward action."
   },
-  "rank": 38
+  "rank": 46
  },
  {
   "id": "K32",
@@ -1089,7 +1313,7 @@
    "operator": "web_search_exa and get_code_context_exa return retrievable sources; not installed, overlaps existing firecrawl search.",
    "skeptic": "web_search_exa returns sources to cite; search-only tools, but not installed."
   },
-  "rank": 39
+  "rank": 47
  },
  {
   "id": "S21",
@@ -1117,7 +1341,7 @@
    "operator": "Scans transcripts for read-only calls and adds an allowlist to settings; computed, but loosens permission guards.",
    "skeptic": "Adds an allowlist to project settings: loosens permission guardrails, though based on scanned transcripts."
   },
-  "rank": 40
+  "rank": 48
  },
  {
   "id": "S20",
@@ -1145,7 +1369,7 @@
    "operator": "Hooks in settings.json turn checks into blocking exit codes; but it edits permissions and privileged hooks.",
    "skeptic": "Edits settings.json hooks and permissions: changes the guardrails themselves."
   },
-  "rank": 41
+  "rank": 49
  },
  {
   "id": "S23",
@@ -1173,7 +1397,7 @@
    "operator": "Adds a database and shared state to published pages, matching my static single-file HTML front ends.",
    "skeptic": "Gives artifact pages a database and shared state; fits single-file HTML front ends, writes shared data."
   },
-  "rank": 42
+  "rank": 50
  },
  {
   "id": "K14",
@@ -1201,7 +1425,35 @@
    "operator": "Tools start, navigate, act, extract: extract retrieves page data, but act clicks on live sites with no stack tie-in.",
    "skeptic": "Tool 'act' drives a cloud browser on arbitrary sites; catalog description empty, publisher unvetted."
   },
-  "rank": 43
+  "rank": 51
+ },
+ {
+  "id": "P43",
+  "name": "Axe Accessibility (Deque)",
+  "type": "plugin",
+  "status": "available",
+  "readiness": 2,
+  "desc": "Accessibility toolkit for coding agents: scan, remediate, verify loop with the Axe MCP Server, including keyboard guided tests.",
+  "facts": "4 skills (mcp-audit, mcp-setup, mcp-usage, mcp-generate-instructions), MCP axe-mcp-server. Partner: Deque.",
+  "mean": {
+   "leverage": 2.0,
+   "verifiability": 5.0,
+   "fit": 3.0,
+   "safety": 4.0
+  },
+  "spread": {
+   "leverage": 0,
+   "verifiability": 0,
+   "fit": 0,
+   "safety": 0
+  },
+  "score": 63.0,
+  "why": {
+   "architect": "Axe MCP scan, remediate, verify loop turns accessibility into a tool check; Deque partner.",
+   "operator": "Axe MCP scan, remediate, verify loop gives pass/fail accessibility results on static HTML sites; Deque partner.",
+   "skeptic": "axe-mcp-server scan-remediate-verify loop yields concrete rule violations; Deque partner, audit-oriented."
+  },
+  "rank": 52
  },
  {
   "id": "P17",
@@ -1229,7 +1481,7 @@
    "operator": "Catalyst calendar and thesis tracker fit my markets playbook; no MCP server, so figures come from the model.",
    "skeptic": "No MCP server, no hooks, Anthropic: contained, but without a data source its numbers are model-written."
   },
-  "rank": 44
+  "rank": 53
  },
  {
   "id": "S24",
@@ -1257,7 +1509,35 @@
    "operator": "Renders a morning brief or sets a recurring weekday task; narrative output, no stated data source.",
    "skeptic": "Renders a morning brief artifact or recurring weekday task; sources and checks for the brief are unstated."
   },
-  "rank": 45
+  "rank": 54
+ },
+ {
+  "id": "P35",
+  "name": "small-business (Anthropic Knowledge Work)",
+  "type": "plugin",
+  "status": "available",
+  "readiness": 2,
+  "desc": "Pre-built small business workflows to run and grow a business; you approve every step that touches money or customers.",
+  "facts": "About 42 skills incl. review-reputation, seo-ai-visibility, invoice-chase, speed-to-lead, lead-finder, call-list, crm-autopilot, cash-flow-snapshot, close-month, tax-prep, inbox-manager, ad-manager. About 35 MCP servers incl. stripe, quickbooks, gmail, google-calendar, hubspot, mailchimp, square, xero, zapier, notion, slack, canva.",
+  "mean": {
+   "leverage": 4.33,
+   "verifiability": 2.33,
+   "fit": 4.0,
+   "safety": 1.0
+  },
+  "spread": {
+   "leverage": 1,
+   "verifiability": 1,
+   "fit": 0,
+   "safety": 0
+  },
+  "score": 61.7,
+  "why": {
+   "architect": "review-reputation, seo-ai-visibility, invoice-chase fit the haul business, but about 35 remote MCP servers incl stripe.",
+   "operator": "review-reputation, invoice-chase, speed-to-lead hit haul-service chores weekly, but about 35 MCP servers incl. stripe and square is broad money reach.",
+   "skeptic": "About 35 MCP servers incl. stripe, square, gmail; invoice-chase and ad-manager can move money or send. Approval claim is vendor copy."
+  },
+  "rank": 55
  },
  {
   "id": "P19",
@@ -1285,7 +1565,7 @@
    "operator": "seo-audit and email-sequence skills serve local SEO for the haul service; mostly drafting, Anthropic publisher, remote MCP to gmail.",
    "skeptic": "seo-audit and email-sequence fit local SEO, but bundled gmail, slack, klaviyo MCP can send."
   },
-  "rank": 46
+  "rank": 56
  },
  {
   "id": "S22",
@@ -1313,7 +1593,7 @@
    "operator": "SessionStart hooks run tests and linters, an exit-code check; but it writes hooks into the repo.",
    "skeptic": "Hooks that run tests give exit codes, but authoring SessionStart hooks is privileged execution at every start."
   },
-  "rank": 47
+  "rank": 57
  },
  {
   "id": "S25",
@@ -1341,7 +1621,7 @@
    "operator": "React, Tailwind, shadcn artifacts are UI generation, heavier than the founder's single-file HTML front ends.",
    "skeptic": "React, Tailwind and shadcn/ui UI generation is unchecked output; stack is single-file HTML front ends."
   },
-  "rank": 48
+  "rank": 58
  },
  {
   "id": "S11",
@@ -1369,7 +1649,35 @@
    "operator": "Word templates with tracked changes help LLC and lease paperwork occasionally; local file editing only.",
    "skeptic": "Creates and edits Word documents locally; useful for LLC filings, produces documents not checks."
   },
-  "rank": 49
+  "rank": 59
+ },
+ {
+  "id": "K56",
+  "name": "Malwarebytes",
+  "type": "connector",
+  "status": "available",
+  "readiness": 3,
+  "desc": "Check links, phones, and emails for scams.",
+  "facts": "Authless. Tools: reputation-check_link, check_phone, check_email, whois, scan_all, report.",
+  "mean": {
+   "leverage": 2.0,
+   "verifiability": 4.33,
+   "fit": 2.0,
+   "safety": 4.0
+  },
+  "spread": {
+   "leverage": 0,
+   "verifiability": 1,
+   "fit": 0,
+   "safety": 0
+  },
+  "score": 58.7,
+  "why": {
+   "architect": "Authless reputation-check_link, check_phone, and whois return lookups; it also has a report tool.",
+   "operator": "Authless check_link, check_phone, whois return reputation data; occasional vetting of leads or vendors; report tool submits outward.",
+   "skeptic": "Authless reputation checks and whois return lookups; 'report' tool may submit outward."
+  },
+  "rank": 60
  },
  {
   "id": "P11",
@@ -1397,7 +1705,7 @@
    "operator": "sql-queries and validate-data make numbers computed, but MCP servers target bigquery, snowflake, databricks, not Supabase.",
    "skeptic": "validate-data and sql-queries compute numbers, but MCP servers are bigquery, snowflake, databricks, not user stack."
   },
-  "rank": 50
+  "rank": 61
  },
  {
   "id": "P09",
@@ -1425,7 +1733,7 @@
    "operator": "citation-check verifies against OpenAlex and arXiv, but a community remote MCP server; academic research is off-venture.",
    "skeptic": "citation-check against OpenAlex and arXiv is checkable, but community tier with remote MCP reference-lookup."
   },
-  "rank": 51
+  "rank": 62
  },
  {
   "id": "P22",
@@ -1453,7 +1761,35 @@
    "operator": "Audits memory with 25 self-tested checks; contained, no hooks, no MCP, but community and saves little founder time.",
    "skeptic": "No hooks, no MCP, contained; the 25 self-tested checks are self-reported by a community author."
   },
-  "rank": 52
+  "rank": 63
+ },
+ {
+  "id": "P32",
+  "name": "frontend-design (Anthropic)",
+  "type": "plugin",
+  "status": "available",
+  "readiness": 3,
+  "desc": "Frontend design skill for UI/UX implementation.",
+  "facts": "1 skill, no MCP, no hooks. Anthropic.",
+  "mean": {
+   "leverage": 3.0,
+   "verifiability": 1.0,
+   "fit": 4.0,
+   "safety": 5.0
+  },
+  "spread": {
+   "leverage": 0,
+   "verifiability": 0,
+   "fit": 0,
+   "safety": 0
+  },
+  "score": 58.0,
+  "why": {
+   "architect": "1 skill, no MCP, no hooks; helps static HTML front ends but output is design prose and code taste.",
+   "operator": "1 skill, no MCP, no hooks; helps single-file HTML front ends but output is design prose, not a check.",
+   "skeptic": "1 skill, no MCP, no hooks: contained taste guidance for static HTML front ends, nothing checkable."
+  },
+  "rank": 64
  },
  {
   "id": "S05",
@@ -1481,7 +1817,7 @@
    "operator": "Exports to Google Docs and PDF for shareable docs; pure document generation, no check.",
    "skeptic": "Document authoring and export; pairs with Claude Docs connector; output is prose, not a check."
   },
-  "rank": 53
+  "rank": 65
  },
  {
   "id": "P06",
@@ -1509,7 +1845,7 @@
    "operator": "42crunch-audit and 42crunch-scan check APIs; serverless functions are small; partner, contained.",
    "skeptic": "42crunch-audit and scan give tool output; partner and contained, but API security is peripheral to static sites."
   },
-  "rank": 54
+  "rank": 66
  },
  {
   "id": "K26",
@@ -1537,7 +1873,7 @@
    "operator": "Error search is checkable data, but installState needs_reconnect and Sentry is not in the founder's stack.",
    "skeptic": "Error search is retrieval, but installState needs_reconnect and Sentry is not in the user's stack."
   },
-  "rank": 55
+  "rank": 67
  },
  {
   "id": "S17",
@@ -1565,7 +1901,7 @@
    "operator": "Runs a prompt on a recurring interval for monitoring; scheduling only, verifies nothing itself.",
    "skeptic": "Runs a prompt on a recurring interval: multiplies whatever the prompt does, adds no check."
   },
-  "rank": 56
+  "rank": 68
  },
  {
   "id": "K31",
@@ -1593,7 +1929,7 @@
    "operator": "Gives API context to coding agents; connected at org level but not enabled in chat; no tools listed.",
    "skeptic": "Only 'give API context' stated; connected at org level but not enabled, no tools listed to verify."
   },
-  "rank": 57
+  "rank": 69
  },
  {
   "id": "K18",
@@ -1621,7 +1957,7 @@
    "operator": "get_design_context and get_variable_defs help design-to-code, but my front ends are single-file HTML without Figma.",
    "skeptic": "get_variable_defs reads real tokens, but Figma is not in the stated stack; use_figma writes files."
   },
-  "rank": 58
+  "rank": 70
  },
  {
   "id": "P21",
@@ -1649,7 +1985,35 @@
    "operator": "dark-pattern-check against dated US, EU, UK rules helps launcher landing pages; contained community skills.",
    "skeptic": "Checks pages against dated US, EU, UK rules, but grading is skill-based judgment; contained community."
   },
-  "rank": 59
+  "rank": 71
+ },
+ {
+  "id": "P42",
+  "name": "Browser Use",
+  "type": "plugin",
+  "status": "available",
+  "readiness": 2,
+  "desc": "A real browser for Claude, your Chrome or a Browser Use Cloud browser: browsing, scraping, form filling, site testing, screenshots, web workflow automation.",
+  "facts": "1 MCP server. Partner: browser-use.",
+  "mean": {
+   "leverage": 3.33,
+   "verifiability": 3.0,
+   "fit": 3.0,
+   "safety": 1.0
+  },
+  "spread": {
+   "leverage": 1,
+   "verifiability": 0,
+   "fit": 0,
+   "safety": 0
+  },
+  "score": 55.0,
+  "why": {
+   "architect": "Drives your own Chrome with form filling; partner browser-use with remote reach.",
+   "operator": "Drives your own Chrome for form filling and scraping; replaces manual portal work but runs logged-in sessions via partner.",
+   "skeptic": "Drives 'your Chrome' with form filling; logged-in sessions plus partner MCP equals broad unvetted reach."
+  },
+  "rank": 72
  },
  {
   "id": "K27",
@@ -1677,7 +2041,7 @@
    "operator": "n8n is in my stack, but connector failed with 404 this session, so nothing usable yet.",
    "skeptic": "n8n is in stack, but failed to connect (404); can run workflows when working."
   },
-  "rank": 60
+  "rank": 73
  },
  {
   "id": "S16",
@@ -1705,7 +2069,7 @@
    "operator": "Reviews changed code and applies the fixes; cleanup, not new capability, and edits the founder's code.",
    "skeptic": "Reviews for reuse and efficiency then applies the fixes itself, an unverified judgment written into code."
   },
-  "rank": 61
+  "rank": 74
  },
  {
   "id": "P10",
@@ -1733,7 +2097,35 @@
    "operator": "Mechanical evidence checks across official records could aid LLC filings research; community, remote MCP plus PostToolUse hook.",
    "skeptic": "Claims mechanical evidence checks, yet community publisher runs a PostToolUse hook and remote MCP server."
   },
-  "rank": 62
+  "rank": 75
+ },
+ {
+  "id": "P34",
+  "name": "feature-dev (Anthropic)",
+  "type": "plugin",
+  "status": "available",
+  "readiness": 3,
+  "desc": "Comprehensive feature development workflow with specialized agents for codebase exploration, architecture design, and quality review.",
+  "facts": "1 command, 3 agents (code-architect, code-explorer, code-reviewer). Anthropic.",
+  "mean": {
+   "leverage": 2.67,
+   "verifiability": 2.0,
+   "fit": 2.67,
+   "safety": 4.0
+  },
+  "spread": {
+   "leverage": 1,
+   "verifiability": 0,
+   "fit": 1,
+   "safety": 0
+  },
+  "score": 53.7,
+  "why": {
+   "architect": "3 agents (code-architect, code-explorer, code-reviewer); contained Anthropic, but review output is judgment, not a check.",
+   "operator": "code-architect, code-explorer, code-reviewer agents; heavyweight workflow for small serverless sites, contained reach.",
+   "skeptic": "Contained Anthropic plugin; code-reviewer agent output is opinion, not a test or exit code."
+  },
+  "rank": 76
  },
  {
   "id": "P12",
@@ -1761,7 +2153,35 @@
    "operator": "Can pause campaigns, change budgets and bids, moving money; the Windsor.ai connector is already installed.",
    "skeptic": "Entry states it can pause campaigns, change budgets and bids: moves ad money; duplicates installed connector."
   },
-  "rank": 63
+  "rank": 77
+ },
+ {
+  "id": "K46",
+  "name": "TinyFish",
+  "type": "connector",
+  "status": "available",
+  "readiness": 2,
+  "desc": "Browser automation and web scraping with a cloud browser agent: log in to portals, fill and submit forms, scrape social media, listings, prices and reviews, monitor changes.",
+  "facts": "About 23 tools: create_browser_session, create_monitor, fetch_content, batch runs.",
+  "mean": {
+   "leverage": 3.0,
+   "verifiability": 3.0,
+   "fit": 3.0,
+   "safety": 1.0
+  },
+  "spread": {
+   "leverage": 0,
+   "verifiability": 0,
+   "fit": 0,
+   "safety": 0
+  },
+  "score": 53.0,
+  "why": {
+   "architect": "Scrapes listings and reviews, but it also logs in to portals and submits forms with a cloud agent.",
+   "operator": "Logs in to portals and submits forms; review and price monitoring useful, but outward submits via cloud agent.",
+   "skeptic": "Desc says it logs in to portals and fills and submits forms: credentialed outward action by a cloud agent."
+  },
+  "rank": 78
  },
  {
   "id": "P20",
@@ -1789,7 +2209,35 @@
    "operator": "ICP and message house help launches; 'sourced and gated proof points' is still prose, no MCP, no hooks.",
    "skeptic": "No MCP, no hooks; 'sourced and gated proof points' is vendor copy with no stated checker."
   },
-  "rank": 64
+  "rank": 79
+ },
+ {
+  "id": "P31",
+  "name": "plugin-dev (Anthropic)",
+  "type": "plugin",
+  "status": "available",
+  "readiness": 2,
+  "desc": "Plugin development toolkit: skills for creating agents, commands, hooks, MCP integrations, and plugin structure guidance.",
+  "facts": "7 skills (agent-development, command-development, hook-development, mcp-integration, plugin-settings, plugin-structure, skill-development), a create-plugin command, 3 agents (agent-creator, plugin-validator, skill-reviewer). Anthropic.",
+  "mean": {
+   "leverage": 3.0,
+   "verifiability": 2.67,
+   "fit": 2.67,
+   "safety": 2.33
+  },
+  "spread": {
+   "leverage": 0,
+   "verifiability": 1,
+   "fit": 1,
+   "safety": 1
+  },
+  "score": 52.7,
+  "why": {
+   "architect": "Has a plugin-validator agent and hook-development skill, useful for this harness, but reach is privileged.",
+   "operator": "Hook-development and plugin-validator help build the desk harness, but reach is privileged and it is meta-tooling, not venture work.",
+   "skeptic": "Anthropic, but reach is privileged and it teaches hook-development; plugin-validator agent is the only check-like part."
+  },
+  "rank": 80
  },
  {
   "id": "K20",
@@ -1817,7 +2265,7 @@
    "operator": "About 70 Express, PDF and image tools; creative output, occasional flyer use, writes into own Adobe storage.",
    "skeptic": "About 70 design, PDF and image tools produce creative output, not checks; writes stay in own asset storage."
   },
-  "rank": 65
+  "rank": 81
  },
  {
   "id": "S12",
@@ -1845,7 +2293,7 @@
    "operator": "Creates and edits PowerPoint decks; output is a document, little weekly need in these ventures.",
    "skeptic": "Creates and edits PowerPoint decks: prose and layout generation, rarely needed by this user."
   },
-  "rank": 66
+  "rank": 82
  },
  {
   "id": "K19",
@@ -1873,7 +2321,7 @@
    "operator": "generate-design and edit-design produce visuals, not checkable data; Canva is not in the stack.",
    "skeptic": "generate-design and edit-design produce visuals, not checks; writes stay inside the user's Canva account."
   },
-  "rank": 67
+  "rank": 83
  },
  {
   "id": "K37",
@@ -1901,7 +2349,7 @@
    "operator": "query-run returns computed analytics, but PostHog is not in the stack; insight create and update write.",
    "skeptic": "query-run returns data, but HogQL is model-generated and insight create/update writes; PostHog not in stack."
   },
-  "rank": 68
+  "rank": 84
  },
  {
   "id": "K43",
@@ -1929,7 +2377,7 @@
    "operator": "data_query returns source data, but it overlaps the installed Windsor.ai, so little added value.",
    "skeptic": "data_query is read retrieval, but entry states it overlaps the installed Windsor.ai."
   },
-  "rank": 69
+  "rank": 85
  },
  {
   "id": "P01",
@@ -1957,7 +2405,35 @@
    "operator": "Anthropic publisher, multi-agent PR review with confidence scoring; useful for serverless functions but reach is privileged.",
    "skeptic": "One slash command by Anthropic; confidence-scored agent review is still model judgment, not a test."
   },
-  "rank": 70
+  "rank": 86
+ },
+ {
+  "id": "P37",
+  "name": "corporate-legal (Anthropic)",
+  "type": "plugin",
+  "status": "available",
+  "readiness": 2,
+  "desc": "M&A diligence with cited tabular review, disclosure schedules, closing checklists, board consents and minutes in house format, entity compliance deadlines across jurisdictions.",
+  "facts": "13 skills incl. entity-compliance, board-minutes, written-consent, tabular-review, diligence-issue-extraction; 1 agent (dataroom-watcher); MCP: Box, Google Drive, Slack, iManage.",
+  "mean": {
+   "leverage": 2.0,
+   "verifiability": 3.0,
+   "fit": 2.67,
+   "safety": 3.0
+  },
+  "spread": {
+   "leverage": 0,
+   "verifiability": 0,
+   "fit": 1,
+   "safety": 0
+  },
+  "score": 49.7,
+  "why": {
+   "architect": "entity-compliance deadlines and cited tabular review touch LLC filings; M&A focus mostly irrelevant.",
+   "operator": "entity-compliance deadlines across jurisdictions fits LLC filings; cited tabular review adds checkability; mostly M&A scope otherwise.",
+   "skeptic": "Cited tabular review helps checks, but built for M&A; entity-compliance marginal for LLC filings. Box, Drive, Slack reach."
+  },
+  "rank": 87
  },
  {
   "id": "K34",
@@ -1985,7 +2461,35 @@
    "operator": "microsoft_docs_search retrieves official docs, authless and read-only, but no Microsoft stack in use.",
    "skeptic": "Authless microsoft_docs_search and fetch are read-only retrieval, but Microsoft docs are irrelevant to this stack."
   },
-  "rank": 71
+  "rank": 88
+ },
+ {
+  "id": "K60",
+  "name": "Jam",
+  "type": "connector",
+  "status": "available",
+  "readiness": 2,
+  "desc": "Record the screen and collect automatic context for issues.",
+  "facts": "6 tools: getDetails, getConsoleLogs, getNetworkRequests, getScreenshot, getUserEvents, analyzeVideo.",
+  "mean": {
+   "leverage": 1.33,
+   "verifiability": 4.0,
+   "fit": 1.67,
+   "safety": 4.0
+  },
+  "spread": {
+   "leverage": 1,
+   "verifiability": 0,
+   "fit": 1,
+   "safety": 0
+  },
+  "score": 48.7,
+  "why": {
+   "architect": "getConsoleLogs and getNetworkRequests give hard debug evidence; depends on recording via Jam.",
+   "operator": "getConsoleLogs and getNetworkRequests from screen recordings; needs Jam captures this solo founder does not make.",
+   "skeptic": "getConsoleLogs and getNetworkRequests are captured evidence, but bug recording is rare for this user."
+  },
+  "rank": 89
  },
  {
   "id": "P03",
@@ -2013,7 +2517,7 @@
    "operator": "Markdown-only checklist, 1 skill, read-only; a review rubric, not a tool that produces checkable output. Community tier.",
    "skeptic": "Markdown-only checklist, read-only by default; findings remain model judgment, community tier."
   },
-  "rank": 72
+  "rank": 90
  },
  {
   "id": "P28",
@@ -2041,7 +2545,7 @@
    "operator": "claim-boundary-checker helps, but output is prose review; 4 skills, contained reach, community.",
    "skeptic": "Contained skills only; claim-boundary-checker is still a model reading prose, not a source check."
   },
-  "rank": 73
+  "rank": 91
  },
  {
   "id": "P23",
@@ -2069,7 +2573,7 @@
    "operator": "Integrity-hook ledger is interesting, but community plugin with PreCompact, SessionStart, Stop hooks and privileged reach.",
    "skeptic": "Community plugin running PreCompact, SessionStart, Stop hooks with privileged reach; memory integrity claim unverified."
   },
-  "rank": 74
+  "rank": 92
  },
  {
   "id": "K10",
@@ -2097,7 +2601,7 @@
    "operator": "Slack is not in the stack; send_message and schedule_message are outward sends.",
    "skeptic": "Slack is not in the user's stack; send_message and schedule_message are outward send actions."
   },
-  "rank": 75
+  "rank": 93
  },
  {
   "id": "P04",
@@ -2125,7 +2629,91 @@
    "operator": "18 skills incl. TDD and verification, but community plugin with a SessionStart hook and privileged reach.",
    "skeptic": "Community plugin with privileged reach and a SessionStart hook; 18 skills are process guidance."
   },
-  "rank": 76
+  "rank": 94
+ },
+ {
+  "id": "K48",
+  "name": "Calendly",
+  "type": "connector",
+  "status": "available",
+  "readiness": 2,
+  "desc": "Manage event types, availability, and bookings.",
+  "facts": "About 36 tools: event types, available times, availability schedules, users.",
+  "mean": {
+   "leverage": 2.0,
+   "verifiability": 3.0,
+   "fit": 2.0,
+   "safety": 3.0
+  },
+  "spread": {
+   "leverage": 0,
+   "verifiability": 0,
+   "fit": 0,
+   "safety": 0
+  },
+  "score": 47.0,
+  "why": {
+   "architect": "Available-times lookups for bookings; Calendly is not in the stack, which uses Google Calendar.",
+   "operator": "Availability and bookings tools, but stack already uses Google Calendar; adds a tool not in use.",
+   "skeptic": "Availability lookups are data, but Calendly is not in the stack; bookings imply writes."
+  },
+  "rank": 95
+ },
+ {
+  "id": "P38",
+  "name": "ip-legal (Anthropic)",
+  "type": "plugin",
+  "status": "available",
+  "readiness": 2,
+  "desc": "First-pass trademark clearance and freedom-to-operate triage, invention disclosure screening, cease-and-desist and DMCA takedown drafting, open source compliance, IP clause review, registration and renewal tracking.",
+  "facts": "12 skills incl. clearance, fto-triage, cease-desist, takedown, oss-review, portfolio; agent ip-renewal-watcher; MCP: CourtListener, Descrybe, Google Drive, Slack.",
+  "mean": {
+   "leverage": 2.0,
+   "verifiability": 3.0,
+   "fit": 2.0,
+   "safety": 3.0
+  },
+  "spread": {
+   "leverage": 0,
+   "verifiability": 0,
+   "fit": 0,
+   "safety": 0
+  },
+  "score": 47.0,
+  "why": {
+   "architect": "CourtListener MCP gives resolvable citations; trademark clearance for venture names is occasional.",
+   "operator": "Trademark clearance via CourtListener retrieval helps naming new web ventures, but use is rare.",
+   "skeptic": "CourtListener MCP gives resolvable retrieval; cease-desist and takedown are drafts. Rare need for these ventures."
+  },
+  "rank": 96
+ },
+ {
+  "id": "P48",
+  "name": "claude-performance",
+  "type": "plugin",
+  "status": "available",
+  "readiness": 2,
+  "desc": "Weekly performance digest for Claude Code: reads JSONL session data, computes six effectiveness metrics, fires diagnostic rules, writes behavioral rules into CLAUDE.md so future sessions adapt.",
+  "facts": "Metrics: activity mix, one-shot edit rate, subagent turn count, model mix, project allocation, hookify firings. 1 skill, SessionStart hook. Community.",
+  "mean": {
+   "leverage": 2.0,
+   "verifiability": 3.67,
+   "fit": 2.0,
+   "safety": 1.0
+  },
+  "spread": {
+   "leverage": 0,
+   "verifiability": 1,
+   "fit": 0,
+   "safety": 0
+  },
+  "score": 46.3,
+  "why": {
+   "architect": "Computes six metrics from JSONL, but a community SessionStart hook writes into CLAUDE.md, breaking the cache prefix.",
+   "operator": "Computes six metrics from JSONL, but SessionStart hook writes rules into CLAUDE.md; privileged community code.",
+   "skeptic": "Computes metrics from JSONL, but a community SessionStart hook writes rules into CLAUDE.md: privileged self-modification."
+  },
+  "rank": 97
  },
  {
   "id": "P29",
@@ -2153,7 +2741,63 @@
    "operator": "Turns scanned filings and receipts into tables; community MCP server with remote reach handles my documents.",
    "skeptic": "Community remote MCP handwritingocr receives scanned documents; output is extracted text, not validated."
   },
-  "rank": 77
+  "rank": 98
+ },
+ {
+  "id": "P45",
+  "name": "Property Management Operator",
+  "type": "plugin",
+  "status": "available",
+  "readiness": 3,
+  "desc": "Property management workflow support: resident requests, maintenance triage, vendors, inspections, renewals, delinquencies, operating reviews.",
+  "facts": "1 skill (property-operations); no MCP, no hooks. Community: Revuity Systems.",
+  "mean": {
+   "leverage": 2.0,
+   "verifiability": 1.0,
+   "fit": 3.0,
+   "safety": 4.0
+  },
+  "spread": {
+   "leverage": 0,
+   "verifiability": 0,
+   "fit": 0,
+   "safety": 0
+  },
+  "score": 46.0,
+  "why": {
+   "architect": "1 skill (property-operations), no MCP, no hooks; workflow prose for landlord work.",
+   "operator": "1 skill property-operations, no MCP; prose workflow for landlord side, contained but community.",
+   "skeptic": "1 skill, no MCP, no hooks; community workflow prose for property ops, nothing computed."
+  },
+  "rank": 99
+ },
+ {
+  "id": "P46",
+  "name": "Small Business Operator",
+  "type": "plugin",
+  "status": "available",
+  "readiness": 3,
+  "desc": "A practical operating layer for small-business owners: sales, cash, customers, delivery, people, vendors, commitments, decisions.",
+  "facts": "1 skill (business-operating-rhythm); no MCP, no hooks. Community: Revuity Systems.",
+  "mean": {
+   "leverage": 2.0,
+   "verifiability": 1.0,
+   "fit": 3.0,
+   "safety": 4.0
+  },
+  "spread": {
+   "leverage": 0,
+   "verifiability": 0,
+   "fit": 0,
+   "safety": 0
+  },
+  "score": 46.0,
+  "why": {
+   "architect": "1 skill (business-operating-rhythm), no MCP; operating-rhythm prose, no data or check.",
+   "operator": "1 skill business-operating-rhythm, no MCP, no hooks; generic operating prose with no data source.",
+   "skeptic": "Single business-operating-rhythm skill, no MCP; generic operating advice, no data or checks."
+  },
+  "rank": 100
  },
  {
   "id": "K42",
@@ -2181,7 +2825,35 @@
    "operator": "addDeal and convertLeadToDeal could track landlord B2B, but Pipedrive is a new paid CRM outside my Airtable stack.",
    "skeptic": "addDeal, addPerson write CRM records; Pipedrive not in stack, marginal for landlord B2B."
   },
-  "rank": 78
+  "rank": 101
+ },
+ {
+  "id": "K47",
+  "name": "Twilio",
+  "type": "connector",
+  "status": "available",
+  "readiness": 3,
+  "desc": "Communications and customer engagement platform.",
+  "facts": "Authless. Tools: twilio__search, twilio__retrieve (2 tools).",
+  "mean": {
+   "leverage": 1.0,
+   "verifiability": 3.0,
+   "fit": 1.33,
+   "safety": 5.0
+  },
+  "spread": {
+   "leverage": 0,
+   "verifiability": 0,
+   "fit": 1,
+   "safety": 0
+  },
+  "score": 45.3,
+  "why": {
+   "architect": "Authless, only twilio__search and twilio__retrieve; Twilio is not in the stack.",
+   "operator": "Authless, only twilio__search and twilio__retrieve; no messaging, Twilio not in stack.",
+   "skeptic": "Authless, only twilio__search and twilio__retrieve; no messaging tools despite the platform desc."
+  },
+  "rank": 102
  },
  {
   "id": "K36",
@@ -2209,7 +2881,35 @@
    "operator": "Workers and KV duplicate Netlify/Vercel serverless I already pay for; about 24 tools with write scope.",
    "skeptic": "Workers, KV, accounts tools can deploy and change infra; stack uses Netlify/Vercel, not Cloudflare."
   },
-  "rank": 79
+  "rank": 103
+ },
+ {
+  "id": "P49",
+  "name": "Dev Loop: Fix, Commit and Ship",
+  "type": "plugin",
+  "status": "available",
+  "readiness": 3,
+  "desc": "Three commands for the daily loop: fix a bug or apply a review report, commit with pre-flight checks, or run review, fix and commit as one flow, pausing after the review for your go-ahead.",
+  "facts": "3 skills (fix, commit, ship); no MCP, no hooks. Community.",
+  "mean": {
+   "leverage": 2.0,
+   "verifiability": 2.0,
+   "fit": 2.0,
+   "safety": 3.0
+  },
+  "spread": {
+   "leverage": 0,
+   "verifiability": 0,
+   "fit": 0,
+   "safety": 0
+  },
+  "score": 45.0,
+  "why": {
+   "architect": "3 skills (fix, commit, ship) with pre-flight checks; community, contained, duplicates plain git.",
+   "operator": "fix, commit, ship skills with pre-flight checks and a pause after review; modest daily-loop savings.",
+   "skeptic": "No MCP, no hooks, but community commit and ship skills write to the repo; pre-flight checks unspecified."
+  },
+  "rank": 104
  },
  {
   "id": "K21",
@@ -2237,7 +2937,7 @@
    "operator": "Webflow is not in my stack; 'launch the whole site from a prompt' is outward publishing I do on Netlify.",
    "skeptic": "Webflow absent from stack; tools include webhooks and scripts, and desc claims launching a whole site."
   },
-  "rank": 80
+  "rank": 105
  },
  {
   "id": "K28",
@@ -2265,7 +2965,7 @@
    "operator": "A CRM not in the stack; connect_incomplete, needs OAuth; no tools listed to verify against.",
    "skeptic": "Vague vendor copy 'works for you'; CRM not in stack and connect_incomplete, capabilities unstated."
   },
-  "rank": 81
+  "rank": 106
  },
  {
   "id": "K38",
@@ -2293,7 +2993,7 @@
    "operator": "About 180 telemetry tools for logs and monitors; a solo founder on Netlify has no Datadog to read.",
    "skeptic": "Logs and metrics search is telemetry retrieval; about 180 tools for a service the user does not run."
   },
-  "rank": 82
+  "rank": 107
  },
  {
   "id": "K23",
@@ -2321,7 +3021,7 @@
    "operator": "grok_chat is a second model's opinion plus image and video generation; nothing checkable, no stack fit.",
    "skeptic": "grok_chat is a second model's opinion and image/video generation; nothing checkable, data leaves to another vendor."
   },
-  "rank": 83
+  "rank": 108
  },
  {
   "id": "K35",
@@ -2349,7 +3049,7 @@
    "operator": "Postgres with compare_database_schema duplicates Supabase already paid for; complete_database_migration writes schema.",
    "skeptic": "compare_database_schema is checkable, but duplicates Supabase and complete_database_migration alters schemas."
   },
-  "rank": 84
+  "rank": 109
  },
  {
   "id": "P15",
@@ -2377,7 +3077,7 @@
    "operator": "Queries BigQuery datasets; the user runs Supabase and Airtable, not BigQuery.",
    "skeptic": "BigQuery queries are checkable, but BigQuery is absent from the stack; listed community tier, remote."
   },
-  "rank": 85
+  "rank": 110
  },
  {
   "id": "P07",
@@ -2405,7 +3105,91 @@
    "operator": "can-i-deploy contract tests are real checks, but PactFlow is irrelevant to single-file HTML; ships PostToolUse hooks.",
    "skeptic": "can-i-deploy contract checks are real, but PostToolUse and SessionStart hooks plus remote smartbear MCP; no API contracts in stack."
   },
-  "rank": 86
+  "rank": 111
+ },
+ {
+  "id": "K61",
+  "name": "Badger Maps (Standard)",
+  "type": "connector",
+  "status": "available",
+  "readiness": 2,
+  "desc": "Field sales platform: accounts, check-ins, routes.",
+  "facts": "About 21 tools: create_route, create_checkin, get_account, find_user.",
+  "mean": {
+   "leverage": 1.33,
+   "verifiability": 2.67,
+   "fit": 2.0,
+   "safety": 3.0
+  },
+  "spread": {
+   "leverage": 1,
+   "verifiability": 1,
+   "fit": 0,
+   "safety": 0
+  },
+  "score": 41.3,
+  "why": {
+   "architect": "create_route and create_checkin for field sales teams; a solo hauler gains little.",
+   "operator": "create_route and create_checkin for field sales; marginal for landlord B2B visits, another paid tool.",
+   "skeptic": "Field sales tool not in stack; create_route and create_checkin write records."
+  },
+  "rank": 112
+ },
+ {
+  "id": "P40",
+  "name": "design (Anthropic Knowledge Work)",
+  "type": "plugin",
+  "status": "available",
+  "readiness": 2,
+  "desc": "Design critique, design system management, UX writing, accessibility audits, research synthesis, dev handoff.",
+  "facts": "7 skills (design-critique, accessibility-review, design-handoff, design-system, ux-copy, user-research); MCP: figma, linear, asana, intercom, notion, slack, gmail.",
+  "mean": {
+   "leverage": 2.0,
+   "verifiability": 2.0,
+   "fit": 2.0,
+   "safety": 2.33
+  },
+  "spread": {
+   "leverage": 0,
+   "verifiability": 0,
+   "fit": 0,
+   "safety": 1
+  },
+  "score": 40.7,
+  "why": {
+   "architect": "design-critique and ux-copy are opinion; figma, linear, intercom MCP mostly outside the stack.",
+   "operator": "accessibility-review and ux-copy skills; MCP leans on figma, linear, intercom not in the stack.",
+   "skeptic": "Mostly critique prose; MCP spans figma, intercom, slack, gmail, none in the stack beyond Gmail."
+  },
+  "rank": 113
+ },
+ {
+  "id": "K53",
+  "name": "Inkbox",
+  "type": "connector",
+  "status": "available",
+  "readiness": 2,
+  "desc": "Email, SMS, and iMessage for AI agents.",
+  "facts": "About 59 tools: calls, call transcripts, contacts, channel status. Includes outward messaging.",
+  "mean": {
+   "leverage": 2.33,
+   "verifiability": 2.0,
+   "fit": 2.0,
+   "safety": 1.0
+  },
+  "spread": {
+   "leverage": 1,
+   "verifiability": 0,
+   "fit": 0,
+   "safety": 0
+  },
+  "score": 40.0,
+  "why": {
+   "architect": "About 59 tools including outward email, SMS and iMessage messaging; a send-class surface.",
+   "operator": "Email, SMS and iMessage with outward messaging; could speed lead replies but is a send-class tool.",
+   "skeptic": "Facts say 'Includes outward messaging' across email, SMS, iMessage plus calls: send class."
+  },
+  "rank": 114
  },
  {
   "id": "P18",
@@ -2433,7 +3217,7 @@
    "operator": "Built around hubspot and salesforce, not in stack; drafts or sends email and books meetings.",
    "skeptic": "Entry states it sends email, updates records, books meetings; relies on hubspot and salesforce not in stack."
   },
-  "rank": 87
+  "rank": 115
  },
  {
   "id": "S26",
@@ -2461,7 +3245,35 @@
    "operator": "Teaching mode with quizzes saves no founder-hours and touches no venture.",
    "skeptic": "Teaching mode with explanations and quizzes; no tools, no venture task served."
   },
-  "rank": 88
+  "rank": 116
+ },
+ {
+  "id": "K54",
+  "name": "PandaDoc",
+  "type": "connector",
+  "status": "available",
+  "readiness": 2,
+  "desc": "Create, send, sign and track documents.",
+  "facts": "About 11 tools: documents_create, create_from_markdown, update, send, status, details. Includes send (act).",
+  "mean": {
+   "leverage": 2.0,
+   "verifiability": 2.0,
+   "fit": 2.33,
+   "safety": 1.0
+  },
+  "spread": {
+   "leverage": 0,
+   "verifiability": 0,
+   "fit": 1,
+   "safety": 0
+  },
+  "score": 39.3,
+  "why": {
+   "architect": "Includes send (act) and sign for documents; could serve landlord B2B contracts but is a gate verb.",
+   "operator": "documents_create plus send and sign for landlord contracts; send (act) crosses the send and sign gates.",
+   "skeptic": "Facts say 'Includes send (act)'; create, send, sign hits two gate verbs."
+  },
+  "rank": 117
  },
  {
   "id": "P13",
@@ -2489,7 +3301,35 @@
    "operator": "Glue, Athena, Redshift ETL skills from AWS partner; no AWS anywhere in the founder's stack.",
    "skeptic": "Athena and Redshift queries return data, but the user has no AWS data lake; partner AWS publisher."
   },
-  "rank": 89
+  "rank": 118
+ },
+ {
+  "id": "P33",
+  "name": "commit-commands (Anthropic)",
+  "type": "plugin",
+  "status": "available",
+  "readiness": 2,
+  "desc": "Streamline the git workflow with commands for committing, pushing, and creating pull requests.",
+  "facts": "3 commands: commit, commit-push-pr, clean_gone. Anthropic.",
+  "mean": {
+   "leverage": 2.0,
+   "verifiability": 1.67,
+   "fit": 2.0,
+   "safety": 2.0
+  },
+  "spread": {
+   "leverage": 0,
+   "verifiability": 1,
+   "fit": 0,
+   "safety": 0
+  },
+  "score": 38.3,
+  "why": {
+   "architect": "commit-push-pr command pushes outward with privileged reach; saves little beyond plain git.",
+   "operator": "commit-push-pr and clean_gone commands; small time save, privileged reach can push and delete branches.",
+   "skeptic": "Privileged reach; commit-push-pr pushes outward and clean_gone deletes branches."
+  },
+  "rank": 119
  },
  {
   "id": "P02",
@@ -2517,7 +3357,35 @@
    "operator": "Six-agent review is overkill for single-file HTML; community plugin with a PreToolUse hook and privileged reach.",
    "skeptic": "Community plugin with privileged reach and a PreToolUse hook; six agents emit opinions, not checks."
   },
-  "rank": 90
+  "rank": 120
+ },
+ {
+  "id": "P36",
+  "name": "legal (Anthropic Knowledge Work)",
+  "type": "plugin",
+  "status": "available",
+  "readiness": 2,
+  "desc": "Speed up contract review, NDA triage, and compliance workflows; draft briefs, organize precedent research, manage institutional knowledge.",
+  "facts": "9 skills (review-contract, triage-nda, compliance-check, legal-risk-assessment, signature-request, vendor-check, brief); MCP: docusign, box, egnyte, gmail, google calendar, slack, atlassian.",
+  "mean": {
+   "leverage": 2.0,
+   "verifiability": 2.0,
+   "fit": 2.0,
+   "safety": 1.0
+  },
+  "spread": {
+   "leverage": 0,
+   "verifiability": 0,
+   "fit": 0,
+   "safety": 0
+  },
+  "score": 38.0,
+  "why": {
+   "architect": "signature-request skill with docusign and gmail MCP; contract review is model judgment for a solo founder.",
+   "operator": "signature-request skill with docusign MCP crosses the sign gate; NDA and contract review is occasional for this founder.",
+   "skeptic": "signature-request skill with docusign and gmail MCP: sign and send are gate verbs."
+  },
+  "rank": 121
  },
  {
   "id": "P30",
@@ -2545,7 +3413,63 @@
    "operator": "Requires the Pendo connector and a Pendo subscription, neither in the stack.",
    "skeptic": "Requires the Pendo connector and a Pendo subscription the user does not have."
   },
-  "rank": 91
+  "rank": 122
+ },
+ {
+  "id": "K52",
+  "name": "Asana",
+  "type": "connector",
+  "status": "available",
+  "readiness": 2,
+  "desc": "Coordinate tasks, projects, and goals.",
+  "facts": "About 15 tools: search_tasks, create_task, get_project, get_portfolio, status overview.",
+  "mean": {
+   "leverage": 1.0,
+   "verifiability": 3.0,
+   "fit": 1.0,
+   "safety": 3.0
+  },
+  "spread": {
+   "leverage": 0,
+   "verifiability": 0,
+   "fit": 0,
+   "safety": 0
+  },
+  "score": 37.0,
+  "why": {
+   "architect": "search_tasks and create_task in Asana; Notion already covers tasks for the user.",
+   "operator": "search_tasks and create_task in Asana; Notion already covers tasks in this stack.",
+   "skeptic": "Asana not in the stack; create_task writes, search_tasks reads."
+  },
+  "rank": 123
+ },
+ {
+  "id": "K49",
+  "name": "Close",
+  "type": "connector",
+  "status": "available",
+  "readiness": 2,
+  "desc": "Connect Claude to Close CRM to access and act on sales data.",
+  "facts": "About 55 tools: activity_search, fetch_contact, fetch_lead, fetch_opportunity, email templates.",
+  "mean": {
+   "leverage": 1.0,
+   "verifiability": 3.0,
+   "fit": 1.0,
+   "safety": 3.0
+  },
+  "spread": {
+   "leverage": 0,
+   "verifiability": 0,
+   "fit": 0,
+   "safety": 0
+  },
+  "score": 37.0,
+  "why": {
+   "architect": "About 55 tools for Close CRM, which the user does not use.",
+   "operator": "Close CRM fetch_lead and opportunities; Airtable is the CRM already in use.",
+   "skeptic": "Close CRM is not used; fetch tools read data, email templates hint at outreach."
+  },
+  "rank": 124
  },
  {
   "id": "P08",
@@ -2573,7 +3497,91 @@
    "operator": "On-call schedules and escalations assume a team; solo founder has no incident.io account.",
    "skeptic": "Partner MCP for on-call and incident escalations; solo founder has no on-call rotation."
   },
-  "rank": 92
+  "rank": 125
+ },
+ {
+  "id": "K51",
+  "name": "Linear",
+  "type": "connector",
+  "status": "available",
+  "readiness": 2,
+  "desc": "Manage issues, projects and team workflows in Linear.",
+  "facts": "About 22 tools: list_issues, get_issue, create_issue, cycles, documents, comments.",
+  "mean": {
+   "leverage": 1.0,
+   "verifiability": 3.0,
+   "fit": 1.0,
+   "safety": 3.0
+  },
+  "spread": {
+   "leverage": 0,
+   "verifiability": 0,
+   "fit": 0,
+   "safety": 0
+  },
+  "score": 37.0,
+  "why": {
+   "architect": "list_issues and create_issue in Linear, which the solo stack does not use.",
+   "operator": "list_issues and create_issue for Linear, a tracker this founder does not use.",
+   "skeptic": "Linear is not in the stack; create_issue writes inside an account."
+  },
+  "rank": 126
+ },
+ {
+  "id": "P47",
+  "name": "Small Business AI Rules",
+  "type": "plugin",
+  "status": "available",
+  "readiness": 3,
+  "desc": "AI rules for a person or small business on ChatGPT, Claude, Perplexity or Gemini subscriptions: which tool gets which job, what data may go where, how accounts are locked down, how AI-shaped decisions are logged, how to pull the plug.",
+  "facts": "1 skill (ai-control-plane-solo); no MCP, no hooks. Community.",
+  "mean": {
+   "leverage": 1.0,
+   "verifiability": 1.0,
+   "fit": 2.0,
+   "safety": 4.0
+  },
+  "spread": {
+   "leverage": 0,
+   "verifiability": 0,
+   "fit": 0,
+   "safety": 0
+  },
+  "score": 36.0,
+  "why": {
+   "architect": "1 skill (ai-control-plane-solo), policy prose only; no MCP, no hooks.",
+   "operator": "1 skill ai-control-plane-solo; a policy write-up the founder already has as standing rules.",
+   "skeptic": "1 skill of AI governance rules; policy prose only, contained community content."
+  },
+  "rank": 127
+ },
+ {
+  "id": "P39",
+  "name": "operations (Anthropic Knowledge Work)",
+  "type": "plugin",
+  "status": "available",
+  "readiness": 2,
+  "desc": "Vendor management, process documentation, change management, capacity planning, compliance tracking.",
+  "facts": "9 skills (runbook, status-report, vendor-review, process-doc, risk-assessment, capacity-plan); MCP: asana, atlassian, gmail, google calendar, notion, slack.",
+  "mean": {
+   "leverage": 2.0,
+   "verifiability": 1.0,
+   "fit": 2.0,
+   "safety": 2.33
+  },
+  "spread": {
+   "leverage": 0,
+   "verifiability": 0,
+   "fit": 0,
+   "safety": 1
+  },
+  "score": 35.7,
+  "why": {
+   "architect": "runbook, status-report, vendor-review skills are prose; asana and atlassian MCP outside the stack.",
+   "operator": "runbook and process-doc skills produce prose; Notion and Gmail MCP overlap stack but no check output.",
+   "skeptic": "runbook and status-report skills are prose; gmail and slack MCP add send reach."
+  },
+  "rank": 128
  },
  {
   "id": "P16",
@@ -2601,7 +3609,7 @@
    "operator": "Tufte and Few style guidance is opinion, not a check; community plugin with privileged PostToolUse hook.",
    "skeptic": "Tufte and Knaflic advice is prose taste; community plugin with privileged reach and a PostToolUse hook."
   },
-  "rank": 93
+  "rank": 129
  },
  {
   "id": "K39",
@@ -2629,7 +3637,7 @@
    "operator": "create-product and list-orders serve a Shopify store I do not run.",
    "skeptic": "No Shopify store in ventures; create-product and orders access write to a live commerce account."
   },
-  "rank": 94
+  "rank": 130
  },
  {
   "id": "K30",
@@ -2657,7 +3665,7 @@
    "operator": "monday.com is not in my stack; installState needs_reconnect and not enabled in chat.",
    "skeptic": "Not in stack and needs_reconnect, not enabled in chat; project-management prose with no stated check."
   },
-  "rank": 95
+  "rank": 131
  },
  {
   "id": "P24",
@@ -2685,7 +3693,7 @@
    "operator": "Memory recall and handoffs via a community remote OAuth MCP server; stores user data with an unvetted party.",
    "skeptic": "Community remote OAuth MCP holding durable cross-session memory: unvetted third party with broad reach."
   },
-  "rank": 96
+  "rank": 132
  },
  {
   "id": "P25",
@@ -2713,7 +3721,35 @@
    "operator": "Requires MCP hubspot for pipeline and call logging; founder runs Airtable and Brevo, not HubSpot.",
    "skeptic": "Requires MCP hubspot; HubSpot is not in the user's stack and call logging writes CRM records."
   },
-  "rank": 97
+  "rank": 133
+ },
+ {
+  "id": "K50",
+  "name": "Atlassian MCP",
+  "type": "connector",
+  "status": "available",
+  "readiness": 2,
+  "desc": "Search, read and update Jira, Confluence, Bitbucket, Loom and other Atlassian apps with existing permissions.",
+  "facts": "About 21 tools incl. executeRead, executeWrite, executeDestructive, getJiraIssue, createJiraIssue.",
+  "mean": {
+   "leverage": 1.0,
+   "verifiability": 3.0,
+   "fit": 1.0,
+   "safety": 1.0
+  },
+  "spread": {
+   "leverage": 0,
+   "verifiability": 0,
+   "fit": 0,
+   "safety": 0
+  },
+  "score": 33.0,
+  "why": {
+   "architect": "executeDestructive tool on Jira and Confluence, neither in the stack.",
+   "operator": "Jira and Confluence not in stack; exposes executeDestructive tool.",
+   "skeptic": "executeDestructive tool on Jira and Confluence, none of which the user runs."
+  },
+  "rank": 134
  },
  {
   "id": "P14",
@@ -2741,7 +3777,7 @@
    "operator": "Databricks is not in my stack; 3 hooks including UserPromptSubmit run on every prompt.",
    "skeptic": "Three hooks including UserPromptSubmit with privileged reach; Databricks unused by these ventures."
   },
-  "rank": 98
+  "rank": 135
  },
  {
   "id": "P05",
@@ -2769,6 +3805,6 @@
    "operator": "36 agents convening 20 specialists is opinion-heavy token spend; community, privileged reach.",
    "skeptic": "36 agents, 65 skills, community, privileged reach: broad unvetted surface producing specialist opinion."
   },
-  "rank": 99
+  "rank": 136
  }
 ]
