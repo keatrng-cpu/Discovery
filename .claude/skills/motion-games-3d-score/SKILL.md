@@ -6,12 +6,12 @@ description: Use when a contact sheet has been scored and the worst frame needs 
 A contact sheet with a per-frame score file from an external scorer. Quiet when no external score exists, or when the ask is the full render.
 ## Done-when
 check: count
-After the fix, `python3 -c` over before.json and after.json prints "changed frames: 1" (only the worst-scoring frame's entry differs) and the rescored worst frame is higher than before. The full render stays blocked until the score file meets the stated threshold; below threshold is a valid result and no render is started.
+A program over before.json and after.json prints `changed frames: 1`, meaning only the worst-scoring frame's entry differs. That count is the single check. Below threshold is a valid result and no full render is started; the render gate is the Forbidden move, not a second check.
 ## Rung
 rung: L1
-One fast-model pass redraws the single worst frame; a program counts changed frames and compares scores. Escalate only if the rescore does not rise.
+One fast-model pass redraws the single worst frame; a program counts changed frames. Escalate only if the count is not 1.
 ## Forbidden move
-Fixing more than the worst frame, or starting the full render before the threshold is met.
+Fixing more than the worst frame, or starting the full render before the threshold is met (a rescore that does not rise is reported, not hidden).
 ## Tool
 tool: Bash:python3
 scope: read

@@ -6,10 +6,10 @@ description: Use when a level needs one change to terrain, light, character, or 
 A level edit in exactly one change class: terrain, light, character, or interaction. Quiet when the ask spans classes or wants unattended level building.
 ## Done-when
 check: state-diff
-`git diff --name-only` lists only files belonging to the one named change class, and the editor path check result is quoted. If no editor check ran, the result is "unvalidated"; a green tool exit alone is not a pass. A broken path means `git checkout -- <files>` restores the prior state, shown by an empty `git diff`.
+A program reads `level_classes.json` (change class to file globs) and `git diff --name-only`, and exits 0 only if every changed path matches the named class's globs and none match another class's. A path in two classes or none (for example a shared scene file) is reported "class not separable", not passed. An empty diff after a revert is valid. The editor path check is quoted separately; with no editor check the result is "unvalidated".
 ## Rung
 rung: L1
-One fast-model pass makes the single-class edit; git diff confirms scope. Escalate only if the diff crosses classes.
+One fast-model pass makes the single-class edit; the program confirms scope. Escalate only if a path is not separable.
 ## Forbidden move
 Treating tool success as scene success: calling the level done because the edit command exited 0, or changing a second class in the same pass.
 ## Tool
