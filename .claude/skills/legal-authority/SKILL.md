@@ -6,7 +6,7 @@ description: Use when a case or statute cite must be resolved and its holding qu
 A cite and the proposition it supports are present. Quiet when no cite or proposition is given.
 ## Done-when
 check: quote
-Each cite opens at a source, and a quoted holding line with a page or paragraph locator is a substring of the opened text. A cite that does not open is dropped and printed "dropped: <cite>". A cite whose quoted line is not a substring of the opened text, or whose pin locator does not exist, fails the card. Zero surviving cites is valid.
+Each cite is resolved: it opens at a source, and the cite string (reporter cite, docket, or statute number) is a substring of the opened text, so the opened page is the cited authority. A quoted holding line with a page or paragraph locator must be a substring of that opened text. A candidate cite that does not open is dropped and printed "dropped: <cite>". Any cite kept or asserted in the output that did not open or resolve (invented), any quoted line not a substring of the opened text, or any pin locator that does not exist fails the card. Zero surviving cites is valid.
 ## Rung
 rung: L3
 Weak directive: a stronger pass reads each opened source; a person must review for subtle misquotes and whether the holding supports the proposition, since the substring check cannot see either (review is outside the check). Do not descend to a cheaper rung.
