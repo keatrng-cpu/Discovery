@@ -6,10 +6,10 @@ description: Use when proposing one change to a harness piece and deciding wheth
 A single harness piece (skill, hook, memory, CLAUDE.md line) was changed and a baseline exists. Quiet when nothing was changed. If two pieces changed, it is two evolve runs: split it and run one change per json.
 ## Done-when
 check: exit-code
-`test "$(git diff --name-only BASE CAND -- .claude CLAUDE.md | wc -l)" -eq 1 && python3 desk/desk.py promote-gate <json>` exits 0 printing "PROMOTE": exactly one harness file differs between baseline and candidate, candidate.heldout_pass and candidate.tune_pass are true, and candidate.tokens is less than baseline.tokens, both counts present in the json and published with the result. A json lacking either token count is unsupported, not PROMOTE. HOLD (exit 1) is valid. A person promotes.
+`python3 desk/desk.py promote-gate --base BASE --cand CAND <json>` exits 0 printing "PROMOTE" only if: git diff of BASE to CAND under .claude and CLAUDE.md names exactly one harness file; candidate.heldout_pass and candidate.tune_pass are true (a tuning-set gain alone is HOLD); candidate.tokens is less than baseline.tokens, both counts present in the json and published with the result. A json lacking either token count is unsupported, not PROMOTE. HOLD (exit 1) is valid. A person promotes. The --base and --cand options do not exist yet (promote-gate takes only the json today), so the check is not runnable.
 ## Rung
 rung: L0
-A program alone: a git diff file count, then the result JSON. Producing heldout_pass needs a held-out runner with a token meter, which is absent; a person supplies that result.
+A program alone: one command reads the git diff and the result JSON. Producing heldout_pass needs a held-out runner with a token meter, which is absent; a person supplies that result.
 ## Forbidden move
 Promoting on a gain seen only on the tuning set, or the agent promoting its own change.
 ## Tool

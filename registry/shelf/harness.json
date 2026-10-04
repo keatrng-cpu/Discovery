@@ -22,7 +22,7 @@
  "directives": {
   "skill": {
    "trigger": "A SKILL.md is being authored or its description tuned. One trigger, one trick. Quiet for hook, memory, trace, evolve asks.",
-   "doneWhen": "A static lint over the SKILL.md (python3; the wrong-task fire test is a separate model-judged check and is not part of this exit code) exits 0 only if: the description has exactly one 'Use when' clause; the description and the Trigger section each contain 'Quiet' followed by a stated quiet case; the Done-when section has exactly one 'check:' line and exactly one backticked command, and the Tool section exactly one 'tool:' line (one trick). A missing or empty file is unsupported, not a pass.",
+   "doneWhen": "One command, python3 lint_skill.py <SKILL.md> --wrong-task <prompts.txt>, exits 0 only if every assertion holds: the description has exactly one 'Use when' clause (one trigger); the Done-when section has exactly one 'check:' line and one backticked command and the Tool section exactly one 'tool:' line (one trick); the description and the Trigger section each contain 'Quiet' followed by a stated quiet case; and no sibling-task prompt in <prompts.txt> matches the 'Use when' clause while every positive prompt in it does (a fire on the wrong task fails). A missing or empty SKILL.md or prompts file is unsupported, not a pass. The program does not exist in the repo yet; this is the program the desk would run.",
    "checkKind": "exit-code",
    "rung": "L0",
    "forbidden": "Firing on the wrong task: two triggers, a broad description, or no stated quiet case. Writing a second trick (a second check command or tool) into the same file instead of a second skill.",
@@ -30,7 +30,7 @@
    "toolScope": "read",
    "gated": false,
    "gate": "",
-   "status": "reliable",
+   "status": "assisted",
    "checkRunnable": false,
    "keywords": [
     "skill file",
@@ -41,8 +41,7 @@
     "quiet case"
    ],
    "absentTools": [
-    "skill lint script",
-    "skill fire-test harness (wrong-task prompts)"
+    "skill lint script with wrong-task prompt set"
    ]
   },
   "hook": {
@@ -69,7 +68,7 @@
   },
   "memory": {
    "trigger": "A note must be saved or recalled during a coding task, keyed by stage analyze, reproduce, edit, verify. Quiet for story-like summaries of a past session.",
-   "doneWhen": "Recall is a stage filter, jq -c --arg s STAGE 'select(.stage==$s)' memory.jsonl, saved to recalled.jsonl; jq -s -e --arg s STAGE '($s|IN(\"analyze\",\"reproduce\",\"edit\",\"verify\")) and all(.[]; .stage==$s and (.body|type==\"string\" and length<=280 and (contains(\"\\n\")|not)))' recalled.jsonl exits 0: STAGE is one of analyze, reproduce, edit, verify; every recalled record carries exactly the requested stage (a record recalled by similar story fails); every body is a string of at most 280 characters with no newline (longer or multi-line bodies are episode blobs and fail). Zero recalled records is valid.",
+   "doneWhen": "One command exits 0: jq -n -e --arg s STAGE --slurpfile m memory.jsonl --slurpfile r recalled.jsonl '($s|IN(\"analyze\",\"reproduce\",\"edit\",\"verify\")) and all($m[]; (.stage|IN(\"analyze\",\"reproduce\",\"edit\",\"verify\")) and (.body|type==\"string\" and length<=280 and (contains(\"\\n\")|not))) and $r == [$m[]|select(.stage==$s)]'. It asserts: STAGE is one of analyze, reproduce, edit, verify; every stored record in memory.jsonl carries one of those four stages (store at the stage); every stored body is a string of at most 280 characters with no newline (a longer or multi-line body is an episode blob and fails); recalled.jsonl equals exactly the stage filter of memory.jsonl (retrieve by stage, not by similar story). Empty memory.jsonl and zero recalled records are valid.",
    "checkKind": "schema",
    "rung": "L0",
    "forbidden": "Storing an episode blob, or retrieving by similar story instead of by stage.",
@@ -93,16 +92,16 @@
   },
   "trace": {
    "trigger": "A log of agent actions is kept as a record of what happened and must be append-only.",
-   "doneWhen": "python3 .claude/hooks/test_hooks.py deny exits 0, running desk/gate.py through the PreToolUse hook: a Write to trace/trace.jsonl, a Bash rm, a truncating redirect and a sed -i on it each exit 2, while cat, tail and python3 desk/desk.py verify-trace exit 0 (attempts to tamper or delete fail). Detection of a mid-file edit is the separate python3 desk/desk.py verify-trace, which exits 1 naming the line. Not covered: tail edit, truncation and a write by a route the patterns miss; real append-only needs chattr +a or a remote write-once sink, both absent.",
+   "doneWhen": "One command, python3 desk/desk.py trace-tamper-check --anchor <anchor.json>, exits 0 only if every assertion holds: the PreToolUse hook (desk/gate.py) exits 2 on a Write to trace/trace.jsonl, a Bash rm, a truncating redirect and a sed -i on it, and exits 0 on cat and tail (the agent has no delete or write on its own record); the hash chain verifies; and the record count and last-record hash equal the anchor a person holds outside the agent's reach, so a mid-file edit, a tail edit and a truncation each exit 1 (a tamper attempt fails). A missing anchor is unsupported, not a pass. The subcommand does not exist yet (today python3 .claude/hooks/test_hooks.py deny and python3 desk/desk.py verify-trace cover the hook and chain parts only); this is the program the desk would run.",
    "checkKind": "exit-code",
    "rung": "L0",
    "forbidden": "Giving the agent a write or delete path to its own trace, or trusting its report that the log is intact.",
    "tool": "none",
    "toolScope": "none",
    "gated": true,
-   "gate": "ABSENT write, delete (the agent holds no write or delete path to its own trace: the PreToolUse hook denies them; a person or an external sink owns the file)",
+   "gate": "ABSENT write-once log sink, chattr +a (the agent holds Bash, so the hook is only a pattern deny and not an absent tool; prepare the log, chain and anchor, stop; a person sets the attribute or sink)",
    "status": "weak",
-   "checkRunnable": true,
+   "checkRunnable": false,
    "keywords": [
     "append-only",
     "tamper",
@@ -113,12 +112,13 @@
    ],
    "absentTools": [
     "write-once log sink",
-    "filesystem append-only attribute (chattr +a)"
+    "filesystem append-only attribute (chattr +a)",
+    "trace-tamper-check subcommand with external anchor"
    ]
   },
   "evolve": {
    "trigger": "One harness piece was changed and a baseline exists; decide promotion on a held-out task with token count.",
-   "doneWhen": "test \"$(git diff --name-only BASE CAND -- .claude CLAUDE.md | wc -l)\" -eq 1 && python3 desk/desk.py promote-gate <json> exits 0 printing PROMOTE: exactly one harness file differs between baseline and candidate (two files is two evolve runs), candidate.heldout_pass and candidate.tune_pass are true and candidate.tokens is less than baseline.tokens, both counts present in the json and published with the result; a json lacking either token count is unsupported, not PROMOTE. HOLD (exit 1) is valid. A person promotes.",
+   "doneWhen": "One command, python3 desk/desk.py promote-gate --base BASE --cand CAND <json>, exits 0 printing PROMOTE only if every assertion holds: git diff of BASE to CAND under .claude and CLAUDE.md names exactly one harness file (two files is two evolve runs); candidate.heldout_pass and candidate.tune_pass are true (a tuning-set gain alone is HOLD); candidate.tokens is less than baseline.tokens, both counts present in the json and published with the result. A json lacking either token count is unsupported, not PROMOTE. HOLD (exit 1) is valid. A person promotes. The --base and --cand options do not exist yet (promote-gate takes only the json today); this is the program the desk would run.",
    "checkKind": "exit-code",
    "rung": "L0",
    "forbidden": "Promoting on a tuning-set gain only, or the agent promoting its own change.",
