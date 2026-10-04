@@ -3,12 +3,12 @@ task: Send the reply to that email thread to the customer and pay the invoice to
 shelf: personal-admin
 directive: pay
 stakes: high
-novelty: high
-check: none authored: write the check before any edit
-gate: ABSENT: pay, reply, send (prepare and stop)
-rung: L4
-token cap: 90000
+novelty: low
+check: schema: Bash:jq -e exits 0 on the payment sheet JSON: non-empty payee, amount, due_date, source_document and paid false. Stop is enforced by the absent pay, payment, checkout tools, not by this check.
+gate: ABSENT: send, book, pay
+rung: L0
+token cap: 0
 verifier: check program + two-lens draft-blind verifier + human gate
-skill: none (none)
+skill: .claude/skills/personal-admin-pay/SKILL.md
 files: plan.md state.json artifacts/personal-admin/pay.out
 status: ready

@@ -1,14 +1,14 @@
 # contract (task)
 task: My draft has six claims and some citations. List the claims, mark which ones are unsupported, and search for a source only for the first unsupported claim
 shelf: research
-directive: none
+directive: gap
 stakes: med
 novelty: high
-check: none: ambiguous; candidates: research/retrieve, research/extract, research/gap, research/conflict, research/synthesize, research/monitor
+check: exit-code: `python3 fixtures/research-gap/check.py --fixture <dir> --out <out.json> --searchlog <log>` exits 0: the claims table validates, every quote is verbatim in the cited document, and the search log holds at most one search. One search is logged when an unsupported claim exists, and it targets the first unsupported claim only, ending resolution "filled" or "open" (declared open is a valid stop). Zero searches is valid when every claim is supported. Runnable today: fixtures/research-gap/check.py is an existing repo program and the search runs through the registered harness desk/tools/localsearch.py; no new program is needed.
 gate: none
-rung: L0
-token cap: 0
-verifier: none
-skill: none
-files: state.json
-status: ambiguous
+rung: L3
+token cap: 40000
+verifier: check program + draft-blind verifier on the claims table
+skill: none (unverified)
+files: plan.md state.json artifacts/research/gap.out
+status: ready

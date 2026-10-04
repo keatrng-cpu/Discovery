@@ -30,7 +30,7 @@
    "directives": {
     "analyze": {
      "trigger": "A failing path, stack trace, or error log is present and the owning file is unknown. Quiet when the ask is to edit, run tests, or explain the whole repo.",
-     "doneWhen": "Output one record, and a program reads each field: (1) a log line quoted verbatim with its line number in the log file, read back with python3 (line N of the log equals the quote); (2) that line names the entry file, given as file:line from the trace, and the file:line exists in the tree; (3) the broken invariant quoted verbatim from a source line at a stated file:line; (4) a do-not-touch list of paths, each present in `git ls-files`. A log with no matching line is a valid result: write \"unmatched\" and stop; do not guess a file.",
+     "doneWhen": "One command, `python3 analyze_check.py record.json --log app.log --repo .`, with one exit code. It does not exist in the repo yet: it is the program the desk would run. Inputs: the record, the log, the repo. It exits 0 only if the quoted log line sits verbatim at its stated line number in the log; that line names the entry file given as file:line from the trace, and the file:line exists in the tree; the broken invariant is quoted verbatim from a source line at a stated file:line; each do-not-touch path is listed by `git ls-files`. A log with no matching line is a valid result: the record says \"unmatched\", names no file, and the command exits 0.",
      "checkKind": "quote",
      "rung": "L1",
      "forbidden": "Guessing a file from a noisy log that the grep did not return; naming a file with no quoted line.",
@@ -38,7 +38,7 @@
      "toolScope": "read",
      "gated": false,
      "gate": "",
-     "status": "reliable",
+     "status": "assisted",
      "checkRunnable": false,
      "keywords": [
       "stack trace",
@@ -76,7 +76,7 @@
     },
     "edit": {
      "trigger": "A frozen plan lists the files to change and any signature change. Quiet when no plan exists or the plan is still open.",
-     "doneWhen": "`git diff --name-only` lists exactly the files named in the plan and no others (a sorted set comparison of the two lists); `git diff -U0` shows no added or removed `def` or `class` line unless the plan lists that signature change; and each hunk the plan marks non-obvious has an added one-line comment inside that hunk. An empty diff is a valid result when the plan needs no change: report \"diff: empty\".",
+     "doneWhen": "One command, `python3 edit_check.py plan.json`, with one exit code. It does not exist in the repo yet: it is the program the desk would run, reading `git diff`. Input: the frozen plan. It exits 0 only if the sorted `git diff --name-only` equals the plan's file list; `git diff -U0` shows no added or removed `def` or `class` line unless the plan lists that signature change; each hunk the plan marks non-obvious has an added one-line comment inside it. An empty diff is a valid result when the plan needs no change: it prints \"diff: empty\" and exits 0.",
      "checkKind": "state-diff",
      "rung": "L1",
      "forbidden": "Drift: editing an unnamed file, renaming a public signature, or tidying beyond the plan.",
@@ -100,7 +100,7 @@
     },
     "verify": {
      "trigger": "A project directory holds verify_gate.sh and a change claims to be finished. Quiet when no gate script exists: report gate absent and stop.",
-     "doneWhen": "`bash verify_gate.sh` in the project directory exits 0 (unit test, then build, then render-compare against the fixture; the first failure stops it). The Stop hook blocks 'done' until it does. The script runs `python3 -m unittest discover -s tests` (tune fixture tests test_simple and test_zero_numerator in tests/test_mod.py), then py_compile, then cmp against fixture.txt, under one exit code. A non-zero exit is a valid result: report RED with the exit code and the first failing line quoted verbatim, declared_done false. No verify_gate.sh in the directory is also a valid result: report \"gate: absent\" and stop. Never report GREEN without exit 0.",
+     "doneWhen": "`bash verify_gate.sh` in the project directory exits 0: unit test, then build, then a real Playwright (chromium) screenshot of the rendered page compared byte for byte to fixture.png; the first failure stops it. The Stop hook blocks 'done' until it does. The script runs `python3 -m unittest discover -s tests` (tune fixture tests test_simple and test_zero_numerator in tests/test_mod.py), then py_compile, then the Playwright screenshot and cmp against fixture.png, under one exit code. A non-zero exit is a valid result: report RED with the exit code and the first failing line quoted verbatim, declared_done false. No verify_gate.sh in the directory is also a valid result: report \"gate: absent\" and stop. Never report GREEN without exit 0.",
      "checkKind": "exit-code",
      "rung": "L0",
      "forbidden": "declaring done, or editing any file, on a model read of the output; verify never fixes",
@@ -123,7 +123,7 @@
     },
     "migrate": {
      "trigger": "One transform of one file shape applies to many files. Quiet for a single file, or when two different shapes are mixed.",
-     "doneWhen": "`git ls-files` filtered by the one file shape prints N target paths, and the worker manifest lists exactly those N paths (sorted set comparison). N of 0 is a valid result: report \"targets: 0\".",
+     "doneWhen": "One command, `python3 migrate_check.py manifest.json --shape '*.ext'`, with one exit code. It does not exist in the repo yet: it is the program the desk would run. Inputs: the worker manifest and the one file shape. It exits 0 only if the manifest paths equal `git ls-files` filtered by that shape (sorted set comparison, N targets); every path has exactly one transform and that transform is of the one shape; each worker has its own distinct isolated copy; every path has a passing recheck record, and any path without one is rejected. N of 0 is a valid result: it prints \"targets: 0\" and exits 0.",
      "checkKind": "count",
      "rung": "L2",
      "forbidden": "Guessing the file list instead of enumerating it, or accepting a file whose result was not rechecked.",
@@ -148,7 +148,7 @@
     },
     "review": {
      "trigger": "A diff or pull request is present. Quiet when asked to fix the code or to run tests.",
-     "doneWhen": "Every comment carries file:line and the quoted line text, and the quote appears verbatim at that line in `git diff` output. Any comment with no matching quote is dropped; zero surviving comments is a valid result: report \"findings: 0\".",
+     "doneWhen": "One command, `python3 review_check.py comments.json --diff`, with one exit code. It does not exist in the repo yet: it is the program the desk would run against `git diff` output. Input: the comment list. It exits 0 only if every surviving comment is labeled logic, security, or performance; carries file:line and a quoted line; and the quote appears verbatim at that line in the diff. Any comment with another label (style) or no matching quote is dropped. Zero surviving comments is a valid result: it prints \"findings: 0\" and exits 0.",
      "checkKind": "quote",
      "rung": "L1",
      "forbidden": "Posting a comment that cannot point at a line, or over-commenting style; cross-file logic no single line shows is reported unsupported, not smoothed.",
@@ -173,7 +173,7 @@
     },
     "onboard": {
      "trigger": "A named request or endpoint and a runtime log are present. Quiet for explain-the-repo or architecture overview asks.",
-     "doneWhen": "One record, read by a program: the hops of one request from entry to store, each as file:line of the hop function (the line exists in the file and contains the function name) plus the owning module; the first hop is the route entry and the last hop is the store call. Exactly one hop is also matched to a runtime log line quoted verbatim with its log line number; python3 reading that log line number returns the quote, and the line names the hop's function or file. No log line matching any hop is a valid result: report \"log: unmatched\" and stop.",
+     "doneWhen": "One command, `python3 onboard_check.py record.json --repo . --log app.log`, with one exit code. It does not exist in the repo yet: it is the program the desk would run. Inputs: the flow record, the repo, the log. It exits 0 only if each hop is a file:line whose line exists and contains the hop function name, with an owning module; the first hop is the route entry and the last is the store call; exactly one hop carries a log line quoted verbatim at its stated log line number, naming that hop's function or file. No log line matching any hop is a valid result: it prints \"log: unmatched\" and exits 0.",
      "checkKind": "quote",
      "rung": "L1",
      "forbidden": "Touring the repo: describing modules that are not on the traced request path.",
@@ -332,11 +332,11 @@
     },
     "monitor": {
      "trigger": "A prior memo exists as a file with a date and a half-life in days on each claim. Quiet when there is no memo file, because there is nothing to diff.",
-     "doneWhen": "Two readings must agree. Clock: a python3 date computation (claim date plus half-life days against today, never a model's judgment) prints the expired claim ids; every printed id has an added line marked \"expired\" and no unprinted id has one. Diff: `git diff --numstat` of the memo file reports 0 deleted lines, so the old conclusion stays visible and a changed conclusion appears as an added line marked \"changed\" beneath it; every source id on an added line is absent from the memo at HEAD (`git show HEAD:<memo>`), so only new sources were added. No new sources and no expiries is a valid result: an empty diff.",
-     "checkKind": "state-diff",
+     "doneWhen": "One command, one exit code: `python3 memo_monitor.py <memo>`. It does not exist in the repo yet; it is the program the desk would run, so the check is not runnable today.\nIt computes expiry in code from each claim's date plus half-life days against today, and fails if an expired claim lacks an added line marked \"expired\" or an unexpired claim has one.\nIt reads the memo's deleted-line count from the diff against HEAD and fails unless it is 0, so the old conclusion stays visible.\nIt fails unless a changed conclusion appears as an added line marked \"changed\" beneath the old one.\nIt fails if a source id on an added line is already in the memo at HEAD, so only new sources are added.\nNo new sources and no expiries is valid: an empty diff exits 0.",
+     "checkKind": "exit-code",
      "rung": "L1",
      "forbidden": "Deciding by model judgment that a claim has expired or is still fresh, or rewriting the memo whole so the old conclusion disappears.",
-     "tool": "Bash:git",
+     "tool": "Bash:python3",
      "toolScope": "read",
      "gated": false,
      "gate": "",
@@ -425,9 +425,9 @@
     },
     "design": {
      "trigger": "An accepted hypothesis record and a list of materials the lab already has are present. Quiet when asked to run the protocol or start an instrument.",
-     "doneWhen": "Only a scientist can accept the plan: the draft lists materials on hand, ordered steps, and the single failure that would kill the idea, then stops at awaiting scientist acceptance. No program passes it.",
-     "checkKind": "human-only",
-     "rung": "L3",
+     "doneWhen": "One program, run on the draft plan record and the lab inventory list, passes only if: every listed material is in the inventory (any other is flagged and fails), steps are numbered in order with at least one, exactly one kill failure is named, and the record ends at status awaiting-scientist-acceptance. The program never accepts the plan; acceptance stays a scientist's act behind the gate.",
+     "checkKind": "schema",
+     "rung": "L1",
      "forbidden": "Treating the draft as accepted, starting hardware, or listing a material the lab does not have as if it were on hand.",
      "tool": "none",
      "toolScope": "none",
@@ -449,7 +449,7 @@
     },
     "analyze": {
      "trigger": "Raw tabular or sequencing data files are present and a result is wanted. Quiet for proprietary instrument dumps no script can read: report unsupported.",
-     "doneWhen": "The verifier, not the script's author, reruns the analysis script in a clean directory with only the raw files; exit code 0 passes. Non-zero, missing script, or skipped rerun means nothing is claimed; unsupported input is a valid result.",
+     "doneWhen": "One command, the desk's clean-rerun program (not yet in desk/ or fixtures/), run by the verifier on the analysis script and raw files in a clean directory, exits 0 only if: the script rerun exits 0; the figure file is regenerated by that rerun; result and interpretation are separate non-empty files; and the script output carries an OUTLIER-DEPENDENT or OUTLIER-INDEPENDENT line from leave-one-out. Non-zero, missing script, or skipped rerun claims nothing; unsupported input is a valid result.",
      "checkKind": "exit-code",
      "rung": "L0",
      "forbidden": "Reporting a number or figure the script did not produce, or hiding single-outlier dependence: if dropping one point flips the result, say so.",
@@ -457,8 +457,8 @@
      "toolScope": "read",
      "gated": false,
      "gate": "",
-     "status": "reliable",
-     "checkRunnable": true,
+     "status": "assisted",
+     "checkRunnable": false,
      "keywords": [
       "raw data",
       "rerun script",
@@ -474,7 +474,7 @@
     },
     "update": {
      "trigger": "An old hypothesis record and a result file are both present. Quiet when no result file exists or a new hypothesis from scratch is wanted.",
-     "doneWhen": "One program over the update record, old hypothesis record, and result file passes only if every cited quote equals the text at its file:line locator, every old branch id is in exactly one of dropped or kept, every dropped branch points at a cited quote, and proposed next measurements number at most 1. No change forced (nothing dropped, zero measurements) is a valid result.",
+     "doneWhen": "One program over the update record, old hypothesis record, and result file passes only if every cited quote equals the text at its file:line locator, every old branch id is in exactly one of dropped or kept, every dropped branch points at a cited quote, no branch tagged contradicted by a cited result line is in kept, and proposed next measurements number at most 1. No change forced (nothing dropped, zero measurements) is a valid result.",
      "checkKind": "quote",
      "rung": "L1",
      "forbidden": "Keeping a dead branch because it was the old one, citing a result not in the file, or proposing more than the next measurement.",
@@ -590,15 +590,15 @@
     },
     "repair": {
      "trigger": "A graph and validator output naming a failing node are present; quiet when no node is named.",
-     "doneWhen": "Validator re-run on the repaired graph: diff of validator output before vs after (git diff --no-index, output quoted) shows the named node's error line removed and zero added error lines, and the re-run exit code is quoted; clean graph with empty diff is valid.",
+     "doneWhen": "One program, python3 repair-check.py (run by the desk) over the before graph, after graph, and before and after validator outputs, exits 0, exit code quoted: the named node's error line is absent from the after output and zero error lines are added; every node other than the named one is byte-identical between the before and after graph files, with key order, ids, and formatting unchanged; a clean graph with no edit and an empty diff is valid.",
      "checkKind": "state-diff",
      "rung": "L1",
      "forbidden": "Restyling the rest of the graph: reordering keys, renaming nodes, reformatting, or touching an unnamed node.",
-     "tool": "Bash:git",
+     "tool": "Bash:python3",
      "toolScope": "read",
      "gated": false,
      "gate": "",
-     "status": "reliable",
+     "status": "assisted",
      "checkRunnable": false,
      "keywords": [
       "repair node",
@@ -613,7 +613,7 @@
     },
     "campaign": {
      "trigger": "A validated graph and a goal for repeated runs are present; the skill prepares the plan and stops.",
-     "doneWhen": "jq -e filter over the campaign file exits 0, exit code quoted: every parameter has min and max set before the loop, a stop condition field is non-empty, the iteration log schema has the required fields and zero entries; grep -c '^STARTED-BY:$' prints 1 (line blank until a person writes it); a person starting the hardware is the gate, not part of this check.",
+     "doneWhen": "One command, jq -e filter over the campaign file, exits 0, exit code quoted: every parameter has min and max set before the loop, the stop condition field is non-empty, the iteration log schema lists its required fields with zero entries, and the started_by field is an empty string until a person writes it; a person starting the hardware is the gate, not part of this check.",
      "checkKind": "schema",
      "rung": "L1",
      "forbidden": "Starting or simulating-as-real a hardware run, or writing a loop with no bound or stop condition.",
@@ -636,11 +636,11 @@
     },
     "handoff": {
      "trigger": "A graph file and an editor-format target, or a manually edited copy to resync, are present; quiet without an editor format.",
-     "doneWhen": "Diff of the jq node projection (id, action, params) of the resynced graph file and of the editor-format file against the expected projection (pre-edit graph with only the person's edits applied) is empty for both views, differing nodes: 0, count quoted; edited values appear; no manual edit gives an empty diff.",
+     "doneWhen": "One program, python3 handoff-check.py (run by the desk) over the resynced graph file, the editor-format file, and the expected projection (pre-edit graph with only the person's edits applied), exits 0, exit code quoted: both files parse as the graph and editor formats so the editor can open the graph and the scientist can run either view; the node projection (id, action, params) of each file equals the expected projection, differing nodes: 0, count quoted; edited values appear; no manual edit gives an identical projection.",
      "checkKind": "state-diff",
      "rung": "L1",
      "forbidden": "Rewriting untouched nodes on resync: regenerating the graph, renumbering ids, or reordering nodes.",
-     "tool": "Bash:git",
+     "tool": "Bash:python3",
      "toolScope": "read",
      "gated": false,
      "gate": "",
@@ -715,7 +715,7 @@
     },
     "clean": {
      "trigger": "One named column and one named rule (trim, cast, dedupe, null-fill, drop). Quiet when the ask names several fields or says clean the data with no field; ask for one field.",
-     "doneWhen": "`python3` applies the one rule and prints \"rows before: N\", \"rows after: M\", \"dropped: K\", and writes dropped.csv holding all K dropped rows. Check: N = M + K, where K equals the data-row count of dropped.csv. K = 0 with an empty dropped.csv is a valid result.",
+     "doneWhen": "`python3` applies the one rule to the one named field and prints \"rows before: N\", \"rows after: M\", \"dropped: K\", and writes dropped.csv holding all K dropped rows. Check: the same `python3` run exits nonzero unless N = M + K, K equals the data-row count of dropped.csv, and every column other than the named field is identical in each kept row to the original row. K = 0 with an empty dropped.csv is a valid result.",
      "checkKind": "count",
      "rung": "L0",
      "forbidden": "Cleaning a second field in the same directive (the loose-directive failure), or deleting dropped rows instead of keeping them queryable.",
@@ -740,7 +740,7 @@
     },
     "hypothesis": {
      "trigger": "A question of the form compare A to B over a slice. Quiet when a chart is requested before the query exists; write the query first.",
-     "doneWhen": "A file hypothesis.md holds a line \"comparison: ...\", a line \"slice: ...\" and a fenced saved query. Check: one `python3` run of that saved query exits 0, and the directory listing before and after the directive differs only by hypothesis.md (no png, svg or chart html added). An empty result set is valid: report \"rows: 0\".",
+     "doneWhen": "A file hypothesis.md holds a line \"comparison: ...\", a line \"slice: ...\" and a fenced saved query. Check: one script, `python3 check_hypothesis.py hypothesis.md <dir-listing-before>`, with one exit code, that exits 0 only if it finds the comparison line, the slice line and the fenced query, the saved query runs, and the directory differs from the listing taken before only by hypothesis.md (no png, svg or chart html). It does not exist in the repo yet, so the desk would write it. An empty result set is valid: report \"rows: 0\".",
      "checkKind": "exit-code",
      "rung": "L1",
      "forbidden": "Jumping to a chart (adding a png, svg or chart html) before the query is saved, or writing a comparison with no slice.",
@@ -765,7 +765,7 @@
     },
     "chart": {
      "trigger": "A saved query and its result are present and a chart is asked for. Quiet when the query is missing or the ask adds extra series.",
-     "doneWhen": "The chart spec (json or svg source) names the query file as its data source. Check: one `python3` run over the spec quotes, each with file and line, the title (which must contain the hypothesis.md \"comparison:\" text), the series count (must be 1 unless the ask said otherwise), and one labeled value that equals the same value quoted from the query result; any inequality exits nonzero.",
+     "doneWhen": "The chart spec (json or svg source) names the query file as its data source. Check: one script, `python3 check_chart.py <spec> hypothesis.md <query-result>`, with one exit code, that exits 0 only if each of these holds: the title contains the hypothesis.md \"comparison:\" text; the series count is 1 unless the ask said otherwise; one labeled value in the spec equals the same value in the query result. It prints each quote with file and line. It does not exist in the repo yet, so the desk would write it.",
      "checkKind": "quote",
      "rung": "L1",
      "forbidden": "Adding a decorative second series (the spec must keep exactly one series unless the ask said otherwise), a title that does not name the saved comparison line, or plotting values not taken from the saved query result.",
@@ -969,9 +969,9 @@
     },
     "memo": {
      "trigger": "Sourced facts exist and the ask is a thesis memo. Quiet when the ask is to buy, sell, or size a position.",
-     "doneWhen": "A person reads the kill condition line and confirms it is an observable: it names a metric, a threshold, and a date. That is the one check; no program can judge observability. Not part of the check, but required of the draft: one stated thesis, every line tagged fact or inference, and no order and no size.",
-     "checkKind": "human-only",
-     "rung": "L3",
+     "doneWhen": "One command, one exit code: `python3 desk/memo_check.py <memo.md>` (a program the desk would run; it does not exist in the repo yet). Input is the memo file. Each assertion is one clause: Thesis: exactly one line starting \"THESIS:\". Kill condition: exactly one line starting \"KILL:\" that holds a metric name, a numeric threshold, and a YYYY-MM-DD date (regex). Tags: every other non-blank line starts \"FACT:\" or \"INFERENCE:\". No order, no size: no line contains an order or sizing verb or a share count or dollar amount to trade. An empty memo, or a memo with no KILL: line, is a valid refusal result and exits 0 only when it prints \"unsupported\".",
+     "checkKind": "exit-code",
+     "rung": "L1",
      "forbidden": "Writing a kill condition that cannot be observed (for example \"if sentiment turns\"), or adding an order or a size.",
      "tool": "none",
      "toolScope": "none",
@@ -986,13 +986,11 @@
       "fact versus inference",
       "one-page memo"
      ],
-     "absentTools": [
-      "kill-condition observability checker"
-     ]
+     "absentTools": []
     },
     "monitor": {
      "trigger": "A previous card file and new material both exist. Quiet when there is no prior card.",
-     "doneWhen": "`git diff --no-index --unified=0 <old card> <new card>` is parsed by a program against the card format: claim lines read \"claim | expires YYYY-MM-DD | text\", the kill condition is one line starting \"KILL:\", added lines start \"DELTA \". Pass only if every added line starts \"DELTA \", every removed line carries an expires date earlier than the clock date, and no \"KILL:\" line is removed or changed (new card still holds the old KILL: line byte-equal). A removed line that is not expired, or a rewritten card, fails. An empty diff is a valid result: the card is unchanged.",
+     "doneWhen": "One command, one exit code: `python3 desk/card_check.py <old card> <new card>` (a program the desk would run; it does not exist in the repo yet). It runs `git diff --no-index --unified=0` on the two cards and reads the local date. Card format: claim lines read \"claim | expires YYYY-MM-DD | text\", the kill condition is one line starting \"KILL:\", added lines start \"DELTA \". Each assertion is one clause: Compare: every added line starts \"DELTA \". Expire: every removed line carries an expires date earlier than the local date, and no line left in the new card carries an expires date earlier than the local date. Kill: the new card holds the old \"KILL:\" line byte-equal. Delta only: a rewritten card fails. An empty diff is a valid result only when the old card holds no expired claim; then the card is unchanged.",
      "checkKind": "state-diff",
      "rung": "L1",
      "forbidden": "Rewriting the whole card, keeping a stale claim, or dropping the kill condition.",
@@ -1009,13 +1007,11 @@
       "expire stale",
       "watchlist update"
      ],
-     "absentTools": [
-      "market data clock feed"
-     ]
+     "absentTools": []
     },
     "scenario": {
      "trigger": "A baseline input set and a named variable to move. Quiet when two variables are named, or when the ask is to place risk.",
-     "doneWhen": "A diff of baseline inputs versus scenario inputs shows exactly one changed key, the named variable; all other keys are byte-equal. Two or more changed keys fails. Not part of the check, but required of the output: the thesis shown under that move, then stop. A move that leaves the thesis unchanged is a valid result.",
+     "doneWhen": "One command, one exit code: `python3 desk/scenario_check.py <baseline.json> <scenario.json> <out.md> <variable>` (a program the desk would run; it does not exist in the repo yet). Each assertion is one clause: Move one: the diff of baseline versus scenario shows exactly one changed key, the named variable. Hold fixed: every other key is byte-equal. Show thesis: out.md holds one line starting \"THESIS under <variable>:\" that states the thesis under that move. Stop: out.md holds no second thesis line and names no other variable as moved. A thesis line that says the thesis is unchanged is a valid result.",
      "checkKind": "state-diff",
      "rung": "L1",
      "forbidden": "Moving two variables, or continuing past the one requested variable. No order, no size.",
@@ -1087,7 +1083,7 @@
     },
     "risk": {
      "trigger": "A contract, one named party, and a written severity rule are present. The scoring party is the one the ask named, fixed for the whole pass (a second party is a second pass). Quiet when no party or no rule is given.",
-     "doneWhen": "Each score row carries the written rule it applied, a severity from that rule, and a verbatim quote that is a substring of the source with a section locator. A row without a quote is dropped and printed as \"unscored: <text>\". Zero scored rows is valid.",
+     "doneWhen": "Each score row carries the party it scored, the written rule it applied, a severity from that rule, and a verbatim quote that is a substring of the source with a section locator. Every row's party equals the one party the ask named; a row for any other party fails. A row without a quote is dropped and printed as \"unscored: <text>\". Zero scored rows is valid.",
      "checkKind": "quote",
      "rung": "L1",
      "forbidden": "Scoring unquoted text, or scoring from both parties' views at once.",
@@ -1153,7 +1149,7 @@
     },
     "authority": {
      "trigger": "A cite and the proposition it supports are present. Quiet when no cite or proposition is given.",
-     "doneWhen": "Each cite is resolved: it opens at a source, and the cite string (reporter cite, docket, or statute number) is a substring of the opened text, so the opened page is the cited authority. A quoted holding line with a page or paragraph locator must be a substring of that opened text. A candidate cite that does not open is dropped and printed \"dropped: <cite>\". Any cite kept or asserted in the output that did not open or resolve (invented), any quoted line not a substring of the opened text, or any pin locator that does not exist fails the card. Zero surviving cites is valid.",
+     "doneWhen": "Each cite is resolved: it opens at a source, and the cite string (reporter cite, docket, or statute number) is a substring of the opened text, so the opened page is the cited authority. Each kept cite carries a quoted holding line used, with a page or paragraph locator, and that line must be a substring of the opened text. A kept cite with no quoted holding is dropped. A candidate cite that does not open is dropped and printed \"dropped: <cite>\". Any cite kept or asserted in the output that did not open or resolve (invented), any quoted line not a substring of the opened text, or any pin locator that does not exist fails the card. Zero surviving cites is valid.",
      "checkKind": "quote",
      "rung": "L3",
      "forbidden": "Keeping a cite that was not opened, or inventing a pin cite or holding quote.",
@@ -1177,7 +1173,7 @@
     },
     "diligence": {
      "trigger": "A data room or document list and a stated scope are present. Quiet when scope is not stated.",
-     "doneWhen": "Two lists print by document name, one per line: in-scope documents and not-read documents. A summary line \"in scope: N; read: R; not read: U\" prints with N equal to the number of in-scope names listed and equal to R plus U. A document with no read record is listed not-read, never implied-read. One sheet holds the issues: each row has a unique issue id and exactly one issue; every row's document name is in the read set (a not-read document has no row), and the printed row count equals the number of distinct issue ids.",
+     "doneWhen": "One command, diligence-check (a program the desk would run; it does not exist yet), takes the document list, the read log and the issue sheet, and exits 0 only if every assertion holds. It prints the in-scope and not-read lists by document name, one per line, plus \"in scope: N; read: R; not read: U\". Assert N equals the in-scope names listed and equals R plus U. Assert a document with no read record is listed not-read, never implied-read. Assert each issue row has a unique issue id, exactly one issue, and a document name in the read set, with the printed row count equal to the distinct issue ids.",
      "checkKind": "count",
      "rung": "L1",
      "forbidden": "Implying a document was read because it sits in scope.",
@@ -1245,7 +1241,7 @@
     },
     "ban-list": {
      "trigger": "A named ban list exists, shorter than the design system, and output must pass it. Quiet when asked to ban taste or style opinions; those are not testable.",
-     "doneWhen": "`pytest` over the ban-list test file exits 0 on the output: one test per banned pattern. Any hit exits non-zero and names the pattern. A banned pattern with no test is not on the list. An empty ban list is a valid result: report \"no bans\", exit 0.",
+     "doneWhen": "One pytest command over the ban-list test file and the system's token or component list exits 0 only when every assertion holds: one test per banned pattern passes on the output (a hit names the pattern), a banned pattern with no test is not on the list, and the count of banned patterns is below the count of entries in the system. An empty ban list is a valid result: report \"no bans\", exit 0.",
      "checkKind": "exit-code",
      "rung": "L0",
      "forbidden": "Enforcing the ban list by instruction in the prompt, or banning taste, so the fail is a plea rather than a test.",
@@ -1265,9 +1261,9 @@
     },
     "components": {
      "trigger": "A component list exists and output is built from components. Quiet when no list is supplied: report \"unsupported\".",
-     "doneWhen": "`python3` over the output prints \"unlisted: N\" and a record line \"component: <name>\" for each use; exit 0 only when N is 0. Any raw substitute (an element or markup standing in for a listed component) counts as unlisted and fails. An output using no components is a valid result: \"unlisted: 0, used: 0\".",
+     "doneWhen": "One python3 program takes the output of two runs of the same prompt plus the component list, and exits 0 only when every assertion holds: it prints \"unlisted: N\" with N equal to 0 for each run, prints a record line \"component: <name>\" for each use, treats any raw substitute (markup standing in for a listed component) as unlisted, and finds the same component names in both runs. An output using no components is a valid result: \"unlisted: 0, used: 0\".",
      "checkKind": "count",
-     "rung": "L1",
+     "rung": "L0",
      "forbidden": "Keeping the component list only in the prompt, so a raw substitute leaks through; the list must be what the tool exposes.",
      "tool": "Bash:python3",
      "toolScope": "read",
@@ -1287,7 +1283,7 @@
     },
     "flows": {
      "trigger": "One page type and its one template screenshot exist. A request naming two page types is two directives: pick one and diff against that template only. Quiet when no template exists.",
-     "doneWhen": "A real screenshot of the output (npx playwright screenshot) is diffed against the one named template screenshot; the diff reports \"off-template regions: 0\". Spacing and type are held to the template: the template renders token spacing and type, so any deviation in either appears as an off-template region. Any off-template region fails, listed by locator. No rendered page is a valid result: \"unread\", not a pass.",
+     "doneWhen": "One program runs a real screenshot of the output (npx playwright screenshot) and exits 0 only when every assertion holds: the pixel diff against the one named template screenshot reports \"off-template regions: 0\" (any region fails, listed by locator), and the rendered spacing and type values read from the page each equal a token value in the token source file. No rendered page is a valid result: \"unread\", not a pass.",
      "checkKind": "state-diff",
      "rung": "L0",
      "forbidden": "Judging a region on-template by looking at it instead of the diff, or waving through an off-template region.",
@@ -1406,7 +1402,7 @@
     },
     "score": {
      "trigger": "A contact sheet with a per-frame score file from an external scorer. Quiet when no external score exists, or when the ask is the full render.",
-     "doneWhen": "A program over before.json and after.json prints 'changed frames: 1' (only the worst-scoring frame's entry differs); below threshold is a valid result and no full render starts.",
+     "doneWhen": "One program over contact.json, before.json, after.json and the threshold exits 0 only if: before.json names the worst-scoring frame; exactly that frame's entry differs in after.json (changed frames: 1) and no other; after.json carries its rescore; and render_started is false unless every rescore is at or above the threshold. Below threshold is a valid result and an unchanged rescore is reported, not hidden; no external score means unscored.",
      "checkKind": "count",
      "rung": "L1",
      "forbidden": "Fixing more than the worst frame, or starting the full render before the threshold is met (a rescore that does not rise is reported, not hidden).",
@@ -1430,7 +1426,7 @@
     },
     "asset": {
      "trigger": "A request to make or fix a mesh, UV, or rig asset. Quiet when the ask is to place the asset in a level or to bundle all stages in one prompt.",
-     "doneWhen": "jq -e '([\"mesh\",\"uv\",\"rig\",\"animation\"] as $o | .stages==$o[:(.stages|length)]) and (.imported==false) and (.placed_in_level==false) and (if (.stages|index(\"animation\")) then (.rig.kind==\"default\") and (.animation.count==1) and (.animation.played_on==\"default\") else true end)' asset.json exits 0; a manifest of only completed earlier stages is valid; editor playback stays assisted.",
+     "doneWhen": "jq -e '([\"mesh\",\"uv\",\"rig\",\"animation\"] as $o | .stages==$o[:(.stages|length)]) and (.imported==false) and (.placed_in_level==false) and (if (.stages|index(\"rig\")) then (.rig.kind==\"default\") else true end) and (if (.stages|index(\"animation\")) then (.animation.count==1) and (.animation.played_on==\"default\") else true end)' asset.json exits 0; a manifest of only completed earlier stages is valid; a custom rig fails until one animation played on the default rig; editor playback stays assisted.",
      "checkKind": "schema",
      "rung": "L1",
      "forbidden": "Bundling mesh, UV, rig and animation in one prompt, or importing or placing the asset in the level before one animation played on the default rig.",
@@ -1480,7 +1476,7 @@
     },
     "engine": {
      "trigger": "An engine project (Unity, Unreal, Godot) on disk and a request to change one system. Quiet when no project is present or the system is unnamed.",
-     "doneWhen": "A program reads systems.json (system name to its file globs), read.json (the pre-edit quote: system path and line, recorded before the first edit) and the output of git diff --name-only, and exits 0 only if the quoted path matches the named system's globs, the quote is non-empty, and every changed path matches the named system's globs; the path walk is reported 'not run' because the connector is absent.",
+     "doneWhen": "One program over systems.json (system name to file globs), read.json (the quote: system path, line number and line text) and git exits 0 only if: the quote is non-empty and its path matches the named system's globs; the quoted line text equals that line of the file at the pre-edit HEAD (git show HEAD:path), proving the read came before the write; and every path in git diff --name-only matches the named system's globs. The path walk is reported 'not run' because the connector is absent; no project or an unnamed system is unsupported, a valid result.",
      "checkKind": "state-diff",
      "rung": "L1",
      "forbidden": "Writing before reading the project (no quoted system path and line before the first edit), or editing a system that was not named first.",
@@ -1529,7 +1525,7 @@
    "directives": {
     "cut": {
      "trigger": "One take file and one region with start and end times; quiet for episode-wide restitch or reorder.",
-     "doneWhen": "python3 diff script exits 0 printing 'outside-region: N/N samples unchanged'; a no-op cut is valid.",
+     "doneWhen": "One python3 check script exits 0 printing 'outside-region: N/N samples unchanged' and 'listen: region noted' only if the same take file is kept, only the region is tightened, and a listen note for that region exists; a no-op cut is valid.",
      "checkKind": "state-diff",
      "rung": "L1",
      "forbidden": "Restitching the episode: changing, moving, or re-joining anything outside the named region.",
@@ -1552,7 +1548,7 @@
     },
     "names": {
      "trigger": "A script or transcript and a pronunciation list file are present; no list means report no list and stop.",
-     "doneWhen": "python3 script loads the pronunciation list file itself and exits 0 whenever the list was read, printing 'missing: <name> line <n>' for each proper noun not on the list (a flag is a valid result, not a failure) and 'names: K/N listed'; empty script prints 'names: 0/0'; exits non-zero only if the list file is unreadable.",
+     "doneWhen": "python3 script loads the pronunciation list file itself and exits 0 on every completed run, printing 'missing: <name> line <n>' for each proper noun not on the list (a flag is a valid result, not a failure) and 'names: K/N listed'; empty script prints 'names: 0/0'; an unreadable or absent list prints 'no list' and also exits 0 as a reported result.",
      "checkKind": "exit-code",
      "rung": "L1",
      "forbidden": "Guessing a pronunciation or spelling for a proper noun not on the list instead of flagging it.",
@@ -1575,7 +1571,7 @@
     },
     "score": {
      "trigger": "A rule file and existing music assets are present; quiet when asked to compose a new theme.",
-     "doneWhen": "python3 script exits 0 only if the hook cue lies inside its rule window using a rule-named asset, printing 'hook: ok'; unplaced hook prints 'hook: absent' and is valid.",
+     "doneWhen": "python3 script exits 0 when the hook cue lies inside its rule window using a rule-named asset (prints 'hook: ok') or when the hook is unplaced (prints 'hook: absent', a valid result); exits non-zero only for a placed hook outside its window or using an unnamed asset.",
      "checkKind": "exit-code",
      "rung": "L1",
      "forbidden": "Composing or generating a new theme to fill the hook, or placing a cue the rule file does not name.",
@@ -1667,7 +1663,7 @@
     },
     "draft": {
      "trigger": "An outline file with claim ids and a voice file are both present. Quiet when only one exists, or when the ask is cutting, channel change, or fact-checking.",
-     "doneWhen": "`python3` over the draft and the outline exits 0 and prints \"violations: 0\": one check, claim-to-paragraph mapping against the outline file. violations = paragraphs carrying zero or more than one outline id tag (a paragraph with two claims or an untagged paragraph) + tags that are not outline ids (an unmapped paragraph is a new claim) + outline ids used more than once + outline ids missing from the draft. A new claim hidden inside a correctly tagged paragraph is not detectable by program, and the voice file (bans, style) is not measured here: both stay a human read. A missing voice file is a valid result: stop and report \"voice file absent\".",
+     "doneWhen": "`python3` over the draft, the outline, and the voice file exits 0 and prints \"violations: 0\": one check, mapping against the outline file plus the voice file's ban list. violations = banned-default phrases (lines under the voice file's \"Bans\" heading) that occur in the draft + paragraphs carrying zero or more than one outline id tag (a paragraph with two claims or an untagged paragraph) + tags that are not outline ids (an unmapped paragraph is a new claim) + outline ids used more than once + outline ids missing from the draft. A new claim hidden inside a correctly tagged paragraph, and voice style beyond the ban list, are not detectable by program and stay a human read. A missing voice file is a valid result: stop and report \"voice file absent\".",
      "checkKind": "count",
      "rung": "L1",
      "forbidden": "Adding a claim that is not in the outline, to fill a paragraph or smooth a transition.",
@@ -1715,7 +1711,7 @@
     },
     "variant": {
      "trigger": "A source piece, a frozen fact list with an \"offer:\" line, and a target channel are present. Quiet when no fact list exists or when the ask is to change the offer or numbers.",
-     "doneWhen": "`python3` over the fact list (one item per line, the offer on a line starting \"offer:\", then numbers and names), the source piece, and the variant exits 0 and prints \"violations: 0\": one check, frozen facts. violations = fact-list items not verbatim in the variant (the offer text is an item, so a dropped offer counts) + a non-empty fact list with no \"offer:\" line + digit-bearing tokens in the variant found in neither the source piece nor the fact list (an added number). A missing item exits non-zero and names the line. An empty fact list prints \"facts: 0/0\" and is valid. An added non-numeric fact is not detectable by program, and the voice file (bans, style) is not measured here: both stay a human read.",
+     "doneWhen": "`python3` over the fact list (one item per line, the offer on a line starting \"offer:\", then numbers and names), the source piece, the voice file, and the variant exits 0 and prints \"violations: 0\": one check, frozen facts plus the voice file's ban list. violations = banned phrases (lines under the voice file's \"Bans\" heading) that occur in the variant +fact-list items not verbatim in the variant (the offer text is an item, so a dropped offer counts) + a non-empty fact list with no \"offer:\" line + digit-bearing tokens in the variant found in neither the source piece nor the fact list (an added number) + capitalized mid-sentence tokens in the variant found in neither the source piece nor the fact list (an added name). A missing item exits non-zero and names the line. An empty fact list prints \"facts: 0/0\" and is valid. An added fact stated without a number or name, and voice style beyond the ban list, are not detectable by program and stay a human read.",
      "checkKind": "count",
      "rung": "L1",
      "forbidden": "Changing a number, dropping the offer, or adding a fact while adapting to the channel.",
@@ -1741,7 +1737,7 @@
     },
     "series": {
      "trigger": "A brand file and a previous piece are present. Quiet when no brand file exists; session chat is never the memory.",
-     "doneWhen": "`cmp` over two files exits 0: bans.expected (the ban lines read from the brand file's \"Bans\" heading) and bans.kept (the same lines minus any whose phrase occurs in the new piece, so a piece that restates a ban also drops it). Exit 1 names the first differing line. One check: the new piece keeps the brand file's bans. The previous piece is context for voice, not a second measured check. A missing brand file is a valid result: stop and report \"brand file absent\".",
+     "doneWhen": "`cmp` over two files exits 0: bans.expected (the brand file's \"Bans\" lines whose phrase is absent from the previous piece, so these are the bans the previous piece kept, plus the brand file's rule lines) and bans.kept (the same lines minus any whose phrase occurs in the new piece, so a piece that breaks a ban or restates a rule also drops it). Exit 1 names the first differing line. One check: the new piece matches the previous piece's bans and restates no rule, with the brand file as the only source. The extractor that builds both files does not exist yet; the desk would run it. A missing brand file is a valid result: stop and report \"brand file absent\".",
      "checkKind": "exit-code",
      "rung": "L1",
      "forbidden": "Taking rules from session chat instead of the brand file, or restating the rules inside the draft (a restated ban phrase also fails cmp).",
@@ -1995,7 +1991,7 @@
     },
     "draft": {
      "trigger": "A classified intent with policy id and policy line is present. Quiet when no classification exists or the ask is to grant a refund or exception.",
-     "doneWhen": "`python3` quote check exits 0 only if the draft contains the classified policy line verbatim, matching the entry at the cited `<file>:<n>`; it prints `quoted: <policy-id> line <n>`. A draft that cannot quote its line is not a pass; the result is `unsupported`. This is the only check. Promise creep and intent drift are not checked by it; a person reviews them, which is why status stays assisted. The check program is not written yet, so checkRunnable is false.",
+     "doneWhen": "One command with one exit code: `python3 desk/check_draft.py --draft draft.txt --intent intent.txt --policy-list <file>`. It does not exist yet, so checkRunnable is false and the program is what the desk would run. Inputs are the draft, the classified intent, and the policy id list. Exit 0 asserts the draft contains the classified policy line verbatim, matching the entry at the cited `<file>:<n>`, and prints `quoted: <policy-id> line <n>`. Exit 0 asserts every draft sentence answers only the classified intent. Exit 0 asserts the draft states or implies no refund, credit, waiver, or exception that the policy line does not grant. A draft that cannot quote its line is not a pass; the result is `unsupported`, which is valid.",
      "checkKind": "quote",
      "rung": "L1",
      "forbidden": "Promise creep: the draft says or implies a refund, credit, waiver, or exception the policy line does not grant.",
@@ -2019,7 +2015,7 @@
     },
     "known-path": {
      "trigger": "A workflow definition with ordered steps and a matching ticket are present. Quiet when no workflow matches; that goes to exception.",
-     "doneWhen": "`jq -e --slurpfile e expected_state.json '. == $e[0]' state.json` exits 0 and prints `true`. Both files are supplied as input: expected_state.json lists the workflow's ordered steps with their end state, state.json is the observed snapshot, so reordering, skipping, or adding a step makes the arrays unequal. Any variance exits non-zero and routes to support-exception; the agent does not improvise. No model is in the loop, so reliable holds. Fetching a live snapshot needs an absent state reader.",
+     "doneWhen": "One command with one exit code: `jq -e --slurpfile e expected_state.json '. == $e[0]' state.json`. Inputs are expected_state.json (the workflow's ordered steps with their end state) and state.json (the observed system-state snapshot). Exit 0 asserts the output state equals the expected end state, so reordering, skipping, or adding a step fails. Any variance exits non-zero and routes to support-exception; the agent does not improvise. state.json is supplied by a person because the state reader is absent, so status is assisted until a reader produces it.",
      "checkKind": "state-diff",
      "rung": "L0",
      "forbidden": "Improvising: adding, skipping, or reordering a step, or repairing a variance instead of handing it to exception.",
@@ -2027,7 +2023,7 @@
      "toolScope": "read",
      "gated": false,
      "gate": "",
-     "status": "reliable",
+     "status": "assisted",
      "checkRunnable": true,
      "keywords": [
       "workflow steps",
@@ -2043,7 +2039,7 @@
     },
     "exception": {
      "trigger": "A known path step failed or a variance was reported. Quiet when state matches the workflow.",
-     "doneWhen": "`jq -e --slurpfile f failed_state.json --slurpfile c state.json '(keys-[\"failed_step\",\"observed\",\"expected\",\"handoff_owner\",\"stopped\"]|length==0) and (.failed_step|type==\"string\" and length>0) and (.handoff_owner|type==\"string\" and length>0) and (.stopped==true) and (.expected|length>0) and (.observed==$f[0]) and (.observed!=.expected) and ($c[0]==$f[0])' record.json` exits 0 only if the record has exactly the allowed keys (a remedy or any other extra field fails), names the failed step and handoff owner, carries observed equal to the failure-time snapshot, differs from expected, and the current state still equals that snapshot, so no fix was tried outside the record. Otherwise exits non-zero. The stop is this code check, not a model judgment. Stop is the valid result.",
+     "doneWhen": "One command with one exit code: `jq -e --slurpfile f failed_state.json --slurpfile c state.json '(keys-[\"failed_step\",\"observed\",\"expected\",\"handoff_owner\",\"stopped\"]|length==0) and (.failed_step|type==\"string\" and length>0) and (.handoff_owner|type==\"string\" and length>0) and (.stopped==true) and (.expected|length>0) and (.observed==$f[0]) and (.observed!=.expected) and ($c[0]==$f[0])' record.json`. Inputs are record.json, failed_state.json, and state.json. Exit 0 asserts the record has exactly the allowed keys, so a remedy field fails. Exit 0 asserts it names a non-empty failed step and handoff owner with stopped true. Exit 0 asserts observed equals the failure-time snapshot and differs from expected. Exit 0 asserts current state still equals that snapshot, so no fix was tried. Stop is the valid result.",
      "checkKind": "exit-code",
      "rung": "L0",
      "forbidden": "Guessing a remedy: proposing, trying, or applying a fix after the failure instead of stopping.",
@@ -2089,7 +2085,7 @@
     },
     "incident": {
      "trigger": "Log files or log lines are present and a timeline is asked for. Quiet when no logs exist.",
-     "doneWhen": "`python3` check exits 0 only if every timeline event has `<file>:<line>`, `ts`, and `quote`; the quote equals the line at that locator; the `ts` equals the timestamp parsed from that line; and the events are in non-decreasing `ts` order (ties keep `<file>:<line>` order). An event with no matching log line fails, so no gap is filled; a mis-ordered timeline fails. An empty log yields `events: 0` and exits 0.",
+     "doneWhen": "One command with one exit code: `python3 desk/check_incident.py --timeline timeline.json --logs <files>`. It does not exist yet, so checkRunnable is false and the program is what the desk would run. Inputs are the timeline events and the log files. Exit 0 asserts every event has `<file>:<line>`, `ts`, and `quote`, and the quote equals the line at that locator. Exit 0 asserts each `ts` equals the timestamp parsed from its log line. Exit 0 asserts events are in non-decreasing `ts` order, ties keeping `<file>:<line>` order. An event with no matching log line fails, so no gap is filled. An empty log yields `events: 0` and exits 0.",
      "checkKind": "quote",
      "rung": "L1",
      "forbidden": "Filling a gap with a likely story: stating a cause or event no log line supports.",
@@ -2220,9 +2216,7 @@
       "missing evidence",
       "candidate comparison sheet"
      ],
-     "absentTools": [
-      "blind-review redaction tool for style normalization"
-     ]
+     "absentTools": []
     },
     "decide": {
      "trigger": "A compare grid exists and the ask is to decide, pick, or hire. Prepare the sheet and stop; a person hires.",
@@ -2244,10 +2238,7 @@
       "make offer",
       "who to hire"
      ],
-     "absentTools": [
-      "hiring tool",
-      "offer or send tool"
-     ]
+     "absentTools": []
     }
    }
   },
@@ -2298,7 +2289,7 @@
     },
     "check": {
      "trigger": "A learner answer exists for a restate or one-application prompt, with the key written down first, and the last answer was a miss. Quiet when no key exists, or when the ask is many questions on one skill.",
-     "doneWhen": "After a miss, the old and new example are saved to old_example.txt and new_example.txt, each starting with a 'scenario:' line, and python3 compares their lowercase word sets: Jaccard similarity must be below 0.5 (exit 0 pass, exit 1 means the paragraph or scenario was repeated or reworded and fails). A hit needs no new example, so no comparison run is a valid result.",
+     "doneWhen": "One command, python3 desk/check_example.py key.txt answer.txt old_example.txt new_example.txt, gives one exit code (0 pass, 1 fail) and does not exist yet. It asserts the answer file is a restate or one application and prints one 'mark: hit' or 'mark: miss' line from comparing it to key.txt. On a miss it asserts the new example differs: each file starts with a 'scenario:' line, the two scenario lines share under half their lowercase words (Jaccard below 0.5) and no paragraph is identical, and the new scenario introduces at least one noun absent from the old one so a rewording fails. A hit needs no new example and exit 0 with no comparison is valid; no key or no answer prints 'mark: unsupported' and is valid.",
      "checkKind": "exit-code",
      "rung": "L1",
      "forbidden": "Repeating the same paragraph or the same scenario after a miss; rewording or a one-byte edit does not count, the scenario must change.",
@@ -2317,12 +2308,12 @@
       "change the example"
      ],
      "absentTools": [
-      "scenario-similarity checker (a program under desk/ that exits 1 when two examples overlap too much)"
+      "semantic-similarity service (embeddings that tell whether two scenarios are the same situation reworded)"
      ]
     },
     "sequence": {
      "trigger": "A learner's current state is given (a quiz result, a stated stuck point) and the ask is what comes next. Quiet when the ask is for the whole path or an order of topics.",
-     "doneWhen": "The whole reply is exactly two non-empty lines: one starting 'gap:' and one starting 'next:' (count 1/1, total non-empty lines 2), each at most 160 characters, and the 'next:' line contains no ';', no numerals-with-period or bullet markers, and none of 'then', 'after that', 'finally', 'step 2' (so prose course dumps fail). 'gap: none found' with 'next: none' is valid when evidence shows no gap; no stated state gives 'gap: unsupported'.",
+     "doneWhen": "One command, python3 desk/check_sequence.py state.txt reply.txt, gives one exit code and does not exist yet. It asserts the reply is exactly two non-empty lines, one starting 'gap:' and one starting 'next:' (count 1/1), each at most 160 characters. It asserts the gap line names exactly one item that appears verbatim in state.txt as a miss or stuck point and has no ';' or list marker, and the 'next:' line has no ';', no numeral-with-period or bullet marker, and none of 'then', 'after that', 'finally', 'step 2'. 'gap: none found' with 'next: none' passes only when state.txt records no miss; an absent state.txt requires 'gap: unsupported'. That the gap is the smallest is not verified by the program (no prerequisite graph) and stays a model judgment.",
      "checkKind": "count",
      "rung": "L1",
      "forbidden": "Laying out the whole course: any list of steps beyond the single next one.",
@@ -2346,7 +2337,7 @@
     },
     "drill": {
      "trigger": "One named skill and an answer key (or a computable answer) exist. Quiet when the key is absent, or when the ask spans more than one skill.",
-     "doneWhen": "A python3 script marks every given answer against the stored key file and prints one 'marked: N/N' line with each mark citing a key item locator; exit 0 only when N equals the number of answers given and every answer has a key item. No key prints 'marked: 0/N unmarked, key absent' and is valid.",
+     "doneWhen": "One command, python3 desk/mark_drill.py key.txt answers.txt reply.txt, gives one exit code and does not exist yet. It asserts key.txt names exactly one 'skill:' and every answer cites it, marks every given answer against key.txt, and prints one 'marked: N/N' line with each mark citing a key item locator. It asserts that line is the last non-empty line of reply.txt, so no second skill, next level, or new item set follows. Exit 0 when N equals the number of answers given and every answer has a key item; with no key it prints 'marked: 0/N unmarked, key absent', which is valid and also exits 0.",
      "checkKind": "count",
      "rung": "L0",
      "forbidden": "Moving on inside the same directive: any text after the marked line that introduces a second skill, a next level, or a new item set, or marking an answer with no key.",
@@ -2364,9 +2355,7 @@
       "mark each answer",
       "answer key"
      ],
-     "absentTools": [
-      "key-marking script under desk/ (not yet written)"
-     ]
+     "absentTools": []
     },
     "curriculum": {
      "trigger": "A request to order topics, plan a course, or set a curriculum. Quiet for one concept, one check, or one next step.",
@@ -2421,7 +2410,7 @@
    "directives": {
     "triage": {
      "trigger": "A mailbox or thread list is present and a triage rule is stated; quiet when no rule exists or the ask is to reply.",
-     "doneWhen": "One program reads the triage log and the header list and compares id sets: the opened thread ids equal the rule-marked header ids (symmetric difference 0), printed \"opened: N/N\"; exits 0 only then. 0/0 is valid.",
+     "doneWhen": "One command, triage-verify (a program the desk would run; not yet in the repo), reads the triage log and the header list and exits 0 only if all hold. The header-scan entry precedes the first open entry. Every open entry carries a non-empty reason. The opened thread ids equal the rule-marked header ids (symmetric difference 0), printed \"opened: N/N\". 0/0 is valid.",
      "checkKind": "count",
      "rung": "L0",
      "forbidden": "Opening a thread the rule did not mark, opening before the header scan, or replying while triaging.",
@@ -2490,7 +2479,7 @@
     },
     "pack": {
      "trigger": "A meeting and source threads or documents are present; quiet when no source is attached.",
-     "doneWhen": "Program greps each item's verbatim quote at its cited locator in that item's own source and prints \"items: N/N sourced\"; exits 0 only if every kept item greps. Unsourced items are dropped; an empty agenda (0/0) is valid.",
+     "doneWhen": "One command, pack-verify (a program the desk would run; not yet in the repo), reads the agenda and exits 0 only if all hold. Each kept item's verbatim quote greps at its cited locator in that item's own source. No two kept items cite the same source. Prints \"items: N/N sourced\". Unsourced items are dropped; an empty agenda (0/0) is valid.",
      "checkKind": "quote",
      "rung": "L1",
      "forbidden": "Adding an agenda item from memory alone, two items from one source, or paraphrasing a source into a quote it does not contain.",
@@ -2620,7 +2609,9 @@
       "ask if screen differs",
       "gui plan"
      ],
-     "absentTools": []
+     "absentTools": [
+      "accessibility-tree reader"
+     ]
     },
     "act": {
      "trigger": "One approved action has been performed by the host's approved GUI driver (not by this skill), and pre-state.json and post-state.json both exist. Quiet when the action is not yet chosen or no pre-state was captured.",
@@ -2648,16 +2639,16 @@
     },
     "recover": {
      "trigger": "A step produced an unexpected state diff, a saved pre-step snapshot exists, and a revert has been carried out by a person or the host's approved GUI driver. Quiet when no snapshot was saved: report that revert cannot be confirmed.",
-     "doneWhen": "Output first prints 'bad step: <step id or steps.md:L<n>>' naming the step that caused the unexpected diff; without that line the result fails. After the revert is made by a person or host driver (this skill holds no act tool), `cmp pre-step-snapshot post-revert-snapshot` exits 0; then stop with no further action. Non-zero cmp is reported as 'revert unconfirmed' and also stops. The check is the cmp exit code.",
+     "doneWhen": "One composite command, check-recover.py (not yet in the repo; the desk would run it), takes the output text, pre-step-snapshot and post-revert-snapshot and has one exit code. It exits 0 only if the output's first line matches 'bad step: <step id or steps.md:L<n>>'. It also requires that a byte comparison of the two snapshots is identical. Any other result exits non-zero: a missing bad-step line fails, and a snapshot mismatch is reported 'revert unconfirmed'. The revert is made by a person or host driver (this skill holds no act tool); then stop with no further action.",
      "checkKind": "exit-code",
      "rung": "L1",
      "forbidden": "Continuing or retrying the task after the revert, claiming a revert without confirming the prior state, or reverting from this skill instead of naming the step and stopping.",
-     "tool": "Bash:cmp",
+     "tool": "Bash:python3",
      "toolScope": "read",
      "gated": false,
      "gate": "",
      "status": "weak",
-     "checkRunnable": true,
+     "checkRunnable": false,
      "keywords": [
       "undo bad step",
       "revert ui",
@@ -3000,7 +2991,7 @@
    "directives": {
     "scan": {
      "trigger": "A repo or branch is present and the ask is to scan for leaked secrets; defensive only.",
-     "doneWhen": "One result line from one tool run: mcp__github__run_secret_scanning stdout quoted verbatim with exit status; each finding a quoted tool line with file and line; zero findings valid as 'secret scan: 0 findings'; a scan that did not run is 'secret scan: unscanned'; a finding without a quoted scanner line is never reported and unscanned is never reported as clean.",
+     "doneWhen": "Two result lines. Secret scan: one tool run, mcp__github__run_secret_scanning stdout quoted verbatim with exit status; each finding a quoted tool line with file and line; zero findings valid as 'secret scan: 0 findings'; a scan that did not run is 'secret scan: unscanned'. Dependency scan: no dependency tool is registered, so the line is 'dependency scan: unsupported'. A finding without a quoted scanner line is never reported and unscanned or unsupported is never reported as clean.",
      "checkKind": "exit-code",
      "rung": "L0",
      "forbidden": "Reporting a model hunch as a finding: anything not a quoted line of scanner output.",
@@ -3047,16 +3038,16 @@
     },
     "rank": {
      "trigger": "Quoted findings and a written rubric are both present and the ask is to order them.",
-     "doneWhen": "Precondition: no written rubric gives 'rank: unsupported' and empty input gives 'rank: 0 rows', before any row. Rubric file lines are 'clause | pattern | rank'. Check: for every ranked row, one python3 -c run exits 0 only when the quoted text is a substring of line <line> of <file> and the row's cited clause exists in the rubric with its pattern inside the quote and its rank equal to the row's rank; a row that exits non-zero (including a rank that ignores or contradicts its clause) is removed as dropped; rows in equal rows out plus dropped, both stated.",
+     "doneWhen": "Precondition: no written rubric gives 'rank: unsupported' and empty input gives 'rank: 0 rows', before any row. One command with one exit code per row: python3 -c over <file> <line> <quote> <clause> <rank> <rubric-file>, where rubric lines are 'clause | pattern | rank'. It exits 0 only when the quote is a substring of line <line> of <file>, the cited clause exists in the rubric with its pattern inside the quote, and the rubric rank equals the row's rank. A non-zero row is removed as dropped; rows in equal rows out plus dropped, both stated.",
      "checkKind": "quote",
-     "rung": "L1",
+     "rung": "L0",
      "forbidden": "Ranking unquoted code: assigning severity to anything no quoted line supports.",
      "tool": "Bash:python3",
      "toolScope": "read",
      "gated": false,
      "gate": "",
      "status": "assisted",
-     "checkRunnable": true,
+     "checkRunnable": false,
      "keywords": [
       "rank findings",
       "severity rubric",
@@ -3113,7 +3104,7 @@
    "directives": {
     "skill": {
      "trigger": "A SKILL.md is being authored or its description tuned. One trigger, one trick. Quiet for hook, memory, trace, evolve asks.",
-     "doneWhen": "A static lint over the SKILL.md (python3; the wrong-task fire test is a separate model-judged check and is not part of this exit code) exits 0 only if: the description has exactly one 'Use when' clause; the description and the Trigger section each contain 'Quiet' followed by a stated quiet case; the Done-when section has exactly one 'check:' line and exactly one backticked command, and the Tool section exactly one 'tool:' line (one trick). A missing or empty file is unsupported, not a pass.",
+     "doneWhen": "One command, python3 lint_skill.py <SKILL.md> --wrong-task <prompts.txt>, exits 0 only if every assertion holds: the description has exactly one 'Use when' clause (one trigger); the Done-when section has exactly one 'check:' line and one backticked command and the Tool section exactly one 'tool:' line (one trick); the description and the Trigger section each contain 'Quiet' followed by a stated quiet case; and no sibling-task prompt in <prompts.txt> matches the 'Use when' clause while every positive prompt in it does (a fire on the wrong task fails). A missing or empty SKILL.md or prompts file is unsupported, not a pass. The program does not exist in the repo yet; this is the program the desk would run.",
      "checkKind": "exit-code",
      "rung": "L0",
      "forbidden": "Firing on the wrong task: two triggers, a broad description, or no stated quiet case. Writing a second trick (a second check command or tool) into the same file instead of a second skill.",
@@ -3121,7 +3112,7 @@
      "toolScope": "read",
      "gated": false,
      "gate": "",
-     "status": "reliable",
+     "status": "assisted",
      "checkRunnable": false,
      "keywords": [
       "skill file",
@@ -3132,8 +3123,7 @@
       "quiet case"
      ],
      "absentTools": [
-      "skill lint script",
-      "skill fire-test harness (wrong-task prompts)"
+      "skill lint script with wrong-task prompt set"
      ]
     },
     "hook": {
@@ -3160,7 +3150,7 @@
     },
     "memory": {
      "trigger": "A note must be saved or recalled during a coding task, keyed by stage analyze, reproduce, edit, verify. Quiet for story-like summaries of a past session.",
-     "doneWhen": "Recall is a stage filter, jq -c --arg s STAGE 'select(.stage==$s)' memory.jsonl, saved to recalled.jsonl; jq -s -e --arg s STAGE '($s|IN(\"analyze\",\"reproduce\",\"edit\",\"verify\")) and all(.[]; .stage==$s and (.body|type==\"string\" and length<=280 and (contains(\"\\n\")|not)))' recalled.jsonl exits 0: STAGE is one of analyze, reproduce, edit, verify; every recalled record carries exactly the requested stage (a record recalled by similar story fails); every body is a string of at most 280 characters with no newline (longer or multi-line bodies are episode blobs and fail). Zero recalled records is valid.",
+     "doneWhen": "One command exits 0: jq -n -e --arg s STAGE --slurpfile m memory.jsonl --slurpfile r recalled.jsonl '($s|IN(\"analyze\",\"reproduce\",\"edit\",\"verify\")) and all($m[]; (.stage|IN(\"analyze\",\"reproduce\",\"edit\",\"verify\")) and (.body|type==\"string\" and length<=280 and (contains(\"\\n\")|not))) and $r == [$m[]|select(.stage==$s)]'. It asserts: STAGE is one of analyze, reproduce, edit, verify; every stored record in memory.jsonl carries one of those four stages (store at the stage); every stored body is a string of at most 280 characters with no newline (a longer or multi-line body is an episode blob and fails); recalled.jsonl equals exactly the stage filter of memory.jsonl (retrieve by stage, not by similar story). Empty memory.jsonl and zero recalled records are valid.",
      "checkKind": "schema",
      "rung": "L0",
      "forbidden": "Storing an episode blob, or retrieving by similar story instead of by stage.",
@@ -3184,16 +3174,16 @@
     },
     "trace": {
      "trigger": "A log of agent actions is kept as a record of what happened and must be append-only.",
-     "doneWhen": "python3 .claude/hooks/test_hooks.py deny exits 0, running desk/gate.py through the PreToolUse hook: a Write to trace/trace.jsonl, a Bash rm, a truncating redirect and a sed -i on it each exit 2, while cat, tail and python3 desk/desk.py verify-trace exit 0 (attempts to tamper or delete fail). Detection of a mid-file edit is the separate python3 desk/desk.py verify-trace, which exits 1 naming the line. Not covered: tail edit, truncation and a write by a route the patterns miss; real append-only needs chattr +a or a remote write-once sink, both absent.",
+     "doneWhen": "One command, python3 desk/desk.py trace-tamper-check --anchor <anchor.json>, exits 0 only if every assertion holds: the PreToolUse hook (desk/gate.py) exits 2 on a Write to trace/trace.jsonl, a Bash rm, a truncating redirect and a sed -i on it, and exits 0 on cat and tail (the agent has no delete or write on its own record); the hash chain verifies; and the record count and last-record hash equal the anchor a person holds outside the agent's reach, so a mid-file edit, a tail edit and a truncation each exit 1 (a tamper attempt fails). A missing anchor is unsupported, not a pass. The subcommand does not exist yet (today python3 .claude/hooks/test_hooks.py deny and python3 desk/desk.py verify-trace cover the hook and chain parts only); this is the program the desk would run.",
      "checkKind": "exit-code",
      "rung": "L0",
      "forbidden": "Giving the agent a write or delete path to its own trace, or trusting its report that the log is intact.",
      "tool": "none",
      "toolScope": "none",
      "gated": true,
-     "gate": "ABSENT write, delete (the agent holds no write or delete path to its own trace: the PreToolUse hook denies them; a person or an external sink owns the file)",
+     "gate": "ABSENT write-once log sink, chattr +a (the agent holds Bash, so the hook is only a pattern deny and not an absent tool; prepare the log, chain and anchor, stop; a person sets the attribute or sink)",
      "status": "weak",
-     "checkRunnable": true,
+     "checkRunnable": false,
      "keywords": [
       "append-only",
       "tamper",
@@ -3204,12 +3194,13 @@
      ],
      "absentTools": [
       "write-once log sink",
-      "filesystem append-only attribute (chattr +a)"
+      "filesystem append-only attribute (chattr +a)",
+      "trace-tamper-check subcommand with external anchor"
      ]
     },
     "evolve": {
      "trigger": "One harness piece was changed and a baseline exists; decide promotion on a held-out task with token count.",
-     "doneWhen": "test \"$(git diff --name-only BASE CAND -- .claude CLAUDE.md | wc -l)\" -eq 1 && python3 desk/desk.py promote-gate <json> exits 0 printing PROMOTE: exactly one harness file differs between baseline and candidate (two files is two evolve runs), candidate.heldout_pass and candidate.tune_pass are true and candidate.tokens is less than baseline.tokens, both counts present in the json and published with the result; a json lacking either token count is unsupported, not PROMOTE. HOLD (exit 1) is valid. A person promotes.",
+     "doneWhen": "One command, python3 desk/desk.py promote-gate --base BASE --cand CAND <json>, exits 0 printing PROMOTE only if every assertion holds: git diff of BASE to CAND under .claude and CLAUDE.md names exactly one harness file (two files is two evolve runs); candidate.heldout_pass and candidate.tune_pass are true (a tuning-set gain alone is HOLD); candidate.tokens is less than baseline.tokens, both counts present in the json and published with the result. A json lacking either token count is unsupported, not PROMOTE. HOLD (exit 1) is valid. A person promotes. The --base and --cand options do not exist yet (promote-gate takes only the json today); this is the program the desk would run.",
      "checkKind": "exit-code",
      "rung": "L0",
      "forbidden": "Promoting on a tuning-set gain only, or the agent promoting its own change.",

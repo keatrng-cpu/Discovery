@@ -643,8 +643,11 @@ def cmd_merge_shelves(a):
         files = _git("diff", "--name-only", base, br).stdout.split()
         ok_prefix = (f".claude/skills/{s}-", f"registry/shelf/{s}.json")
         out_of_scope = [f for f in files if not f.startswith(ok_prefix)]
-        if out_of_scope or not files:
-            print(f"REJECT  {s}: {br} touches out-of-scope paths {out_of_scope[:5]}" if out_of_scope else f"REJECT  {s}: {br} has no changes")
+        if not files:
+            print(f"SKIP    {s}: {br} changes nothing (empty commit)")
+            continue
+        if out_of_scope:
+            print(f"REJECT  {s}: {br} touches out-of-scope paths {out_of_scope[:5]}")
             bad += 1
             continue
         r = _git("merge", "--no-ff", "-m", f"Merge shelf {s} ({br}) after path-scope check", br)

@@ -91,9 +91,7 @@
     "missing evidence",
     "candidate comparison sheet"
    ],
-   "absentTools": [
-    "blind-review redaction tool for style normalization"
-   ]
+   "absentTools": []
   },
   {
    "directive": "decide",
@@ -116,10 +114,7 @@
     "make offer",
     "who to hire"
    ],
-   "absentTools": [
-    "hiring tool",
-    "offer or send tool"
-   ]
+   "absentTools": []
   }
  ]
 }

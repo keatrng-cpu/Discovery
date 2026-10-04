@@ -4,11 +4,11 @@ shelf: software
 directive: verify
 stakes: high
 novelty: high
-check: none authored: write the check before any edit
+check: exit-code: `bash verify_gate.sh` in the project directory exits 0 (unit test, then build, then render-compare against the fixture; the first failure stops it). The Stop hook blocks 'done' until it does. The script runs `python3 -m unittest discover -s tests` (tune fixture tests test_simple and test_zero_numerator in tests/test_mod.py), then py_compile, then cmp against fixture.txt, under one exit code. A non-zero exit is a valid result: report RED with the exit code and the first failing line quoted verbatim, declared_done false. No verify_gate.sh in the directory is also a valid result: report "gate: absent" and stop. Never report GREEN without exit 0.
 gate: ABSENT: checkout (prepare and stop)
 rung: L4
 token cap: 90000
 verifier: check program + two-lens draft-blind verifier + human gate
-skill: none (none)
+skill: none (unverified)
 files: plan.md state.json artifacts/software/verify.out
 status: ready

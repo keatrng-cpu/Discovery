@@ -27,7 +27,7 @@
   {
    "directive": "risk",
    "trigger": "A contract, one named party, and a written severity rule are present. The scoring party is the one the ask named, fixed for the whole pass (a second party is a second pass). Quiet when no party or no rule is given.",
-   "doneWhen": "Each score row carries the written rule it applied, a severity from that rule, and a verbatim quote that is a substring of the source with a section locator. A row without a quote is dropped and printed as \"unscored: <text>\". Zero scored rows is valid.",
+   "doneWhen": "Each score row carries the party it scored, the written rule it applied, a severity from that rule, and a verbatim quote that is a substring of the source with a section locator. Every row's party equals the one party the ask named; a row for any other party fails. A row without a quote is dropped and printed as \"unscored: <text>\". Zero scored rows is valid.",
    "checkKind": "quote",
    "rung": "L1",
    "forbidden": "Scoring unquoted text, or scoring from both parties' views at once.",
@@ -96,7 +96,7 @@
   {
    "directive": "authority",
    "trigger": "A cite and the proposition it supports are present. Quiet when no cite or proposition is given.",
-   "doneWhen": "Each cite is resolved: it opens at a source, and the cite string (reporter cite, docket, or statute number) is a substring of the opened text, so the opened page is the cited authority. A quoted holding line with a page or paragraph locator must be a substring of that opened text. A candidate cite that does not open is dropped and printed \"dropped: <cite>\". Any cite kept or asserted in the output that did not open or resolve (invented), any quoted line not a substring of the opened text, or any pin locator that does not exist fails the card. Zero surviving cites is valid.",
+   "doneWhen": "Each cite is resolved: it opens at a source, and the cite string (reporter cite, docket, or statute number) is a substring of the opened text, so the opened page is the cited authority. Each kept cite carries a quoted holding line used, with a page or paragraph locator, and that line must be a substring of the opened text. A kept cite with no quoted holding is dropped. A candidate cite that does not open is dropped and printed \"dropped: <cite>\". Any cite kept or asserted in the output that did not open or resolve (invented), any quoted line not a substring of the opened text, or any pin locator that does not exist fails the card. Zero surviving cites is valid.",
    "checkKind": "quote",
    "rung": "L3",
    "forbidden": "Keeping a cite that was not opened, or inventing a pin cite or holding quote.",
@@ -121,7 +121,7 @@
   {
    "directive": "diligence",
    "trigger": "A data room or document list and a stated scope are present. Quiet when scope is not stated.",
-   "doneWhen": "Two lists print by document name, one per line: in-scope documents and not-read documents. A summary line \"in scope: N; read: R; not read: U\" prints with N equal to the number of in-scope names listed and equal to R plus U. A document with no read record is listed not-read, never implied-read. One sheet holds the issues: each row has a unique issue id and exactly one issue; every row's document name is in the read set (a not-read document has no row), and the printed row count equals the number of distinct issue ids.",
+   "doneWhen": "One command, diligence-check (a program the desk would run; it does not exist yet), takes the document list, the read log and the issue sheet, and exits 0 only if every assertion holds. It prints the in-scope and not-read lists by document name, one per line, plus \"in scope: N; read: R; not read: U\". Assert N equals the in-scope names listed and equals R plus U. Assert a document with no read record is listed not-read, never implied-read. Assert each issue row has a unique issue id, exactly one issue, and a document name in the read set, with the printed row count equal to the distinct issue ids.",
    "checkKind": "count",
    "rung": "L1",
    "forbidden": "Implying a document was read because it sits in scope.",

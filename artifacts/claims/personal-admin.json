@@ -4,7 +4,7 @@
   {
    "directive": "triage",
    "trigger": "A mailbox or thread list is present and a triage rule is stated; quiet when no rule exists or the ask is to reply.",
-   "doneWhen": "One program reads the triage log and the header list and compares id sets: the opened thread ids equal the rule-marked header ids (symmetric difference 0), printed \"opened: N/N\"; exits 0 only then. 0/0 is valid.",
+   "doneWhen": "One command, triage-verify (a program the desk would run; not yet in the repo), reads the triage log and the header list and exits 0 only if all hold. The header-scan entry precedes the first open entry. Every open entry carries a non-empty reason. The opened thread ids equal the rule-marked header ids (symmetric difference 0), printed \"opened: N/N\". 0/0 is valid.",
    "checkKind": "count",
    "rung": "L0",
    "forbidden": "Opening a thread the rule did not mark, opening before the header scan, or replying while triaging.",
@@ -76,7 +76,7 @@
   {
    "directive": "pack",
    "trigger": "A meeting and source threads or documents are present; quiet when no source is attached.",
-   "doneWhen": "Program greps each item's verbatim quote at its cited locator in that item's own source and prints \"items: N/N sourced\"; exits 0 only if every kept item greps. Unsourced items are dropped; an empty agenda (0/0) is valid.",
+   "doneWhen": "One command, pack-verify (a program the desk would run; not yet in the repo), reads the agenda and exits 0 only if all hold. Each kept item's verbatim quote greps at its cited locator in that item's own source. No two kept items cite the same source. Prints \"items: N/N sourced\". Unsourced items are dropped; an empty agenda (0/0) is valid.",
    "checkKind": "quote",
    "rung": "L1",
    "forbidden": "Adding an agenda item from memory alone, two items from one source, or paraphrasing a source into a quote it does not contain.",

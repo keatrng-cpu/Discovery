@@ -26,7 +26,7 @@
   {
    "directive": "ban-list",
    "trigger": "A named ban list exists, shorter than the design system, and output must pass it. Quiet when asked to ban taste or style opinions; those are not testable.",
-   "doneWhen": "`pytest` over the ban-list test file exits 0 on the output: one test per banned pattern. Any hit exits non-zero and names the pattern. A banned pattern with no test is not on the list. An empty ban list is a valid result: report \"no bans\", exit 0.",
+   "doneWhen": "One pytest command over the ban-list test file and the system's token or component list exits 0 only when every assertion holds: one test per banned pattern passes on the output (a hit names the pattern), a banned pattern with no test is not on the list, and the count of banned patterns is below the count of entries in the system. An empty ban list is a valid result: report \"no bans\", exit 0.",
    "checkKind": "exit-code",
    "rung": "L0",
    "forbidden": "Enforcing the ban list by instruction in the prompt, or banning taste, so the fail is a plea rather than a test.",
@@ -47,9 +47,9 @@
   {
    "directive": "components",
    "trigger": "A component list exists and output is built from components. Quiet when no list is supplied: report \"unsupported\".",
-   "doneWhen": "`python3` over the output prints \"unlisted: N\" and a record line \"component: <name>\" for each use; exit 0 only when N is 0. Any raw substitute (an element or markup standing in for a listed component) counts as unlisted and fails. An output using no components is a valid result: \"unlisted: 0, used: 0\".",
+   "doneWhen": "One python3 program takes the output of two runs of the same prompt plus the component list, and exits 0 only when every assertion holds: it prints \"unlisted: N\" with N equal to 0 for each run, prints a record line \"component: <name>\" for each use, treats any raw substitute (markup standing in for a listed component) as unlisted, and finds the same component names in both runs. An output using no components is a valid result: \"unlisted: 0, used: 0\".",
    "checkKind": "count",
-   "rung": "L1",
+   "rung": "L0",
    "forbidden": "Keeping the component list only in the prompt, so a raw substitute leaks through; the list must be what the tool exposes.",
    "tool": "Bash:python3",
    "toolScope": "read",
@@ -70,7 +70,7 @@
   {
    "directive": "flows",
    "trigger": "One page type and its one template screenshot exist. A request naming two page types is two directives: pick one and diff against that template only. Quiet when no template exists.",
-   "doneWhen": "A real screenshot of the output (npx playwright screenshot) is diffed against the one named template screenshot; the diff reports \"off-template regions: 0\". Spacing and type are held to the template: the template renders token spacing and type, so any deviation in either appears as an off-template region. Any off-template region fails, listed by locator. No rendered page is a valid result: \"unread\", not a pass.",
+   "doneWhen": "One program runs a real screenshot of the output (npx playwright screenshot) and exits 0 only when every assertion holds: the pixel diff against the one named template screenshot reports \"off-template regions: 0\" (any region fails, listed by locator), and the rendered spacing and type values read from the page each equal a token value in the token source file. No rendered page is a valid result: \"unread\", not a pass.",
    "checkKind": "state-diff",
    "rung": "L0",
    "forbidden": "Judging a region on-template by looking at it instead of the diff, or waving through an off-template region.",

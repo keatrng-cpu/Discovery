@@ -80,9 +80,9 @@
   {
    "directive": "memo",
    "trigger": "Sourced facts exist and the ask is a thesis memo. Quiet when the ask is to buy, sell, or size a position.",
-   "doneWhen": "A person reads the kill condition line and confirms it is an observable: it names a metric, a threshold, and a date. That is the one check; no program can judge observability. Not part of the check, but required of the draft: one stated thesis, every line tagged fact or inference, and no order and no size.",
-   "checkKind": "human-only",
-   "rung": "L3",
+   "doneWhen": "One command, one exit code: `python3 desk/memo_check.py <memo.md>` (a program the desk would run; it does not exist in the repo yet). Input is the memo file. Each assertion is one clause: Thesis: exactly one line starting \"THESIS:\". Kill condition: exactly one line starting \"KILL:\" that holds a metric name, a numeric threshold, and a YYYY-MM-DD date (regex). Tags: every other non-blank line starts \"FACT:\" or \"INFERENCE:\". No order, no size: no line contains an order or sizing verb or a share count or dollar amount to trade. An empty memo, or a memo with no KILL: line, is a valid refusal result and exits 0 only when it prints \"unsupported\".",
+   "checkKind": "exit-code",
+   "rung": "L1",
    "forbidden": "Writing a kill condition that cannot be observed (for example \"if sentiment turns\"), or adding an order or a size.",
    "tool": "none",
    "toolScope": "none",
@@ -97,14 +97,12 @@
     "fact versus inference",
     "one-page memo"
    ],
-   "absentTools": [
-    "kill-condition observability checker"
-   ]
+   "absentTools": []
   },
   {
    "directive": "monitor",
    "trigger": "A previous card file and new material both exist. Quiet when there is no prior card.",
-   "doneWhen": "`git diff --no-index --unified=0 <old card> <new card>` is parsed by a program against the card format: claim lines read \"claim | expires YYYY-MM-DD | text\", the kill condition is one line starting \"KILL:\", added lines start \"DELTA \". Pass only if every added line starts \"DELTA \", every removed line carries an expires date earlier than the clock date, and no \"KILL:\" line is removed or changed (new card still holds the old KILL: line byte-equal). A removed line that is not expired, or a rewritten card, fails. An empty diff is a valid result: the card is unchanged.",
+   "doneWhen": "One command, one exit code: `python3 desk/card_check.py <old card> <new card>` (a program the desk would run; it does not exist in the repo yet). It runs `git diff --no-index --unified=0` on the two cards and reads the local date. Card format: claim lines read \"claim | expires YYYY-MM-DD | text\", the kill condition is one line starting \"KILL:\", added lines start \"DELTA \". Each assertion is one clause: Compare: every added line starts \"DELTA \". Expire: every removed line carries an expires date earlier than the local date, and no line left in the new card carries an expires date earlier than the local date. Kill: the new card holds the old \"KILL:\" line byte-equal. Delta only: a rewritten card fails. An empty diff is a valid result only when the old card holds no expired claim; then the card is unchanged.",
    "checkKind": "state-diff",
    "rung": "L1",
    "forbidden": "Rewriting the whole card, keeping a stale claim, or dropping the kill condition.",
@@ -121,14 +119,12 @@
     "expire stale",
     "watchlist update"
    ],
-   "absentTools": [
-    "market data clock feed"
-   ]
+   "absentTools": []
   },
   {
    "directive": "scenario",
    "trigger": "A baseline input set and a named variable to move. Quiet when two variables are named, or when the ask is to place risk.",
-   "doneWhen": "A diff of baseline inputs versus scenario inputs shows exactly one changed key, the named variable; all other keys are byte-equal. Two or more changed keys fails. Not part of the check, but required of the output: the thesis shown under that move, then stop. A move that leaves the thesis unchanged is a valid result.",
+   "doneWhen": "One command, one exit code: `python3 desk/scenario_check.py <baseline.json> <scenario.json> <out.md> <variable>` (a program the desk would run; it does not exist in the repo yet). Each assertion is one clause: Move one: the diff of baseline versus scenario shows exactly one changed key, the named variable. Hold fixed: every other key is byte-equal. Show thesis: out.md holds one line starting \"THESIS under <variable>:\" that states the thesis under that move. Stop: out.md holds no second thesis line and names no other variable as moved. A thesis line that says the thesis is unchanged is a valid result.",
    "checkKind": "state-diff",
    "rung": "L1",
    "forbidden": "Moving two variables, or continuing past the one requested variable. No order, no size.",
