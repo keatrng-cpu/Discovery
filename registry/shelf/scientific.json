@@ -25,7 +25,7 @@
  "directives": {
   "triage": {
    "trigger": "A candidate list (papers, records, datasets) and a written inclusion rule file are both present. Quiet when the rule is only in someone's head, or for deep reading.",
-   "doneWhen": "A program reads the rule file and triage table: every row is included, excluded, or unread; each excluded row cites a rule id; included count is at most the cap; included + excluded + unread equals the candidate total; unread ids are listed. Empty included set with unread rows is a valid result.",
+   "doneWhen": "A program reads the rule file and triage table: every row is included, excluded, or unread; each included row cites the rule id that admits it and each excluded row cites the rule id that excludes it, a row with no rule id fails; included count is at most the cap; included + excluded + unread equals the candidate total; unread ids are listed. Empty included set with unread rows is a valid result.",
    "checkKind": "count",
    "rung": "L1",
    "forbidden": "Including a paper because it is interesting when no rule id admits it; excluding by vibe with no rule id; silently dropping what was not read instead of recording it as unread.",
@@ -35,7 +35,14 @@
    "gate": "",
    "status": "assisted",
    "checkRunnable": false,
-   "keywords": ["inclusion rule", "screen papers", "paper cap", "exclusion criteria", "literature screen", "unread list"],
+   "keywords": [
+    "inclusion rule",
+    "screen papers",
+    "paper cap",
+    "exclusion criteria",
+    "literature screen",
+    "unread list"
+   ],
    "absentTools": []
   },
   "hypothesis": {
@@ -50,8 +57,15 @@
    "gate": "",
    "status": "assisted",
    "checkRunnable": false,
-   "keywords": ["testable hypothesis", "direction of change", "control group", "name the measurement", "runnable hypothesis", "reject hypothesis"],
-   "absentTools": ["schema validator for protocol graphs"]
+   "keywords": [
+    "testable hypothesis",
+    "direction of change",
+    "control group",
+    "name the measurement",
+    "runnable hypothesis",
+    "reject hypothesis"
+   ],
+   "absentTools": []
   },
   "design": {
    "trigger": "An accepted hypothesis record and a list of materials the lab already has are present. Quiet when asked to run the protocol or start an instrument.",
@@ -65,12 +79,21 @@
    "gate": "ABSENT hardware-start, accept (prepare the plan, stop; a scientist accepts and a person starts any instrument)",
    "status": "gated",
    "checkRunnable": false,
-   "keywords": ["experiment plan", "protocol draft", "materials on hand", "kill criterion", "ordered steps", "reagent list"],
-   "absentTools": ["schema validator for protocol graphs", "instrument or hardware control"]
+   "keywords": [
+    "experiment plan",
+    "protocol draft",
+    "materials on hand",
+    "kill criterion",
+    "ordered steps",
+    "reagent list"
+   ],
+   "absentTools": [
+    "schema validator for protocol graphs"
+   ]
   },
   "analyze": {
    "trigger": "Raw tabular or sequencing data files are present and a result is wanted. Quiet for proprietary instrument dumps no script can read: report unsupported.",
-   "doneWhen": "The analysis script runs from raw files alone and exits 0, and a second run regenerates figure and results byte-identical (cmp exits 0). A failed rerun means nothing is claimed; unsupported input is a valid result; result and interpretation are separate sections.",
+   "doneWhen": "One program only: the analysis script, run from raw files alone, exits 0. In that run it regenerates the figure, writes result and interpretation as separate files, and runs a leave-one-out pass that flags OUTLIER-DEPENDENT when dropping one point flips the result, exiting non-zero if the flag is missing. A failed rerun means nothing is claimed; unsupported input is a valid result.",
    "checkKind": "exit-code",
    "rung": "L0",
    "forbidden": "Reporting a number or figure the script did not produce, or hiding single-outlier dependence: if dropping one point flips the result, say so.",
@@ -80,12 +103,22 @@
    "gate": "",
    "status": "reliable",
    "checkRunnable": true,
-   "keywords": ["raw data", "rerun script", "regenerate figure", "outlier", "replicate", "count table", "sequencing results"],
-   "absentTools": ["instrument file parser"]
+   "keywords": [
+    "raw data",
+    "rerun script",
+    "regenerate figure",
+    "outlier",
+    "replicate",
+    "count table",
+    "sequencing results"
+   ],
+   "absentTools": [
+    "instrument file parser"
+   ]
   },
   "update": {
    "trigger": "An old hypothesis record and a result file are both present. Quiet when no result file exists or a new hypothesis from scratch is wanted.",
-   "doneWhen": "Each cited result is quoted verbatim from the result file with a file and line locator that a program confirms; the record lists the dropped branch and kept branches and proposes exactly one next measurement. A quote not at its locator fails; no change forced is a valid result.",
+   "doneWhen": "Each cited result is quoted verbatim from the result file with a file and line locator that a program confirms. A quote not at its locator fails; no change forced is a valid result.",
    "checkKind": "quote",
    "rung": "L1",
    "forbidden": "Keeping a dead branch because it was the old one, citing a result not in the file, or proposing more than the next measurement.",
@@ -95,12 +128,19 @@
    "gate": "",
    "status": "assisted",
    "checkRunnable": false,
-   "keywords": ["revise hypothesis", "drop failed branch", "next measurement", "result forces change", "assay result", "update hypothesis"],
+   "keywords": [
+    "revise hypothesis",
+    "drop failed branch",
+    "next measurement",
+    "result forces change",
+    "assay result",
+    "update hypothesis"
+   ],
    "absentTools": []
   },
   "manuscript": {
    "trigger": "Result files and a figure exist and a draft is wanted. Quiet when no result files exist or when the ask is a verdict on the claim.",
-   "doneWhen": "A program extracts every number in the draft and each appears in a result file with a file and line locator; any unlocated number fails. The self-review is headed DRAFT self-review with no verdict words. Zero unsupported numbers, or an empty draft for empty results, is valid.",
+   "doneWhen": "One program scans the single draft file, body and self-review alike, and flags each line holding a number with no file:line locator in a result file or a verdict or settled-claim word; it passes when it flags zero lines. An empty draft for empty results is valid.",
    "checkKind": "quote",
    "rung": "L1",
    "forbidden": "Upgrading the draft self-review into a verdict, or stating a claim as settled; the human owns the claim.",
@@ -110,7 +150,14 @@
    "gate": "",
    "status": "assisted",
    "checkRunnable": false,
-   "keywords": ["draft paper", "methods section", "results section", "self-review draft", "write up results", "manuscript draft"],
+   "keywords": [
+    "draft paper",
+    "methods section",
+    "results section",
+    "self-review draft",
+    "write up results",
+    "manuscript draft"
+   ],
    "absentTools": []
   }
  }

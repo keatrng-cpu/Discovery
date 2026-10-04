@@ -6,7 +6,7 @@ description: Use when a pile of papers or records must be cut to a capped set by
 A candidate list (papers, records, datasets) and a written inclusion rule file are both present. Quiet when the rule is only in someone's head: write it down first, then triage. Quiet for deep reading or summarizing.
 ## Done-when
 check: count
-A program reads the rule file and the triage table. Every row has one of included, excluded, unread. Each excluded row cites a rule id from the rule file. Included count is at most the stated cap. Included + excluded + unread equals the candidate total. Unread rows are listed by id, not dropped. An empty included set and a nonzero unread count are valid results: print "included: 0/N unread: M" and exit 0.
+A program reads the rule file and the triage table. Every row has one of included, excluded, unread. Each included row cites the rule id that admits it and each excluded row cites the rule id that excludes it; a row with no rule id, included or excluded, fails. Included count is at most the stated cap. Included + excluded + unread equals the candidate total. Unread rows are listed by id, not dropped. An empty included set and a nonzero unread count are valid results: print "included: 0/N unread: M" and exit 0.
 ## Rung
 rung: L1
 One fast-model pass applies the rule row by row; code does the counts and the cap. Escalate only if the count program fails, not because a paper looks interesting.
