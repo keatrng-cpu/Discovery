@@ -43,8 +43,8 @@
    "absentTools": []
   },
   "draft": {
-   "trigger": "An outline file and a voice file are both present. Quiet when only one exists, or when the ask is cutting, channel change, or fact-checking.",
-   "doneWhen": "`python3` over the draft, the outline, and the voice file exits 0 and prints \"violations: 0\": violations = paragraphs with no outline claim id or a repeated one (an unmapped paragraph is a new claim) + outline ids missing from the draft + hits of any phrase listed under the voice file's \"Bans\" heading (the banned defaults). One count, one exit code. The rest of the voice file is style a program cannot read; it stays a human read. A missing voice file is a valid result: stop and report \"voice file absent\".",
+   "trigger": "An outline file with claim ids and a voice file are both present. Quiet when only one exists, or when the ask is cutting, channel change, or fact-checking.",
+   "doneWhen": "`python3` over the draft and the outline exits 0 and prints \"violations: 0\": one check, claim-to-paragraph mapping against the outline file. violations = paragraphs carrying zero or more than one outline id tag (a paragraph with two claims or an untagged paragraph) + tags that are not outline ids (an unmapped paragraph is a new claim) + outline ids used more than once + outline ids missing from the draft. A new claim hidden inside a correctly tagged paragraph is not detectable by program, and the voice file (bans, style) is not measured here: both stay a human read. A missing voice file is a valid result: stop and report \"voice file absent\".",
    "checkKind": "count",
    "rung": "L1",
    "forbidden": "Adding a claim that is not in the outline, to fill a paragraph or smooth a transition.",
@@ -91,8 +91,8 @@
    ]
   },
   "variant": {
-   "trigger": "A source piece, a frozen fact list, and a target channel are present. Quiet when no fact list exists or when the ask is to change the offer or numbers.",
-   "doneWhen": "`python3` over the fact list (offer, numbers, names, one per line), the source piece, the variant, and the voice file exits 0 and prints \"violations: 0\": violations = fact-list items not verbatim in the variant + digit-bearing tokens in the variant found in neither the source piece nor the fact list (an added number) + hits of any phrase under the voice file's \"Bans\" heading. A missing item exits non-zero and names the line. An empty fact list prints \"facts: 0/0\" and is valid. An added non-numeric fact is not detectable by program; it stays a human read.",
+   "trigger": "A source piece, a frozen fact list with an \"offer:\" line, and a target channel are present. Quiet when no fact list exists or when the ask is to change the offer or numbers.",
+   "doneWhen": "`python3` over the fact list (one item per line, the offer on a line starting \"offer:\", then numbers and names), the source piece, and the variant exits 0 and prints \"violations: 0\": one check, frozen facts. violations = fact-list items not verbatim in the variant (the offer text is an item, so a dropped offer counts) + a non-empty fact list with no \"offer:\" line + digit-bearing tokens in the variant found in neither the source piece nor the fact list (an added number). A missing item exits non-zero and names the line. An empty fact list prints \"facts: 0/0\" and is valid. An added non-numeric fact is not detectable by program, and the voice file (bans, style) is not measured here: both stay a human read.",
    "checkKind": "count",
    "rung": "L1",
    "forbidden": "Changing a number, dropping the offer, or adding a fact while adapting to the channel.",
