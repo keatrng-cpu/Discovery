@@ -21,7 +21,7 @@
  "directives": {
   "explain": {
    "trigger": "A learner names one concept and wants it explained. Quiet when two or more concepts are named, or when the ask is to mark, drill, or plan a course.",
-   "doneWhen": "Before writing, the one concept's neighbouring terms are saved to neighbours.txt. The reply is exactly three non-empty lines, one each starting 'Concept:', 'Example:', 'Question:' (count 1/1/1), no body text, and the last starts with 'Question:' and ends with '?'. leaks = (non-empty lines outside those three) + (neighbours.txt terms found anywhere in the reply other than the Concept line); leaks must be 0. 'Concept not stated' is a valid result.",
+   "doneWhen": "Before writing, the one concept's neighbouring terms are saved to neighbours.txt (model-authored today, so the term search is only as strong as that list). The reply is exactly three non-empty lines, one each starting 'Concept:', 'Example:', 'Question:' (count 1/1/1), no body text, and the last starts with 'Question:' and ends with '?'. leaks = (non-empty lines outside those three) + (neighbours.txt terms found anywhere in the reply other than the Concept line); leaks must be 0. 'Concept not stated' is a valid result.",
    "checkKind": "count",
    "rung": "L1",
    "forbidden": "Leaking a second concept: naming, defining, or previewing a neighbouring idea in the Example, the Question, or any extra line.",
@@ -39,20 +39,22 @@
     "explain with an example",
     "eli5"
    ],
-   "absentTools": []
+   "absentTools": [
+    "concept-graph or glossary service (supplies the neighbouring terms so neighbours.txt is not model-authored)"
+   ]
   },
   "check": {
-   "trigger": "A learner answer exists for a restate or one-application prompt, with the key written down first. Quiet when no key exists, or when the ask is many questions on one skill.",
-   "doneWhen": "One restate or one application is marked by exactly one line 'marked: hit' or 'marked: miss' citing a stored key line locator (count 1; no mark line fails). After a miss, old and new example are saved to old_example.txt and new_example.txt, each starting with a 'scenario:' line; the scenario lines are saved to old_scenario.txt and new_scenario.txt; cmp old_scenario.txt new_scenario.txt exits 1 (a new scenario, not rewording) and cmp old_example.txt new_example.txt exits 1. Exit 0 on either means the paragraph or example was repeated and fails. A hit needs no new example, so no cmp run is a valid result.",
+   "trigger": "A learner answer exists for a restate or one-application prompt, with the key written down first, and the last answer was a miss. Quiet when no key exists, or when the ask is many questions on one skill.",
+   "doneWhen": "After a miss, the old and new example are saved to old_example.txt and new_example.txt, each starting with a 'scenario:' line, and python3 compares their lowercase word sets: Jaccard similarity must be below 0.5 (exit 0 pass, exit 1 means the paragraph or scenario was repeated or reworded and fails). A hit needs no new example, so no comparison run is a valid result.",
    "checkKind": "exit-code",
    "rung": "L1",
    "forbidden": "Repeating the same paragraph or the same scenario after a miss; rewording or a one-byte edit does not count, the scenario must change.",
-   "tool": "Bash:cmp",
+   "tool": "Bash:python3",
    "toolScope": "read",
    "gated": false,
    "gate": "",
    "status": "assisted",
-   "checkRunnable": true,
+   "checkRunnable": false,
    "keywords": [
     "restate",
     "check understanding",
@@ -61,11 +63,13 @@
     "mark my answer",
     "change the example"
    ],
-   "absentTools": []
+   "absentTools": [
+    "scenario-similarity checker (a program under desk/ that exits 1 when two examples overlap too much)"
+   ]
   },
   "sequence": {
    "trigger": "A learner's current state is given (a quiz result, a stated stuck point) and the ask is what comes next. Quiet when the ask is for the whole path or an order of topics.",
-   "doneWhen": "The reply has exactly one line starting 'gap:' and exactly one line starting 'next:' (count 1/1) and no list of further steps. 'gap: none found' with 'next: none' is valid when evidence shows no gap; no stated state gives 'gap: unsupported'.",
+   "doneWhen": "The whole reply is exactly two non-empty lines: one starting 'gap:' and one starting 'next:' (count 1/1, total non-empty lines 2), each at most 160 characters, and the 'next:' line contains no ';', no numerals-with-period or bullet markers, and none of 'then', 'after that', 'finally', 'step 2' (so prose course dumps fail). 'gap: none found' with 'next: none' is valid when evidence shows no gap; no stated state gives 'gap: unsupported'.",
    "checkKind": "count",
    "rung": "L1",
    "forbidden": "Laying out the whole course: any list of steps beyond the single next one.",
@@ -82,13 +86,16 @@
     "where am i stuck",
     "what should i learn next"
    ],
-   "absentTools": []
+   "absentTools": [
+    "prerequisite graph service",
+    "learner-record store (would make the smallest-gap judgment a lookup)"
+   ]
   },
   "drill": {
    "trigger": "One named skill and an answer key (or a computable answer) exist. Quiet when the key is absent, or when the ask spans more than one skill.",
-   "doneWhen": "A line 'marked: N/N' appears with N equal to the answers given, each mark citing a key item locator, and it is the last non-empty line of the reply (nothing follows the marks: no next level, new item set, or new skill). No key prints 'marked: 0/N unmarked, key absent' as the last line and is valid.",
+   "doneWhen": "A python3 script marks every given answer against the stored key file and prints one 'marked: N/N' line with each mark citing a key item locator; exit 0 only when N equals the number of answers given and every answer has a key item. No key prints 'marked: 0/N unmarked, key absent' and is valid.",
    "checkKind": "count",
-   "rung": "L1",
+   "rung": "L0",
    "forbidden": "Moving on inside the same directive: any text after the marked line that introduces a second skill, a next level, or a new item set, or marking an answer with no key.",
    "tool": "Bash:python3",
    "toolScope": "read",
@@ -104,7 +111,9 @@
     "mark each answer",
     "answer key"
    ],
-   "absentTools": []
+   "absentTools": [
+    "key-marking script under desk/ (not yet written)"
+   ]
   },
   "curriculum": {
    "trigger": "A request to order topics, plan a course, or set a curriculum. Quiet for one concept, one check, or one next step.",
