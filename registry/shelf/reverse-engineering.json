@@ -26,12 +26,170 @@
   "strings"
  ],
  "directives": {
-  "triage": null,
-  "static": null,
-  "lift": null,
-  "dynamic": null,
-  "protocol": null,
-  "summarize": null,
-  "state": null
+  "triage": {
+   "trigger": "One or more files are in hand and the ask is what is this: format, class, endianness, architecture, entry. Quiet for function lists, call graphs, naming, lifting, or decrypting or bypassing anything.",
+   "doneWhen": "`python3 fixtures/re-triage/check.py --fixture <dir> --out <out.json>` exits 0: for each file the output fields format, class, endian, arch, and entry (the entry point address) equal what the checker parses from `file` and `readelf -h` itself, or is {\"stop\":\"tools disagree\"} when the tools error or disagree, or {\"unsupported\":\"not ELF\"}.",
+   "checkKind": "exit-code",
+   "rung": "L0",
+   "forbidden": "any field the tools did not emit; continuing past a disagreement; anything beyond identification (no decryption, no bypass)",
+   "tool": "Bash:file",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": true,
+   "keywords": [
+    "identify binary format",
+    "elf header",
+    "file architecture",
+    "entry point",
+    "what is this binary",
+    "triage binary"
+   ],
+   "absentTools": []
+  },
+  "static": {
+   "trigger": "A binary is in hand and triage already named its format and architecture; the ask is the function list, call graph, or strings. Quiet for names or purposes, runtime behavior, or decrypting or bypassing.",
+   "doneWhen": "One combined output holding the function list, the call-graph edge list, and the strings is generated from `objdump -d` and `strings` output twice, and `cmp first.out second.out` exits 0 (all three regenerate byte for byte). A binary with no functions is a valid result: empty function and edge sections that regenerate empty, not a guess.",
+   "checkKind": "exit-code",
+   "rung": "L0",
+   "forbidden": "redrawing or editing the call graph by hand or by model; adding an edge or function the disassembler output does not show; listing any function address or string the tool output does not contain",
+   "tool": "Bash:objdump",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "call graph",
+    "function list",
+    "extract strings",
+    "disassembly listing",
+    "regenerate graph",
+    "list functions"
+   ],
+   "absentTools": [
+    "headless disassembler with a call-graph export"
+   ]
+  },
+  "lift": {
+   "trigger": "A known-architecture sample with ground truth exists and a target needs a recovered spec. Quiet when no scored sample exists, or for decrypting or bypassing.",
+   "doneWhen": "A scoring program run on the known-architecture sample prints the line \"lift: M/N matched\" and exits 0, and writes remainder.json holding exactly N-M items (the unmatched ones; `jq length remainder.json` equals N-M), which is the only input a model pass receives. M=N (empty remainder), or an unknown architecture reported as \"unsupported\", is a valid result.",
+   "checkKind": "count",
+   "rung": "L1",
+   "forbidden": "sending the whole target, or any item outside remainder.json, to a model; touching the target before the known-architecture score exists; calling an unknown-ISA lift reliable",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "lift binary",
+    "recover spec",
+    "known architecture",
+    "isa recovery",
+    "unmatched remainder",
+    "score lift"
+   ],
+   "absentTools": [
+    "disassembler",
+    "ISA-specific disassembly for unknown architectures"
+   ]
+  },
+  "dynamic": {
+   "trigger": "A static claim list and a saved emulation trace are both in hand. Quiet when only one exists, to start hardware, or to decrypt or bypass anything.",
+   "doneWhen": "A comparison program prints \"claims: K kept, D dropped of N\" with K+D=N; each dropped claim cites the contradicting trace line by line number and no kept claim has one. With no trace the result is \"unsupported: no trace\" and exit 0.",
+   "checkKind": "count",
+   "rung": "L1",
+   "forbidden": "keeping a claim the trace contradicts, or dropping one without a cited trace line; inventing a trace when no emulator is registered",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "emulation trace",
+    "trace versus claim",
+    "drop contradicted claim",
+    "dynamic analysis",
+    "emulated run",
+    "trace line"
+   ],
+   "absentTools": [
+    "emulator with a trace export",
+    "emulator"
+   ]
+  },
+  "protocol": {
+   "trigger": "Saved captures are in hand and the ask is to parse them and show the parse reproduces them. Quiet for live interception, crafting or replaying traffic, or decrypting or bypassing.",
+   "doneWhen": "For every capture, parse then re-serialize, and `cmp capture.bin roundtrip.bin` exits 0. A capture that does not round-trip is reported as failed, and an empty capture set is a valid result.",
+   "checkKind": "exit-code",
+   "rung": "L1",
+   "forbidden": "parsing any field not seen in the captures in hand; generalizing a field layout, length rule, or message type past the captures in hand; calling a spec from a few captures trustworthy",
+   "tool": "Bash:cmp",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "pcap round trip",
+    "parse capture",
+    "packet capture",
+    "wire format",
+    "message layout",
+    "protocol parser"
+   ],
+   "absentTools": []
+  },
+  "summarize": {
+   "trigger": "A function from disassembly or decompilation needs a name or one-line purpose. Quiet when the ask is only listing functions, or decrypting or bypassing anything.",
+   "doneWhen": "Each proposed name carries a quoted evidence line: a string with its offset, a call target with its address, or a trace line with its line number, confirmed by a program to appear in the tool output at that locator. A function with no evidence stays unnamed, a valid result. This proves the evidence exists, not that the name is right.",
+   "checkKind": "quote",
+   "rung": "L1",
+   "forbidden": "giving a plausible name with no string, call, or trace behind it",
+   "tool": "Bash:strings",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "weak",
+   "checkRunnable": false,
+   "keywords": [
+    "name function",
+    "stripped function name",
+    "evidence cited name",
+    "function purpose",
+    "rename decompiled",
+    "label function"
+   ],
+   "absentTools": [
+    "disassembler",
+    "emulator with a trace export"
+   ]
+  },
+  "state": {
+   "trigger": "Findings from any reverse-engineering directive exist, or a session must resume one. Quiet when there is nothing yet to record.",
+   "doneWhen": "A fresh session reads only the state file and its listed artifacts and writes restated.json; then `jq -S .findings state.json > a.json; jq -S .findings restated.json > b.json; cmp a.json b.json` exits 0 (the resumed findings equal the saved findings). An empty findings list is a valid result.",
+   "checkKind": "state-diff",
+   "rung": "L0",
+   "forbidden": "leaving findings in chat only, or resuming from memory instead of the files",
+   "tool": "Bash:jq",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "reliable",
+   "checkRunnable": false,
+   "keywords": [
+    "resume investigation",
+    "investigation state",
+    "state file",
+    "reverse engineering notes",
+    "resume analysis",
+    "artifact files"
+   ],
+   "absentTools": []
+  }
  }
 }
