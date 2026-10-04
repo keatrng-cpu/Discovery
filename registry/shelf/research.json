@@ -21,11 +21,137 @@
   "unsupported"
  ],
  "directives": {
-  "retrieve": null,
-  "extract": null,
-  "gap": null,
-  "conflict": null,
-  "synthesize": null,
-  "monitor": null
+  "retrieve": {
+   "trigger": "A question or topic needs outside sources: papers, DOIs, preprints, pages. Quiet when the source text is already in context, or when the ask is to extract or synthesize.",
+   "doneWhen": "Every opened identifier (DOI, arXiv id, or URL the scrape tool returned and opened) is listed under \"opened\" and ends in exactly one place: \"kept\" or \"dropped-recap\". Every kept source has its identifier, a quoted title line with its locator (page or line), an access date (YYYY-MM-DD), and a tag \"primary\" (the publisher, DOI landing, arXiv, or original-document page) or \"recap\". A \"recap\" is kept only when the line \"no-primary-opened\" names the primary identifier that failed to open. A recap that opened while a primary of the same work also opened is not kept: it is listed under \"dropped-recap\" with the primary identifier that replaced it. Every hit that did not open is listed under \"discarded\" with the failing identifier. Zero kept sources is a valid result: print \"retrieved: 0\" and list the discards. Counts must satisfy: kept + dropped-recap = opened.",
+   "checkKind": "quote",
+   "rung": "L1",
+   "forbidden": "Writing an identifier or URL the tool did not return, or keeping a recap when the primary source opened. A hit that does not open is discarded, never repaired by guessing.",
+   "tool": "mcp__FireCrawl__firecrawl_scrape",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "resolve doi",
+    "primary source",
+    "find papers",
+    "access date",
+    "discard dead link",
+    "retrieve sources"
+   ],
+   "absentTools": []
+  },
+  "extract": {
+   "trigger": "A source page or PDF text is in context and the ask is its stated facts. Quiet when the source is not yet fetched, or when two sources are being compared.",
+   "doneWhen": "Each extracted item is a verbatim sentence found in the source text at a stated page or line, confirmed by substring match against the pdftotext or page text. Each item that is not verbatim is tagged \"paraphrase\". An item whose sentence states a number also carries a \"unit\" field and a \"scope\" field (the sample or scope the number applies to): each must be a substring of the source text at the stated locator, or the literal \"absent\" when the source gives none. A number with no unit field or no scope field fails. A source with no matching sentence yields \"absent\"; zero items is a valid result.",
+   "checkKind": "quote",
+   "rung": "L1",
+   "forbidden": "Paraphrasing under compression without the paraphrase tag, or giving a number without its unit and sample or scope.",
+   "tool": "Bash:pdftotext",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "verbatim quote",
+    "pull the sentence",
+    "number with unit",
+    "sample size",
+    "exact wording",
+    "extract from paper"
+   ],
+   "absentTools": []
+  },
+  "gap": {
+   "trigger": "A draft with claims and a searchable corpus are both present. Quiet when there is no draft, or when the ask is a broad survey.",
+   "doneWhen": "`python3 fixtures/research-gap/check.py --fixture <dir> --out <out.json> --searchlog <log>` exits 0: the claims table validates, every quote is verbatim in the cited document, and the search log holds at most one search. One search is logged when an unsupported claim exists, and it targets the first unsupported claim only, ending resolution \"filled\" or \"open\" (declared open is a valid stop). Zero searches is valid when every claim is supported. Runnable today: fixtures/research-gap/check.py is an existing repo program and the search runs through the registered harness desk/tools/localsearch.py; no new program is needed.",
+   "checkKind": "exit-code",
+   "rung": "L1",
+   "forbidden": "searching a second claim; a quote that is not verbatim; marking a cited-but-mismatching claim supported",
+   "tool": "Bash:localsearch",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": true,
+   "keywords": [
+    "unsupported claim",
+    "claim list",
+    "fill the gap",
+    "which claims lack support",
+    "first unsupported",
+    "draft claims"
+   ],
+   "absentTools": []
+  },
+  "conflict": {
+   "trigger": "Two or more sources state different things about the same point. Quiet when only one source exists or the sources agree.",
+   "doneWhen": "A script reads the side-by-side table and exits 0 only when: two quotes each appear verbatim in their cited source at a stated locator; one line begins \"Disagreement:\" and one line begins \"Decider:\" (what evidence would decide it); and the sentence after the quotes contains no number absent from both quotes and none of the blend words \"average\", \"mean of\", \"midpoint\", \"between the two\", \"roughly\", \"split the difference\". Status stays weak: a blended conclusion worded without a number or a listed word still needs a person's read, so the program catches the figure and the wording, not every smoothing.",
+   "checkKind": "quote",
+   "rung": "L1",
+   "forbidden": "Averaging the two sources, or writing a blended figure or a midpoint conclusion in the sentence after the quotes.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "weak",
+   "checkRunnable": false,
+   "keywords": [
+    "sources disagree",
+    "contradicting studies",
+    "side by side",
+    "conflicting evidence",
+    "what would decide it",
+    "two sources"
+   ],
+   "absentTools": []
+  },
+  "synthesize": {
+   "trigger": "Extracted, sourced findings exist and a written answer is wanted. Quiet when no sources have been gathered yet.",
+   "doneWhen": "A script splits the answer into sentences and exits 0 only when every sentence carries exactly one source id or the literal label \"unsupported\" (a sentence with two source ids or two labels is two claims and fails), the first sentence begins \"Answer:\", every sentence beginning \"Conflict:\" comes after all non-conflict sentences, and the printed count \"claims: N/N sourced-or-labeled\" has N equal to the sentence count. An empty answer is valid: \"claims: 0/0\".",
+   "checkKind": "count",
+   "rung": "L1",
+   "forbidden": "Keeping a sentence that has neither a source nor the unsupported label, or putting two claims in one sentence.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "one claim per sentence",
+    "write up findings",
+    "literature summary",
+    "sourced answer",
+    "label unsupported",
+    "evidence summary"
+   ],
+   "absentTools": []
+  },
+  "monitor": {
+   "trigger": "A prior memo exists as a file with a date and a half-life in days on each claim. Quiet when there is no memo file, because there is nothing to diff.",
+   "doneWhen": "Two readings must agree. Clock: a python3 date computation (claim date plus half-life days against today, never a model's judgment) prints the expired claim ids; every printed id has an added line marked \"expired\" and no unprinted id has one. Diff: `git diff --numstat` of the memo file reports 0 deleted lines, so the old conclusion stays visible and a changed conclusion appears as an added line marked \"changed\" beneath it; every source id on an added line is absent from the memo at HEAD (`git show HEAD:<memo>`), so only new sources were added. No new sources and no expiries is a valid result: an empty diff.",
+   "checkKind": "state-diff",
+   "rung": "L1",
+   "forbidden": "Deciding by model judgment that a claim has expired or is still fresh, or rewriting the memo whole so the old conclusion disappears.",
+   "tool": "Bash:git",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "update the memo",
+    "what changed since",
+    "expire stale claims",
+    "half-life",
+    "delta only",
+    "refresh research"
+   ],
+   "absentTools": []
+  }
  }
 }
