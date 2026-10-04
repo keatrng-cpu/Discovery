@@ -20,10 +20,115 @@
   "problem statement"
  ],
  "directives": {
-  "compress": null,
-  "frame": null,
-  "analogy": null,
-  "constrain": null,
-  "what-if": null
+  "compress": {
+   "trigger": "A source document and a request to compress it to assumptions and kill conditions. Quiet when the ask is a general summary, a rewrite, or a framing task.",
+   "doneWhen": "`python3` over the output prints \"assumptions: A\" and \"kill: K\" where A and K are the counts of lines starting \"A:\" and \"K:\", each line carries a locator (source line or section) and a quote taken from the input, and nothing else is kept. An input that states no assumption or no kill condition is a valid result: write \"assumptions: 0\" or \"kill: 0\" and do not invent one. Exit 0 only if every kept line quotes the input.",
+   "checkKind": "count",
+   "rung": "L1",
+   "forbidden": "Keeping a line that is neither a stated assumption nor a kill condition, or inventing an unstated assumption. An assumption not stated does not exist.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "compress",
+    "assumptions",
+    "kill conditions",
+    "cut the rest",
+    "list assumptions",
+    "strategy brief"
+   ],
+   "absentTools": []
+  },
+  "frame": {
+   "trigger": "A problem is given and the ask is to frame it. Quiet when the ask is to rank options, summarise, or pick one statement.",
+   "doneWhen": "`python3` over the output prints \"statements: 2\" and \"actions: 2 distinct\": exactly two lines starting \"P:\" each followed by one line starting \"Action:\", and the two Action lines are not equal after lowercasing and stripping stop words. Exit 0 only then. A source with only one framing is a valid result: print \"statements: 1\" and exit 1 rather than pad a restatement.",
+   "checkKind": "count",
+   "rung": "L1",
+   "forbidden": "Writing a restatement: a second statement whose Action line matches the first in substance. Drop it.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "frame",
+    "problem statement",
+    "two framings",
+    "reframe",
+    "different action",
+    "problem framing"
+   ],
+   "absentTools": []
+  },
+  "analogy": {
+   "trigger": "A proposed analogy or a request to reason by analogy. Quiet when no source domain is named or the ask is a rank or a what-if.",
+   "doneWhen": "`python3` over the output prints \"analogy: 3/3\" only if exactly three labelled non-empty lines exist: \"Source:\", \"Transfers:\", \"Does not transfer:\". Only the Transfers line may feed later reasoning. A line reading \"Does not transfer: none found\" prints \"analogy: 2/3 (none stated)\" and exits 1: the skipped half is flagged, not smoothed.",
+   "checkKind": "count",
+   "rung": "L1",
+   "forbidden": "Skipping or softening the Does not transfer line, or using a property from it afterwards.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "analogy",
+    "does not transfer",
+    "source domain",
+    "borrowed model",
+    "what transfers",
+    "like a"
+   ],
+   "absentTools": []
+  },
+  "constrain": {
+   "trigger": "A closed list of options plus a time and money budget. Quiet when the options are not yet listed or the ask is to generate more.",
+   "doneWhen": "`python3` compares the output to the input option list and prints \"rank: N/N\" and \"new: 0\". Each option has a \"time:\" and \"money:\" value, the order is ascending by time then money, and a line starting \"Runner-up lost:\" names the second option with a reason quoting its time or money. Exit 0 only if every ranked name is in the input list (a name outside the list prints \"new: 1\" and exits 1). A list with fewer than two options prints \"rank: 1/1\" with no runner-up and is valid.",
+   "checkKind": "count",
+   "rung": "L1",
+   "forbidden": "Adding a new idea: any option in the ranking that was not in the input list.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "rank by time and money",
+    "runner-up",
+    "constrain",
+    "trade-off",
+    "cheapest fastest",
+    "why it lost"
+   ],
+   "absentTools": []
+  },
+  "what-if": {
+   "trigger": "A decision with named variables and a request to test a change. Quiet when more than one variable is to move or no decision exists.",
+   "doneWhen": "`python3` over the output table prints \"moved: 1\" and \"held: H\" where H equals the count of other variables in the base case, and every held cell equals its base value. Exit 0 only if exactly one row is marked \"moved\" and a \"Decision:\" line appears for base and moved cases. A second moved variable prints \"moved: 2\" and exits 1.",
+   "checkKind": "count",
+   "rung": "L1",
+   "forbidden": "Drifting: changing a second variable, or a held value, while showing the moved case.",
+   "tool": "Bash:python3",
+   "toolScope": "read",
+   "gated": false,
+   "gate": "",
+   "status": "assisted",
+   "checkRunnable": false,
+   "keywords": [
+    "what-if",
+    "what if",
+    "binding variable",
+    "one variable",
+    "sensitivity",
+    "hold the others"
+   ],
+   "absentTools": []
+  }
  }
 }
