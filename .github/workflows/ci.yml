@@ -2,8 +2,9 @@
 name: ci
 on:
   pull_request:
+    branches: [claude/blissful-darwin-uaoi7e]
   push:
-    branches: [main]
+    branches: [claude/blissful-darwin-uaoi7e]
 permissions:
   contents: read
 concurrency:
