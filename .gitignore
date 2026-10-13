@@ -4,3 +4,5 @@ __pycache__/
 .pytest_cache/
 artifacts/tmp/
 .claude/worktrees/
+ai/.sessions.log
+graphify-out/.post-commit.log
