@@ -1,0 +1,19 @@
+# Forge Atlas T1: keep generated/vendored files out of the code graph
+graphify-out/
+node_modules/
+dist/
+build/
+.next/
+coverage/
+**/routeTree.gen.ts
+**/*.gen.ts
+**/*.min.js
+lib/i18n-dicts/
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+# fixtures/ holds real code (*/check.py, fixtures/caps/*.json read by desk/desk.py:1114-1115), so it stays in the graph.
+# Hide only the synthetic broken/fixed specimen projects that sw-verify/check.py grades.
+fixtures/sw-verify/tune/
+fixtures/sw-verify/heldout/
+deploy.zip
